@@ -99,3 +99,16 @@ classDiagram
     Etiqueta o-- ColorEtiqueta : color
     HistorialMovimientos o-- Email : autor
 ```
+
+---
+
+## Explicación del diagrama
+
+Este diagrama de clases representa la estructura de nuestro dominio, definiendo cómo interactúan las Entidades y los Value Objects:
+
+* **Tablero:** Es el componente principal. Contiene las listas de tareas, la lista de tarjetas terminadas y el historial de cambios. Cada tablero tiene una `URL` única para compartirlo y un dueño asignado mediante su `Email`.
+* **Organización en Listas:** Un `Tablero` agrupa varias `ListaTareas` y una `ListaCompletadas`. Dentro de estas listas es donde se guardan y organizan las diferentes `Tarjetas`.
+* **Tipos de Tarjetas (Herencia):** Existe una `Tarjeta` básica que guarda la información común (título, descripción, estado). De ella nacen dos tipos especiales: la `TarjetaTarea` (que se asigna a una persona) y la `TarjetaChecklist` (que tiene subtareas que se pueden ir marcando).
+* **Value Objects:** En lugar de usar texto simple (`String`) para cosas importantes, creamos clases específicas como `Email`, `URL` o `ColorEtiqueta`. Así nos aseguramos de que un correo tenga formato válido o que un color sea correcto desde el momento en que se crean.
+* **Etiquetas e Historial:** Las tarjetas usan `Etiqueta` para clasificarse visualmente. Por otro lado, el tablero usa el `HistorialMovimientos` como una "caja negra" para recordar qué usuario hizo cada cambio y en qué momento.
+* **Usuarios:** El `Usuario` es la persona que usa la aplicación. Se identifica por su correo electrónico y puede crear sus propios tableros o colaborar en los tableros de otras personas.
