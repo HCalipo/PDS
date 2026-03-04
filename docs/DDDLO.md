@@ -19,94 +19,137 @@ Este documento define los conceptos fundamentales de nuestra aplicación de gest
 
 ```mermaid
 classDiagram
-    direction LR
+  direction TB
 
-    class Usuario {
-        - Email correo
-        - String nombre
+    class USUARIO {
+      <<Entity>>
+      +Email correo
+      +String nombre
     }
-    class Tablero {
-        - URL url
-        - boolean estaBloqueado
-        - Email dueno
-        - Set<Email> colaboradores
-        - List<Tarjeta> tareas
-        - ListaCompletadas listaCompletadas
-        - List<HistorialMovimientos> historial
+
+    class TABLERO {
+      <<Entity>>
+      +URL url
+      +boolean estaBloqueado
+      +Usuario dueno
+      +Set~Usuario~ colaboradores
+      +List~Tarjeta~ tareas
+      +ListaCompletadas listaCompletadas
+      +List~HistorialMovimientos~ historial
     }
-    class ListaTareas {
-        - String id
-        - int orden
-        - List<Tarjeta> tarjetas
+
+    class LISTATAREAS {
+      <<Entity>>
+      +ListaTareasId id
+      +List~Tarjeta~ tarjetas
     }
-    class ListaCompletadas {
-        - String id
-        - List<Tarjeta> tarjetas
+
+    class ListaTareasId { <<VO>> +String id }
+
+    class LISTACOMPLETADAS {
+      <<Entity>>
+      +ListaCompletadasId id
+      +List~Tarjeta~ tarjetas
     }
-    class Tarjeta {
-        - String id
-        - String titulo
-        - String descripcion
-        - boolean estaCompletada
-        - LocalDateTime fechaCreacion
-        - Set<Etiqueta> etiquetas
+
+    class HISTORIALMOVIMIENTOS {
+      <<Entity>>
+      +List~Movimiento~ movimientos
     }
-    class TarjetaTarea {
-        - Email asignadoA
+
+    class TARJETA {
+      <<Abstract Entity>>
+      +TarjetaId id
+      +String titulo
+      +String descripcion
+      +boolean estaCompletada
+      +LocalDateTime fechaCreacion
+      +Set~Etiqueta~ etiquetas
     }
-    class TarjetaChecklist {
-        - List<ElementoChecklist> items
+
+    class ETIQUETA {
+      <<Entity>>
+      +String id
+      +String texto
+      +ColorEtiqueta color
     }
-    class Etiqueta {
-        - String id
-        - String texto
-        - ColorEtiqueta color
+
+    class MOVIMIENTO {
+      <<Entity>>
+      +String id
+      +LocalDateTime fechaHora
+      +String accionDetalle
+      +Email autor
     }
-    class HistorialMovimientos {
-        - String id
-        - LocalDateTime fechaHora
-        - String accionDetalle
-        - Email autor
+
+    class TARJETATAREA {
+      <<Entity>>
+      +String texto
     }
+
+    class TARJETACHECKLIST {
+      <<Entity>>
+      +ListaItems listaItems
+    }
+
+    class LISTAITEMS {
+      <<Entity>>
+      +List~ElementoChecklist~ items
+    }
+
+    class ELEMENTOCHECKLIST {
+      <<VO>>
+      +String descripcion
+      +boolean estaMarcado
+    }
+
     class Email {
-        - String value
+      <<VO>>
+      +String email
     }
+
     class URL {
-        - String value
-    }
-    class ColorEtiqueta {
-        - String value
-    }
-    class ElementoChecklist {
-        - String descripcion
-        - boolean estaMarcado
+      <<VO>>
+      +String url
     }
 
-    Tarjeta <|-- TarjetaTarea
-    Tarjeta <|-- TarjetaChecklist
+    class ListaCompletadasId { <<VO>> +String id }
+    class TarjetaId { <<VO>> +String id }
+    class ColorEtiqueta { <<VO>> +String color }
 
-    Tablero o-- ListaTareas : listas
-    Tablero o-- ListaCompletadas : listaCompletadas
-    Tablero o-- HistorialMovimientos : historial
-    Tablero o-- Email : dueno
-    Tablero o-- URL : url
-    ListaTareas o-- Tarjeta : tarjetas
-    ListaCompletadas o-- Tarjeta : tarjetas
-    Tarjeta o-- Etiqueta : etiquetas
-    TarjetaTarea o-- Email : asignadoA
-    TarjetaChecklist o-- ElementoChecklist : contiene
-    Usuario --> Tablero : crea
-    Etiqueta o-- ColorEtiqueta : color
-    HistorialMovimientos o-- Email : autor
+    USUARIO --> TABLERO : accede >
+
+    TABLERO --> LISTATAREAS : contiene >
+    TABLERO --> LISTACOMPLETADAS : incluye >
+    TABLERO --> HISTORIALMOVIMIENTOS : registra >
+
+    LISTATAREAS *-- ListaTareasId : id >
+
+    LISTATAREAS --> TARJETA : organiza >
+    LISTACOMPLETADAS --> TARJETA : archiva >
+    TARJETA --> ETIQUETA : clasifica con >
+    HISTORIALMOVIMIENTOS --> MOVIMIENTO : compone >
+
+    TARJETA <|-- TARJETATAREA : subtipo >
+    TARJETA <|-- TARJETACHECKLIST : subtipo >
+
+    TARJETACHECKLIST --> LISTAITEMS : contiene >
+    LISTAITEMS --> ELEMENTOCHECKLIST : incluye >
+
+    USUARIO *-- Email : correo >
+    TABLERO *-- URL : url >
+    LISTACOMPLETADAS *-- ListaCompletadasId : id >
+    TARJETA *-- TarjetaId : id >
+    ETIQUETA *-- ColorEtiqueta : color >
 ```
 
 ---
 
-## Explicación del diagrama
+## Explicación de los diagramas
 
-Este diagrama de clases representa la estructura de nuestro dominio, definiendo cómo interactúan las Entidades y los Value Objects:
+Estos diagramas de clases representan la estructura de nuestro dominio, definiendo cómo interactúan las Entidades y los Value Objects:
 
-* **Tablero:** Es el componente principal. Contiene las listas de tareas, la lista de tarjetas terminadas y el historial de cambios. Cada tablero tiene una `URL` única para compartirlo y un dueño asignado mediante su `Email`.
+* **Tablero:** Es el componente principal. Contiene las listas de tareas, la lista de tarjetas terminadas y el historial de cambios. Cada tablero tiene una `URL` única para compartirlo, un `Usuario` dueño y una colección de `Usuario` colaboradores.
 * **Organización en Listas:** Un `Tablero` agrupa varias `ListaTareas` y una `ListaCompletadas`. Dentro de estas listas es donde se guardan y organizan las diferentes `Tarjetas`.
 * **Tipos de Tarjetas (Herencia):** Existe una `Tarjeta` básica que guarda la información común (título, descripción, estado). De ella nacen dos tipos especiales: la `TarjetaTarea` (que se asigna a una persona) y la `TarjetaChecklist` (que tiene subtareas que se pueden ir marcando).
 * **Value Objects:** En lugar de usar texto simple (`String`) para cosas importantes, creamos clases específicas como `Email`, `URL` o `ColorEtiqueta`. Así nos aseguramos de que un correo tenga formato válido o que un color sea correcto desde el momento en que se crean.

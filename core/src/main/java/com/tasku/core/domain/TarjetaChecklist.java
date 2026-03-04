@@ -1,9 +1,7 @@
 package com.tasku.core.domain;
 
-import java.util.List;
-
 public class TarjetaChecklist extends Tarjeta {
-    private List<ElementoChecklist> items;
+    private ListaItems listaItems;
 
     // Getters, setters, constructor, equals, hashCode
 }

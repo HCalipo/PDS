@@ -1,12 +1,9 @@
 package com.tasku.core.domain;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class HistorialMovimientos {
-    private String id;
-    private LocalDateTime fechaHora;
-    private String accionDetalle;
-    private Email autor;
+    private List<Movimiento> movimientos;
 
     // Getters, setters, constructor, equals, hashCode
 }
