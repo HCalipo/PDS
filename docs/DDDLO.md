@@ -19,7 +19,7 @@ Este documento define los conceptos fundamentales de nuestra aplicación de gest
 
 ```mermaid
 classDiagram
-    direction LR
+  direction TB
 
     class Usuario {
         - Email correo
