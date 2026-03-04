@@ -13,7 +13,18 @@ Este documento define los conceptos fundamentales de nuestra aplicación de gest
 * **Tarjeta de Checklist:** Subtipo de tarjeta que contiene una lista de comprobación de subtareas.
 * **Etiqueta:** Elemento clasificador asignado a las tarjetas. Está definida por un color y una descripción.
 * **Historial de movimientos:** Registro inmutable de una acción realizada por un usuario sobre un tablero.
+* **Movimiento:** Evento individual dentro del historial que guarda qué acción ocurrió, cuándo ocurrió y qué usuario la realizó.
 * **URL de Acceso:** Identificador único que actúa como mecanismo de invitación y acceso al tablero para los colaboradores.
+* **Dueño del tablero:** Usuario creador del tablero con control sobre su configuración y gestión general.
+* **Colaborador:** Usuario invitado mediante URL que puede participar en el tablero según las reglas definidas.
+* **Estado de bloqueo:** Condición del tablero que impide temporalmente la creación de nuevas tarjetas.
+* **Elemento de checklist:** Subtarea individual de una tarjeta de checklist que puede marcarse como completada o pendiente.
+* **Lista de ítems:** Colección de elementos de checklist asociada a una tarjeta de tipo checklist.
+* **TarjetaId:** Identificador de valor único que distingue cada tarjeta dentro del dominio.
+* **ListaTareasId:** Identificador de valor para una lista de tareas dentro de un tablero.
+* **ListaCompletadasId:** Identificador de valor para la lista especial de tarjetas finalizadas.
+* **Email:** Value Object que encapsula y valida el correo electrónico de un usuario.
+* **Color de etiqueta:** Value Object que restringe y representa el color válido de una etiqueta.
 
 ---
 
