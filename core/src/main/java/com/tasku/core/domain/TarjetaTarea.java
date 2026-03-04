@@ -1,7 +1,7 @@
 package com.tasku.core.domain;
 
 public class TarjetaTarea extends Tarjeta {
-    private Email asignadoA;
+    private String texto;
 
     // Getters, setters, constructor, equals, hashCode
 }
