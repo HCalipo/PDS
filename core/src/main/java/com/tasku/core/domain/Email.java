@@ -1,4 +1,4 @@
 package com.tasku.core.domain;
 
-public record Email(String value) {
+public record Email(String email) {
 }

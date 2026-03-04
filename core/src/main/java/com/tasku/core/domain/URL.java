@@ -1,4 +1,4 @@
 package com.tasku.core.domain;
 
-public record URL(String value) {
+public record URL(String url) {
 }
