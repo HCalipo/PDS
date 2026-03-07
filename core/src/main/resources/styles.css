@@ -255,3 +255,82 @@
     -fx-border-color: #94a3b8;
     -fx-text-fill: #334155;
 }
+
+
+
+
+/* ================= HISTORIAL ================= */
+
+.history-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 0 1;
+}
+
+.history-header {
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.history-container {
+    -fx-background-color: transparent;
+}
+
+/* Círculo del usuario (Avatar) */
+.avatar-circle {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: bold;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+    -fx-alignment: center;
+    -fx-background-radius: 50;
+}
+
+.avatar-blue {
+    -fx-background-color: #0ba360; /* Usando el verde de tu login */
+    -fx-text-fill: white;
+}
+
+/* Línea de tiempo vertical */
+.timeline-line {
+    -fx-background-color: #f1f5f9;
+    -fx-min-width: 2px;
+    -fx-max-width: 2px;
+    -fx-translate-y: 4;
+}
+
+/* Textos del historial */
+.history-user {
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 13px;
+}
+
+.history-action {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+}
+
+.history-target {
+    -fx-text-fill: #2563eb;
+    -fx-font-weight: 500;
+    -fx-font-size: 13px;
+}
+
+.history-detail {
+    -fx-text-fill: #475569;
+    -fx-font-size: 12px;
+    -fx-background-color: #f8fafc;
+    -fx-padding: 4 8;
+    -fx-background-radius: 4;
+}
+
+.history-time {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 11px;
+}
+
+.history-item:hover {
+    -fx-cursor: hand;
+}
