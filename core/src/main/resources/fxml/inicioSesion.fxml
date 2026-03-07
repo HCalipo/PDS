@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f4f7f6;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tu.paquete.LoginController">
+
+   <BorderPane maxHeight="500.0" maxWidth="700.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15;">
+      
+      <effect>
+         <DropShadow blurType="GAUSSIAN" color="#0000001a" height="30.0" radius="14.5" width="30.0" />
+      </effect>
+
+      <left>
+         <VBox alignment="CENTER" prefWidth="300.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+               <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+            </padding>
+            <style>
+               -fx-background-color: linear-gradient(to bottom right, #0ba360, #3cba92);
+               -fx-background-radius: 15 0 0 15;
+            </style>
+
+            <Label text="U" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="64.0" />
+               </font>
+               <style>
+                  -fx-border-color: white;
+                  -fx-border-width: 4px;
+                  -fx-border-radius: 50;
+                  -fx-padding: 0 15 0 15;
+               </style>
+            </Label>
+
+            <Label text="TaskU" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="40.0" />
+               </font>
+            </Label>
+
+            <Label text="Aplicación de organización de tareas" textAlignment="CENTER" textFill="rgba(255,255,255,0.9)" wrapText="true">
+               <font>
+                  <Font name="System Italic" size="14.0" />
+               </font>
+            </Label>
+         </VBox>
+      </left>
+
+      <center>
+         <VBox alignment="CENTER" prefWidth="400.0" spacing="25.0" BorderPane.alignment="CENTER">
+            <padding>
+               <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+
+            <Label text="Inicia Sesión" textFill="#2d3436">
+               <font>
+                  <Font name="System Bold" size="28.0" />
+               </font>
+            </Label>
+
+            <GridPane hgap="10.0" vgap="20.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="90.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="230.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+               
+                  <Label text="Email:" textFill="#636e72" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtEmail" promptText="tu.email@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                     <style>
+                        -fx-background-color: #fafbfc;
+                        -fx-background-radius: 20;
+                        -fx-padding: 10 15 10 15;
+                        -fx-border-color: #dfe6e9;
+                        -fx-border-radius: 20;
+                     </style>
+                  </TextField>
+               </children>
+            </GridPane>
+
+            <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="45.0" prefWidth="200.0" text="Ingresar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <style>
+                  -fx-background-color: #0ba360;
+                  -fx-background-radius: 25;
+                  -fx-cursor: hand;
+               </style>
+               <effect>
+                  <DropShadow color="#0ba36066" radius="5" spread="0.1" />
+               </effect>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+
+            <Label fx:id="lblMensajeError" textFill="#d63031" />
+
+         </VBox>
+      </center>
+   </BorderPane>
+
+</StackPane>
