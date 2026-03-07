@@ -334,3 +334,48 @@
 .history-item:hover {
     -fx-cursor: hand;
 }
+
+/* ================= HISTORIAL CARD ================= */
+
+
+/* Contenedor principal de la tarjeta */
+.history-card-exact {
+    -fx-background-color: transparent;
+}
+
+/* Avatar circular usando tu verde institucional  */
+.avatar-exact {
+    -fx-background-color: #0ba360; 
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 50; /* Hace el círculo perfecto */
+}
+
+/* Estilos de texto para la línea de acción */
+.text-name {
+    -fx-font-weight: bold;
+    -fx-fill: #172b4d; /* Color oscuro de texto de Trello */
+    -fx-font-size: 14px;
+}
+
+.text-action {
+    -fx-fill: #64748b; /* Slate-500 de tus estilos */
+    -fx-font-size: 14px;
+}
+
+.text-target {
+    -fx-fill: #2563eb; /* Azul de tu botón primario */
+    -fx-font-size: 14px;
+}
+
+/* Estilos para detalles y tiempo (con el indentado de la imagen) */
+.text-detail {
+    -fx-text-fill: #475569; /* Slate-600 */
+    -fx-font-size: 14px;
+}
+
+.text-timestamp {
+    -fx-text-fill: #94a3b8; /* Slate-400 de tus iconos */
+    -fx-font-size: 12px;
+}
