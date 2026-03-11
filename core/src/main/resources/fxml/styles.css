@@ -404,3 +404,145 @@
     -fx-font-weight: bold;
     -fx-text-fill: #0f172a; /* */
 }
+
+/* ================= AÑADIR TABLERO ================= */
+
+/* Panel lateral izquierdo */
+.sidebar-menu {
+    -fx-background-color: #f8fafc; /* Gris extra claro de tus fondos */
+    -fx-border-color: #e2e8f0;     /* Gris de los bordes */
+    -fx-border-width: 0 1 0 0;     /* Solo borde separador derecho */
+}
+
+/* Botón Volver circular */
+.icon-button-circle {
+    -fx-background-color: transparent;
+    -fx-background-radius: 50;
+    -fx-padding: 8;
+    -fx-cursor: hand;
+}
+.icon-button-circle:hover {
+    -fx-background-color: #e2e8f0; /* Hover gris natural */
+}
+
+/* Ítems del menú lateral */
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #334155; /* Color de texto estándar del menú */
+    -fx-font-size: 14px;
+    -fx-padding: 10 16;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.nav-item:hover {
+    -fx-background-color: #f1f5f9; /* Hover suave */
+}
+
+/* Ítem activo (Usando tu verde institucional #0ba360) */
+.nav-item-active {
+    -fx-background-color: rgba(11, 163, 96, 0.1); /* Fondo verde translúcido */
+    -fx-text-fill: #0ba360;                       /* Verde principal */
+    -fx-font-weight: bold;
+}
+.nav-item-active:hover {
+    -fx-background-color: rgba(11, 163, 96, 0.15);
+}
+
+/* ScrollPane del contenido derecho */
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #ffffff; /* Fondo blanco limpio para la zona de creación */
+    -fx-border-color: transparent;
+}
+
+/* ================= TARJETAS DE CREACIÓN / PLANTILLAS ================= */
+
+.template-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0; /* Borde estándar */
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+.template-card:hover {
+    -fx-border-color: #0ba360; /* Al pasar el ratón, se ilumina con el verde primario */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+/* Zona superior de la tarjeta (donde va el icono grande) */
+.template-card-img-bg {
+    -fx-background-color: #f1f5f9; /* Mismo fondo que tu search-container */
+    -fx-background-radius: 8 8 0 0;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Zona de texto de la tarjeta */
+.template-card-info {
+    -fx-padding: 16;
+}
+
+.template-card-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a; /* Oscuro fuerte, como tu header-title */
+    -fx-font-size: 14px;
+}
+
+.template-card-desc {
+    -fx-text-fill: #64748b; /* Gris medio, como tu header-subtitle */
+    -fx-font-size: 12px;
+}
+
+/* ================= SELECTOR DE PLANTILLAS HORIZONTAL ================= */
+
+/* Contenedor clickeable de cada plantilla */
+.template-selector-card {
+    -fx-cursor: hand;
+    -fx-padding: 6 8;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.template-selector-card:hover {
+    -fx-background-color: #f8fafc; /* Gris muy clarito al pasar el ratón */
+}
+
+/* Plantilla seleccionada (Aprovechamos tu verde institucional #0ba360) */
+.template-selector-active {
+    -fx-background-color: rgba(11, 163, 96, 0.05); /* Fondo verde casi transparente */
+    -fx-border-color: #0ba360; /* Verde principal */
+}
+
+.template-selector-active .template-label {
+    -fx-text-fill: #0ba360;
+}
+
+/* La previsualización (el cuadradito con la imagen/color) */
+.template-preview {
+    -fx-background-radius: 4;
+    -fx-border-color: #e2e8f0; /* Borde gris estándar */
+    -fx-border-radius: 4;
+}
+
+/* Colores simulando el contenido de las plantillas */
+.preview-blank {
+    -fx-background-color: #ffffff;
+}
+
+.preview-kanban {
+    /* Simula columnas de tablero con un gradiente/color sólido */
+    -fx-background-color: #e2e8f0; 
+}
+
+.preview-scrum {
+    /* Otro color para distinguirlo */
+    -fx-background-color: #dbeafe; 
+}
+
+/* Texto debajo del cuadradito */
+.template-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: bold;
+}
