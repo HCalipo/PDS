@@ -11,6 +11,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -98,7 +99,10 @@
                         <SVGPath content="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z" fill="WHITE" scaleX="0.02" scaleY="0.02" />
                      </children>
                   </Group>
-               </graphic></Button>
+               </graphic>
+               <effect>
+                  <DropShadow height="0.0" offsetY="3.0" radius="0.0" width="0.0" />
+               </effect></Button>
             </HBox>
         </HBox>
     </top>
