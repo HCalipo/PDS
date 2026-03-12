@@ -22,7 +22,7 @@
                 <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Unirme a un tablero" />
                 <Region HBox.hgrow="ALWAYS" />
                 
-                <Button mnemonicParsing="false" styleClass="icon-button" style="-fx-padding: 4;">
+                <Button mnemonicParsing="false" style="-fx-padding: 4;" styleClass="icon-button">
                     <graphic>
                         <Group>
                             <children>

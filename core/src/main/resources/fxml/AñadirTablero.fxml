@@ -22,7 +22,7 @@
                 <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Crear nuevo tablero" />
                 <Region HBox.hgrow="ALWAYS" />
                 
-                <Button mnemonicParsing="false" styleClass="icon-button" style="-fx-padding: 4;">
+                <Button mnemonicParsing="false" style="-fx-padding: 4;" styleClass="icon-button">
                     <graphic>
                         <Group>
                             <children>
@@ -50,14 +50,14 @@
                         <VBox alignment="CENTER" spacing="10.0" styleClass="template-selector-card">
                             <children>
                                 <Region prefHeight="110.0" prefWidth="160.0" styleClass="template-preview, preview-kanban" />
-                                <Label styleClass="template-label" text="Kanban" />
+                                <Label styleClass="template-label" text="Plantilla1" />
                             </children>
                         </VBox>
 
                         <VBox alignment="CENTER" spacing="10.0" styleClass="template-selector-card">
                             <children>
                                 <Region prefHeight="110.0" prefWidth="160.0" styleClass="template-preview, preview-scrum" />
-                                <Label styleClass="template-label" text="Scrum" />
+                                <Label styleClass="template-label" text="Plantilla2" />
                             </children>
                         </VBox>
                     </children>

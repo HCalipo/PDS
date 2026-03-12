@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!/core
+!/core/*
+!/docs
+!/docs/*
+!/README.md
