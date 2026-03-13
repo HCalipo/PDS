@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f4f7f6;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tu.paquete.LoginController">
+<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f4f7f6;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.LoginController">
 
    <BorderPane maxHeight="500.0" maxWidth="700.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15;">
       
@@ -84,7 +84,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtEmail" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <TextField id="texfieldEmail" fx:id="txtEmail" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <style>
                         -fx-background-color: #fafbfc;
                         -fx-background-radius: 20;
@@ -93,6 +93,23 @@
                         -fx-border-radius: 20;
                      </style>
                   </TextField>
+               </children>
+            </GridPane>
+            <GridPane hgap="10.0" vgap="20.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="90.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="230.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="Nombre:" textFill="#636e72" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField id="texFieldNombre" fx:id="txtNombre" prefHeight="40.0" prefWidth="182.0" promptText="Inserte aquí su nombre" style="-fx-border-radius: 20;" GridPane.columnIndex="1" />
                </children>
             </GridPane>
 
