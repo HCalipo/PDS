@@ -43,6 +43,12 @@ public class ListaCompletadas {
         tarjetas.add(tarjetaACompletar);
     }
 
+    public void eliminarDeCompletadas(Tarjeta tarjeta) {
+        Tarjeta tarjetaAEliminar = Objects.requireNonNull(tarjeta, "La tarjeta no puede ser nula");
+        if (!tarjetas.remove(tarjetaAEliminar)) {
+            throw new IllegalArgumentException("La tarjeta no pertenece a la lista de completadas");
+        }
+    }
     // Redefinición de equals y hashCode
     
     @Override
