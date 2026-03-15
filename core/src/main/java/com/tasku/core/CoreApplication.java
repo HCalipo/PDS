@@ -135,6 +135,15 @@ public class CoreApplication {
 						actual.completarTarjeta(tarjetaId, autor);
 						System.out.println("Tarjeta completada.");
 					}
+					case "mover-tarjeta" -> {
+						Tablero actual = requireTablero(tablero);
+						Usuario autor = requireAutor(dueno);
+						String[] args = splitArgs(rest, 2, "mover-tarjeta <tarjetaId>|<listaDestinoId>");
+						UUID tarjetaId = parseUuid(args[0], "tarjetaId");
+						UUID listaDestinoId = parseUuid(args[1], "listaDestinoId");
+						actual.moverTarjeta(tarjetaId, listaDestinoId, autor);
+						System.out.println("Tarjeta movida.");
+					}
 					case "bloquear" -> {
 						requireTablero(tablero).bloquear();
 						System.out.println("Tablero bloqueado.");
@@ -226,6 +235,7 @@ public class CoreApplication {
 		System.out.println("  agregar-item <tarjetaId>|<descripcion>");
 		System.out.println("  marcar-item <tarjetaId>|<indice>|<true|false>");
 		System.out.println("  completar-tarjeta <tarjetaId>");
+		System.out.println("  mover-tarjeta <tarjetaId>|<listaDestinoId>");
 		System.out.println("  bloquear | desbloquear");
 		System.out.println("  mostrar-tablero | listar-activas | listar-completadas");
 		System.out.println("  mostrar-tarjeta <tarjetaId>");
