@@ -37,13 +37,13 @@ public class ListaCompletadas {
     }
 
     // Función para añadir una tarjeta a la lista de completadas
-    public void anadirAcompletadas(Tarjeta tarjeta) {
+    void anadirAcompletadas(Tarjeta tarjeta) {
         Tarjeta tarjetaACompletar = Objects.requireNonNull(tarjeta, "La tarjeta no puede ser nula");
         tarjetaACompletar.completar();
         tarjetas.add(tarjetaACompletar);
     }
 
-    public void eliminarDeCompletadas(Tarjeta tarjeta) {
+    void eliminarDeCompletadas(Tarjeta tarjeta) {
         Tarjeta tarjetaAEliminar = Objects.requireNonNull(tarjeta, "La tarjeta no puede ser nula");
         if (!tarjetas.remove(tarjetaAEliminar)) {
             throw new IllegalArgumentException("La tarjeta no pertenece a la lista de completadas");

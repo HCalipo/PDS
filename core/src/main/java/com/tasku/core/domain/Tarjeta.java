@@ -50,30 +50,30 @@ public abstract class Tarjeta {
     }
 
     // Funcion para modificar el contenido de la tarjeta
-    public void actualizarContenido(String titulo, String descripcion) {
+    void actualizarContenido(String titulo, String descripcion) {
         this.titulo = validarTexto(titulo, "El título no puede ser nulo ni vacío");
         this.descripcion = validarTexto(descripcion, "La descripción no puede ser nula ni vacía");
     }
 
     // Función para completar la tarjeta y añadirla a la lista de completadas
     
-    public void completar() {
+    void completar() {
         this.estaCompletada = true;
     }
 
     // Función para descompletar la tarjeda y sacarla de la lista de completadas
     
-    public void descompletar() {
+    void descompletar() {
         this.estaCompletada = false;
     }
 
     // Función para agregar o quitar etiquetas de la tarjeta
     
-    public void agregarEtiqueta(Etiqueta etiqueta) {
+    void agregarEtiqueta(Etiqueta etiqueta) {
         etiquetas.add(Objects.requireNonNull(etiqueta, "La etiqueta no puede ser nula"));
     }
 
-    public void quitarEtiqueta(Etiqueta etiqueta) {
+    void quitarEtiqueta(Etiqueta etiqueta) {
         etiquetas.remove(Objects.requireNonNull(etiqueta, "La etiqueta no puede ser nula"));
     }
 

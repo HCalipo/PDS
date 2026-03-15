@@ -23,7 +23,7 @@ public class HistorialMovimientos {
     }
 
     // Funcion de registrar
-    public void registrar(Movimiento movimiento) {
+    void registrar(Movimiento movimiento) {
         movimientos.add(Objects.requireNonNull(movimiento, "El movimiento no puede ser nulo"));
     }
 }

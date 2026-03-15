@@ -45,11 +45,11 @@ public class Etiqueta {
         
     // Modificar las etiquetas, cambiándole el texto o el color
 
-    public void actualizarTexto(String texto) {
+    void actualizarTexto(String texto) {
         this.texto = validarTexto(texto);
     }
 
-    public void actualizarColor(ColorEtiqueta color) {
+    void actualizarColor(ColorEtiqueta color) {
         this.color = Objects.requireNonNull(color, "El color no puede ser nulo");
     }
     

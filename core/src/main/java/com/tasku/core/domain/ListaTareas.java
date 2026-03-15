@@ -37,11 +37,11 @@ public class ListaTareas {
 
     // Funciones para agregar y eliminar tarjetas de la lista de tareas
     
-    public void agregarTarjeta(Tarjeta tarjeta) {
+    void agregarTarjeta(Tarjeta tarjeta) {
         tarjetas.add(Objects.requireNonNull(tarjeta, "La tarjeta no puede ser nula"));
     }
 
-    public boolean quitarTarjeta(Tarjeta tarjeta) {
+    boolean quitarTarjeta(Tarjeta tarjeta) {
         return tarjetas.remove(Objects.requireNonNull(tarjeta, "La tarjeta no puede ser nula"));
     }
 }

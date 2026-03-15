@@ -22,12 +22,12 @@ public class TarjetaChecklist extends Tarjeta {
     }
 
     // Función para agregar items a la lista de checklist
-    public void agregarItemChecklist(String descripcion) {
+    void agregarItemChecklist(String descripcion) {
         listaItems.agregarItem(new ElementoChecklist(descripcion, false));
     }
 
     // Función para marcar o desmarcar items de la lista de checklist
-    public void marcarItemChecklist(int indice, boolean marcado) {
+    void marcarItemChecklist(int indice, boolean marcado) {
         listaItems.marcarItem(indice, marcado);
     }
 }

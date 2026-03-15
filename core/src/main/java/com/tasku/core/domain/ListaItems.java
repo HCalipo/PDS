@@ -25,17 +25,17 @@ public class ListaItems {
     
     // Funciones para agregar y eliminar items en la lista de checklist
 
-    public void agregarItem(ElementoChecklist item) {
+    void agregarItem(ElementoChecklist item) {
         items.add(Objects.requireNonNull(item, "El item no puede ser nulo"));
     }
 
-    public boolean eliminarItem(ElementoChecklist item) {
+    boolean eliminarItem(ElementoChecklist item) {
         return items.remove(Objects.requireNonNull(item, "El item no puede ser nulo"));
     }
 
     // Función para marcar o desmarcar items de la lista de checklist
     
-    public void marcarItem(int indice, boolean estaMarcado) {
+    void marcarItem(int indice, boolean estaMarcado) {
         if (indice < 0 || indice >= items.size()) {
             throw new IllegalArgumentException("Índice de item fuera de rango");
         }

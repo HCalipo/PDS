@@ -21,7 +21,7 @@ public class TarjetaTarea extends Tarjeta {
     }
 
     // Función para modificar el texto de la tarjeta
-    public void actualizarTexto(String texto) {
+    void actualizarTexto(String texto) {
         this.texto = validarTexto(texto);
     }
 
