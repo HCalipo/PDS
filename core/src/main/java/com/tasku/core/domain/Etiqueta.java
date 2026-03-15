@@ -1,5 +1,7 @@
 package com.tasku.core.domain;
 
+import java.util.Objects;
+
 public class Etiqueta {
     private EtiquetaId id;
     private String texto;
@@ -39,4 +41,33 @@ public class Etiqueta {
         return texto.trim();
     }
  
+  
+        
+    // Modificar las etiquetas, cambiándole el texto o el color
+
+    public void actualizarTexto(String texto) {
+        this.texto = validarTexto(texto);
+    }
+
+    public void actualizarColor(ColorEtiqueta color) {
+        this.color = Objects.requireNonNull(color, "El color no puede ser nulo");
+    }
+    
+    // Redefinición de hashCode y equals
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Etiqueta etiqueta)) {
+            return false;
+        }
+        return Objects.equals(id, etiqueta.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
