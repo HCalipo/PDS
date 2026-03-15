@@ -12,8 +12,8 @@ public class ListaCompletadas {
 
     // Constructores 
     
-    public ListaCompletadas(URL url, ListaCompletadasId id) {
-        this(url, id, new ArrayList<>());
+    public ListaCompletadas(URL url) {
+        this(url, new ListaCompletadasId(url), new ArrayList<>());
     }
 
     public ListaCompletadas(URL url, ListaCompletadasId id, List<Tarjeta> tarjetas) {
