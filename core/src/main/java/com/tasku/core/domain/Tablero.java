@@ -145,6 +145,25 @@ public class Tablero {
         historial.registrar(new Movimiento("Tarjeta completada: " + tarjeta.getTitulo(), autor.getCorreo()));
     }
 
+    public void moverTarjeta(UUID tarjetaId, UUID listaDestinoId, Usuario autor) {
+        validarModificacion(autor);
+        if (estaCompletada(tarjetaId)) {
+            throw new IllegalStateException("La tarjeta ya esta completada");
+        }
+        ListaTareas listaOrigen = buscarListaPorTarjeta(tarjetaId);
+        ListaTareas listaDestino = buscarLista(listaDestinoId);
+        if (listaOrigen.equals(listaDestino)) {
+            return;
+        }
+
+        Tarjeta tarjeta = buscarTarjeta(tarjetaId);
+        if (!listaOrigen.quitarTarjeta(tarjeta)) {
+            throw new IllegalArgumentException("La tarjeta no pertenece a la lista indicada");
+        }
+        listaDestino.agregarTarjeta(tarjeta);
+        historial.registrar(new Movimiento("Tarjeta movida: " + tarjeta.getTitulo(), autor.getCorreo()));
+    }
+
     public Tarjeta obtenerTarjeta(UUID tarjetaId) {
         return buscarTarjeta(tarjetaId);
     }
@@ -190,6 +209,15 @@ public class Tablero {
             }
         }
         throw new IllegalArgumentException("La tarjeta no pertenece a ninguna lista activa");
+    }
+
+    private boolean estaCompletada(UUID tarjetaId) {
+        for (Tarjeta tarjeta : listaCompletadas.getTarjetas()) {
+            if (tarjeta.getId().id().equals(tarjetaId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private TarjetaChecklist requireChecklist(Tarjeta tarjeta) {
