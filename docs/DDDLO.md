@@ -55,7 +55,11 @@ classDiagram
       +List~Tarjeta~ tarjetas
     }
 
-    class ListaTareasId { <<VO>> +String id }
+    class ListaTareasId {
+      <<VO>>
+      +URL url
+      +UUID id
+    }
 
     class LISTACOMPLETADAS {
       <<Entity>>
@@ -87,7 +91,7 @@ classDiagram
 
     class MOVIMIENTO {
       <<Entity>>
-      +String id
+      +MovimientoId id
       +LocalDateTime fechaHora
       +String accionDetalle
       +Email autor
@@ -121,11 +125,16 @@ classDiagram
 
     class URL {
       <<VO>>
-      +String url
+      +UUID url
     }
 
-    class ListaCompletadasId { <<VO>> +String id }
-    class TarjetaId { <<VO>> +String id }
+    class ListaCompletadasId {
+      <<VO>>
+      +URL url
+      +UUID id
+    }
+    class TarjetaId { <<VO>> +UUID id }
+    class MovimientoId { <<VO>> +UUID id }
     class ColorEtiqueta { <<VO>> +String color }
 
     USUARIO --> TABLERO : accede >
@@ -151,6 +160,7 @@ classDiagram
     TABLERO *-- URL : url >
     LISTACOMPLETADAS *-- ListaCompletadasId : id >
     TARJETA *-- TarjetaId : id >
+    MOVIMIENTO *-- MovimientoId : id >
     ETIQUETA *-- ColorEtiqueta : color >
 ```
 
