@@ -9,47 +9,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="com.tasku.core.ui.controllers.CreateCardController" 
-      stylesheets="@styles.css" 
-      spacing="16.0" styleClass="template-card" prefWidth="450.0">
+<VBox prefWidth="450.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.CreateCardController">
     <padding>
         <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <!-- Header -->
-    <Label text="Crear Tarjeta" styleClass="header-title" />
+    <Label styleClass="header-title" text="Crear Tarjeta" />
 
     <!-- Tipo de tarjeta -->
-    <Label text="Tipo de tarjeta" styleClass="template-card-desc" />
+    <Label styleClass="template-card-desc" text="Tipo de tarjeta" />
     <HBox spacing="20.0">
-        <RadioButton fx:id="radioTexto" text="Texto" selected="true" styleClass="nav-item" userData="TEXT" />
-        <RadioButton fx:id="radioChecklist" text="Checklist" styleClass="nav-item" userData="CHECKLIST" />
+        <RadioButton fx:id="radioTexto" selected="true" styleClass="nav-item" text="Texto" userData="TEXT" />
+        <RadioButton fx:id="radioChecklist" styleClass="nav-item" text="Checklist" userData="CHECKLIST" />
     </HBox>
 
     <!-- Título -->
-    <Label text="Título" styleClass="template-card-desc">
+    <Label styleClass="template-card-desc" text="Título">
         <font>
             <Font size="12.0" />
         </font>
     </Label>
     <TextField fx:id="titleField" promptText="Introduce el título de la tarjeta" styleClass="join-input" />
 
-    <!-- Panel de Checklist -->
-    <VBox fx:id="checklistPanel" spacing="10.0" visible="false">
-        <Label text="Elementos del checklist" styleClass="template-card-desc">
-            <font>
-                <Font size="12.0" />
-            </font>
-        </Label>
-        <VBox fx:id="checklistItemsContainer" spacing="8.0" />
-        <Button text="+ Añadir elemento" styleClass="btn-add-column" onAction="#handleAddChecklistItem" 
-                maxWidth="200.0" />
-    </VBox>
-
     <!-- Botones -->
-    <HBox spacing="12.0" alignment="CENTER_RIGHT">
-        <Button text="Cancelar" styleClass="icon-button" onAction="#handleCancel" />
-        <Button text="Crear Tarjeta" styleClass="btn-primary" onAction="#handleCreate" />
+    <HBox alignment="CENTER_RIGHT" spacing="12.0">
+        <Button onAction="#handleCancel" styleClass="icon-button" text="Cancelar" />
+        <Button onAction="#handleCreate" styleClass="btn-primary" text="Crear Tarjeta" />
     </HBox>
 </VBox>
