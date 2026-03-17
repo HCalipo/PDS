@@ -2,26 +2,62 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="450.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.CreateCardController">
+<VBox prefWidth="450.0" spacing="5.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.CreateCardController">
     <padding>
         <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <!-- Header -->
     <Label styleClass="header-title" text="Crear Tarjeta" />
-
-    <!-- Tipo de tarjeta -->
-    <Label styleClass="template-card-desc" text="Tipo de tarjeta" />
-    <HBox spacing="20.0">
-        <RadioButton fx:id="radioTexto" selected="true" styleClass="nav-item" text="Texto" userData="TEXT" />
-        <RadioButton fx:id="radioChecklist" styleClass="nav-item" text="Checklist" userData="CHECKLIST" />
+   <HBox prefWidth="409.0" spacing="20.0">
+      <children>
+         <VBox prefWidth="156.0" spacing="10.0" HBox.hgrow="ALWAYS">
+            <children>
+            
+                <!-- Tipo de tarjeta -->
+                <Label styleClass="template-card-desc" text="Tipo de tarjeta">
+                  <opaqueInsets>
+                     <Insets right="20.0" />
+                  </opaqueInsets>
+               </Label>
+               <HBox prefWidth="126.0" spacing="10.0">
+                  <children>
+                       <ToggleButton fx:id="toggleTipo" prefHeight="35.0" selected="true" styleClass="toggle-card-type" text="Texto">
+                           <toggleGroup>
+                               <ToggleGroup fx:id="tipoCardGroup" />
+                           </toggleGroup>
+                       </ToggleButton>
+                       <ToggleButton prefHeight="35.0" styleClass="toggle-card-type" text="Checklist" toggleGroup="$tipoCardGroup" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
+         <VBox prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+            <children>
+                 
+                    <Label styleClass="template-card-desc" text="Etiqueta" />
+               <HBox prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                  <children>
+                       <ChoiceBox fx:id="choiceEtiqueta" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="35.0" styleClass="choice-etiqueta" HBox.hgrow="ALWAYS" />
+                       <Button fx:id="btnNuevaEtiqueta" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleNuevaEtiqueta" prefHeight="35.0" prefWidth="35.0" styleClass="btn-add-small" text="+" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
+      </children>
+   </HBox>
+    <HBox spacing="12.0">
+        
+        <Region HBox.hgrow="ALWAYS" />
     </HBox>
 
     <!-- Título -->
@@ -34,7 +70,7 @@
 
     <!-- Botones -->
     <HBox alignment="CENTER_RIGHT" spacing="12.0">
-        <Button onAction="#handleCancel" styleClass="icon-button" text="Cancelar" />
+        <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />
         <Button onAction="#handleCreate" styleClass="btn-primary" text="Crear Tarjeta" />
     </HBox>
 </VBox>

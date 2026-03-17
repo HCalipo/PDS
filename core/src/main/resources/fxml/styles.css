@@ -155,7 +155,10 @@
     -fx-cursor: hand;
 }
 .btn-primary:hover {
-    -fx-background-color: #05f5a9;
+    /* -fx-background-color: #05f5a9; */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-translate-y: -1;
 }
 
 /* ================= TABLERO Y COLUMNAS ================= */
@@ -545,4 +548,75 @@
     -fx-font-size: 11px;
     -fx-text-fill: #64748b;
     -fx-font-weight: bold;
+}
+
+/* ================= TOGGLE BUTTON TIPO TARJETA ================= */
+.toggle-card-type {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #475569;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.toggle-card-type:hover {
+    -fx-background-color: #e2e8f0;
+}
+
+.toggle-card-type:selected {
+    -fx-background-color: rgba(11, 163, 96, 0.15);
+    -fx-text-fill: #0ba360;
+    -fx-font-weight: bold;
+}
+
+/* ================= CHOICEBOX ETIQUETA ================= */
+.choice-etiqueta {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-min-width: 120;
+}
+
+.choice-etiqueta:hover {
+    -fx-border-color: #cbd5e1;
+}
+
+/* ================= BOTÓN PEQUEÑO AÑADIR ================= */
+.btn-add-small {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.btn-add-small:hover {
+    -fx-background-color: #0ba360;
+    -fx-text-fill: #ffffff;
+}
+
+/* ================= TEXTFIELD LOGIN ================= */
+.textfield-login {
+    -fx-background-color: #fafbfc;
+    -fx-background-radius: 20;
+    -fx-padding: 10 15 10 15;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 20;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2d3436;
+}
+
+.textfield-login:focused {
+    -fx-border-color: #0ba360;
+    -fx-background-color: #ffffff;
+}
+
+.textfield-login:hover {
+    -fx-border-color: #b2bec3;
 }

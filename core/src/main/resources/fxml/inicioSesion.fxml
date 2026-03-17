@@ -84,15 +84,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField id="texfieldEmail" fx:id="txtEmail" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                     <style>
-                        -fx-background-color: #fafbfc;
-                        -fx-background-radius: 20;
-                        -fx-padding: 10 15 10 15;
-                        -fx-border-color: #dfe6e9;
-                        -fx-border-radius: 20;
-                     </style>
-                  </TextField>
+                   <TextField id="texfieldEmail" fx:id="txtEmail" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                </children>
             </GridPane>
             <GridPane hgap="10.0" vgap="20.0">
@@ -109,7 +101,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField id="texFieldNombre" fx:id="txtNombre" prefHeight="40.0" prefWidth="182.0" promptText="Inserte aquí su nombre" style="-fx-border-radius: 20;" GridPane.columnIndex="1" />
+                   <TextField id="texFieldNombre" fx:id="txtNombre" prefHeight="40.0" prefWidth="182.0" promptText="Inserte aquí su nombre" styleClass="textfield-login" GridPane.columnIndex="1" />
                </children>
             </GridPane>
 

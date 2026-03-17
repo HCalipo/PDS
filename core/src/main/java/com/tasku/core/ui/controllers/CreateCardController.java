@@ -1,9 +1,11 @@
 package com.tasku.core.ui.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 
 public class CreateCardController {
@@ -14,10 +16,13 @@ public class CreateCardController {
     private TextArea descriptionArea;
     
     @FXML
-    private RadioButton radioTexto;
+    private ToggleButton toggleTipo;
     
     @FXML
-    private RadioButton radioChecklist;
+    private ToggleGroup tipoCardGroup;
+    
+    @FXML
+    private ChoiceBox<String> choiceEtiqueta;
     
     @FXML
     private VBox checklistPanel;
@@ -40,14 +45,20 @@ public class CreateCardController {
             return;
         }
         
-        String cardType = radioChecklist.isSelected() ? "CHECKLIST" : "TEXT";
+        String cardType = toggleTipo.isSelected() ? "TEXT" : "CHECKLIST";
+        String etiqueta = choiceEtiqueta.getValue();
         
-        System.out.println("Create card: " + title + " - Type: " + cardType);
+        System.out.println("Create card: " + title + " - Type: " + cardType + " - Etiqueta: " + etiqueta);
         System.out.println("Description: " + description);
     }
     
     @FXML
     private void handleAddChecklistItem() {
         System.out.println("Add checklist item");
+    }
+    
+    @FXML
+    private void handleNuevaEtiqueta() {
+        System.out.println("Crear nueva etiqueta");
     }
 }
