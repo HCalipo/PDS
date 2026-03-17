@@ -9,7 +9,7 @@ public abstract class Tarjeta {
     private TarjetaId id;
     private String titulo;
     private String descripcion;
-    private boolean estaCompletada;
+    private boolean completada;
     private LocalDateTime fechaCreacion;
     private Set<Etiqueta> etiquetas;
 
@@ -19,7 +19,7 @@ public abstract class Tarjeta {
         this.id = Objects.requireNonNull(id, "El id de la tarjeta no puede ser nulo");
         this.titulo = validarTexto(titulo, "El título no puede ser nulo ni vacío");
         this.descripcion = validarTexto(descripcion, "La descripción no puede ser nula ni vacía");
-        this.estaCompletada = false;
+        this.completada = false;
         this.fechaCreacion = LocalDateTime.now();
         this.etiquetas = new HashSet<>();
     }
@@ -37,8 +37,8 @@ public abstract class Tarjeta {
         return descripcion;
     }
 
-    public boolean isEstaCompletada() {
-        return estaCompletada;
+    public boolean isCompletada() {
+        return completada;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -58,13 +58,13 @@ public abstract class Tarjeta {
     // Función para completar la tarjeta y añadirla a la lista de completadas
     
     void completar() {
-        this.estaCompletada = true;
+        this.completada = true;
     }
 
     // Función para descompletar la tarjeda y sacarla de la lista de completadas
     
     void descompletar() {
-        this.estaCompletada = false;
+        this.completada = false;
     }
 
     // Función para agregar o quitar etiquetas de la tarjeta
