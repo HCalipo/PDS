@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox prefWidth="400.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.CreateTagController">
+    <padding>
+        <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
+    </padding>
+
+    <!-- Header -->
+    <Label styleClass="header-title" text="Crear Etiqueta" />
+
+    <!-- Nombre de la etiqueta -->
+    <Label styleClass="template-card-desc" text="Nombre" />
+    <TextField fx:id="txtNombre" promptText="Ej. Urgente, Backend, Diseño..." styleClass="join-input" />
+
+    <!-- Selector de paleta -->
+    <Label styleClass="template-card-desc" text="Paleta de colores" />
+    <HBox spacing="16.0">
+        <ToggleButton fx:id="toggleNormal" selected="true" styleClass="toggle-card-type" text="Normal">
+            <toggleGroup>
+                <ToggleGroup fx:id="paletaGroup" />
+            </toggleGroup>
+        </ToggleButton>
+        <ToggleButton styleClass="toggle-card-type" text="Pastel" toggleGroup="$paletaGroup" />
+    </HBox>
+
+    <!-- Selector de color -->
+    <Label styleClass="template-card-desc" text="Color" />
+    <GridPane fx:id="gridColores" hgap="10.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+        </columnConstraints>
+    </GridPane>
+
+    <!-- Preview del color seleccionado -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <Label styleClass="template-card-desc" text="Preview:" />
+        <Circle fx:id="colorPreview" radius="12.0" strokeWidth="2.0" />
+        <Label fx:id="lblColorHex" styleClass="template-label" text="#000000" />
+    </HBox>
+
+    <!-- Botones -->
+    <HBox alignment="CENTER_RIGHT" spacing="12.0">
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />
+        <Button onAction="#handleCreate" styleClass="btn-primary" text="Crear" />
+    </HBox>
+</VBox>

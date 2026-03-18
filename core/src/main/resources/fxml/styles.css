@@ -620,3 +620,19 @@
 .textfield-login:hover {
     -fx-border-color: #b2bec3;
 }
+
+/* ================= COLOR SWATCH SELECTOR ================= */
+.color-swatch {
+    -fx-cursor: hand;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 2;
+}
+
+.color-swatch:hover {
+    -fx-stroke: #64748b;
+}
+
+.color-swatch-selected {
+    -fx-stroke: #0ba360;
+    -fx-stroke-width: 3;
+}

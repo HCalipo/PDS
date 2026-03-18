@@ -286,7 +286,7 @@ public class CoreApplication {
 
 	private static void printTarjetaDetalle(Tarjeta tarjeta) {
 		System.out.println(formatTarjetaResumen(tarjeta));
-		System.out.println("Completada: " + tarjeta.isEstaCompletada());
+		System.out.println("Completada: " + tarjeta.isCompletada());
 		Set<Etiqueta> etiquetas = tarjeta.getEtiquetas();
 		if (etiquetas.isEmpty()) {
 			System.out.println("Etiquetas: (sin etiquetas)");
