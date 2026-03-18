@@ -101,7 +101,7 @@
                   </Group>
                </graphic>
                <effect>
-                  <DropShadow height="0.0" offsetY="3.0" radius="0.0" width="0.0" />
+                  <DropShadow height="1.0" offsetX="3.0" offsetY="3.0" radius="0.0" width="0.0" />
                </effect></Button>
             </HBox>
         </HBox>
