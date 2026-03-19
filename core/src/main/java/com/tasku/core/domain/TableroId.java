@@ -2,10 +2,10 @@ package com.tasku.core.domain;
 
 import java.util.UUID;
 
-public record URL(String url) {
+public record TableroId(String url) {
 	private static final String PREFIJO = "tasku://tablero/";
 
-	public URL {
+	public TableroId {
 		if (url == null || url.isBlank()) {
 			throw new IllegalArgumentException("La URL no puede ser nula ni vacia");
 		}
@@ -24,11 +24,11 @@ public record URL(String url) {
 		url = PREFIJO + uuid;
 	}
 
-	public URL(UUID idTablero) {
+	public TableroId(UUID idTablero) {
 		this(PREFIJO + validarId(idTablero));
 	}
 
-	public URL() {
+	public TableroId() {
 		this(UUID.randomUUID());
 	}
 

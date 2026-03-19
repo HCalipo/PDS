@@ -10,7 +10,7 @@ import com.tasku.core.domain.Tablero;
 import com.tasku.core.domain.Tarjeta;
 import com.tasku.core.domain.TarjetaChecklist;
 import com.tasku.core.domain.TarjetaTarea;
-import com.tasku.core.domain.URL;
+import com.tasku.core.domain.TableroId;
 import com.tasku.core.domain.Usuario;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -63,7 +63,7 @@ public class CoreApplication {
 						String[] args = splitArgs(rest, 2, "crear-tablero <email>|<nombre>");
 						Email correo = new Email(args[0]);
 						dueno = new Usuario(correo, args[1]);
-						tablero = new Tablero(new URL(), dueno);
+						tablero = new Tablero(new TableroId(), dueno);
 						System.out.println("Tablero creado: " + tablero.getUrl().url());
 					}
 					case "agregar-colaborador" -> {
@@ -286,7 +286,7 @@ public class CoreApplication {
 
 	private static void printTarjetaDetalle(Tarjeta tarjeta) {
 		System.out.println(formatTarjetaResumen(tarjeta));
-		System.out.println("Completada: " + tarjeta.isEstaCompletada());
+		System.out.println("Completada: " + tarjeta.isCompletada());
 		Set<Etiqueta> etiquetas = tarjeta.getEtiquetas();
 		if (etiquetas.isEmpty()) {
 			System.out.println("Etiquetas: (sin etiquetas)");
