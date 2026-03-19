@@ -40,7 +40,7 @@ classDiagram
 
     class TABLERO {
       <<Entity>>
-      +URL url
+      +TableroId url
       +boolean estaBloqueado
       +Usuario dueno
       +Set~Usuario~ colaboradores
@@ -57,7 +57,7 @@ classDiagram
 
     class ListaTareasId {
       <<VO>>
-      +URL url
+      +TableroId url
       +UUID id
     }
 
@@ -123,14 +123,14 @@ classDiagram
       +String email
     }
 
-    class URL {
+    class TableroId {
       <<VO>>
       +UUID url
     }
 
     class ListaCompletadasId {
       <<VO>>
-      +URL url
+      +TableroId url
       +UUID id
     }
     class TarjetaId { <<VO>> +UUID id }
@@ -157,7 +157,7 @@ classDiagram
     LISTAITEMS --> ELEMENTOCHECKLIST : incluye >
 
     USUARIO *-- Email : correo >
-    TABLERO *-- URL : url >
+    TABLERO *-- TableroId : url >
     LISTACOMPLETADAS *-- ListaCompletadasId : id >
     TARJETA *-- TarjetaId : id >
     MOVIMIENTO *-- MovimientoId : id >
