@@ -2,7 +2,7 @@ package com.tasku.core.domain;
 
 import java.util.UUID;
 
-public record ListaTareasId(URL url, UUID id) {
+public record ListaTareasId(TableroId url, UUID id) {
 	public ListaTareasId {
 		if (url == null) {
 			throw new IllegalArgumentException("La URL no puede ser nula");
@@ -12,7 +12,7 @@ public record ListaTareasId(URL url, UUID id) {
 		}
 	}
 
-	public ListaTareasId(URL url) {
+	public ListaTareasId(TableroId url) {
 		this(url, UUID.randomUUID());
 	}
 }

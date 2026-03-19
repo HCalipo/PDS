@@ -6,17 +6,17 @@ import java.util.Objects;
 
 
 public class ListaCompletadas {
-    private URL url;
+    private TableroId url;
     private ListaCompletadasId id;
     private List<Tarjeta> tarjetas;
 
     // Constructores 
     
-    public ListaCompletadas(URL url) {
+    public ListaCompletadas(TableroId url) {
         this(url, new ListaCompletadasId(url), new ArrayList<>());
     }
 
-    public ListaCompletadas(URL url, ListaCompletadasId id, List<Tarjeta> tarjetas) {
+    public ListaCompletadas(TableroId url, ListaCompletadasId id, List<Tarjeta> tarjetas) {
         this.url = Objects.requireNonNull(url, "La URL de la lista de completadas no puede ser nula");
         this.id = Objects.requireNonNull(id, "El id de la lista de completadas no puede ser nulo");
         this.tarjetas = new ArrayList<>(Objects.requireNonNull(tarjetas, "La lista de tarjetas no puede ser nula"));
@@ -24,7 +24,7 @@ public class ListaCompletadas {
 
     // Getters 
     
-    public URL getUrl() {
+    public TableroId getUrl() {
         return url;
     }
 

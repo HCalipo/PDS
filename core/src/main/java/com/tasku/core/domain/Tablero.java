@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Tablero {
-    private URL url;
+    private TableroId url;
     private boolean estaBloqueado;
     private Usuario dueno;
     private Set<Usuario> colaboradores;
@@ -16,7 +16,7 @@ public class Tablero {
     private ListaCompletadas listaCompletadas;
     private HistorialMovimientos historial;
 
-    public Tablero(URL url, Usuario dueno) {
+    public Tablero(TableroId url, Usuario dueno) {
         this.url = Objects.requireNonNull(url, "La URL del tablero no puede ser nula");
         this.dueno = Objects.requireNonNull(dueno, "El dueño del tablero no puede ser nulo");
         this.estaBloqueado = false;
@@ -28,7 +28,7 @@ public class Tablero {
 
     // Getters
 
-    public URL getUrl() {
+    public TableroId getUrl() {
         return url;
     }
 
