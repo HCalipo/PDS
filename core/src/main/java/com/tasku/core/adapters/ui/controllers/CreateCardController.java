@@ -1,4 +1,5 @@
-package com.tasku.core.ui.controllers;
+package com.tasku.core.adapters.ui.controllers;
+
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
