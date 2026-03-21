@@ -1,4 +1,4 @@
-package com.tasku.core.domain;
+package com.tasku.core.domain.model;
 
 public record ElementoChecklist(String descripcion, boolean estaMarcado) {
 	public ElementoChecklist {

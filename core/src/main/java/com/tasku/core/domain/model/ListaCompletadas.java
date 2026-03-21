@@ -1,4 +1,4 @@
-package com.tasku.core.domain;
+package com.tasku.core.domain.model;
 
 import java.util.ArrayList;
 import java.util.List;

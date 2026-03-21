@@ -1,4 +1,4 @@
-package com.tasku.core.domain;
+package com.tasku.core.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

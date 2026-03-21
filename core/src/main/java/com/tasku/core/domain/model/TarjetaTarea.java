@@ -1,4 +1,4 @@
-package com.tasku.core.domain;
+package com.tasku.core.domain.model;
 
 public class TarjetaTarea extends Tarjeta {
     private String texto;

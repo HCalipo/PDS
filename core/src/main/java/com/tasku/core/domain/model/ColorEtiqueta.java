@@ -1,4 +1,4 @@
-package com.tasku.core.domain;
+package com.tasku.core.domain.model;
 
 public record ColorEtiqueta(String color) {
 	public ColorEtiqueta {

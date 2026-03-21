@@ -1,18 +1,19 @@
 package com.tasku.core;
 
-import com.tasku.core.domain.ColorEtiqueta;
-import com.tasku.core.domain.Email;
-import com.tasku.core.domain.Etiqueta;
-import com.tasku.core.domain.ListaItems;
-import com.tasku.core.domain.ListaTareas;
-import com.tasku.core.domain.Movimiento;
-import com.tasku.core.domain.Tablero;
-import com.tasku.core.domain.Tarjeta;
-import com.tasku.core.domain.TarjetaChecklist;
-import com.tasku.core.domain.TarjetaTarea;
-import com.tasku.core.domain.TableroId;
-import com.tasku.core.domain.Usuario;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.tasku.core.domain.model.ColorEtiqueta;
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.Etiqueta;
+import com.tasku.core.domain.model.ListaItems;
+import com.tasku.core.domain.model.ListaTareas;
+import com.tasku.core.domain.model.Movimiento;
+import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.TableroId;
+import com.tasku.core.domain.model.Tarjeta;
+import com.tasku.core.domain.model.TarjetaChecklist;
+import com.tasku.core.domain.model.TarjetaTarea;
+import com.tasku.core.domain.model.Usuario;
 
 import java.util.Scanner;
 import java.util.Set;

@@ -1,9 +1,9 @@
-package com.tasku.core.domain;
+package com.tasku.core.domain.model;
 
 import java.util.UUID;
 
-public record ListaTareasId(TableroId url, UUID id) {
-	public ListaTareasId {
+public record ListaCompletadasId(TableroId url, UUID id) {
+	public ListaCompletadasId {
 		if (url == null) {
 			throw new IllegalArgumentException("La URL no puede ser nula");
 		}
@@ -12,7 +12,7 @@ public record ListaTareasId(TableroId url, UUID id) {
 		}
 	}
 
-	public ListaTareasId(TableroId url) {
+	public ListaCompletadasId(TableroId url) {
 		this(url, UUID.randomUUID());
 	}
 }
