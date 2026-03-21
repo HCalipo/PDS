@@ -236,3 +236,15 @@ Estos diagramas de clases representan la estructura de nuestro dominio, definien
   * Como sistema cliente (GUI), quiero solicitar al backend el listado de acciones históricas de un tablero.
 
 ---
+
+## Ventajas de emplear la arquitectura hexagonal
+
+La arquitectura hexagonal se adhiere perfectamente a los principios *S.O.L.I.D*
+- **Principio de responsabilidad única (Single Responsibility):** cada capa tiene una responsabilidad única bien definida, lo cual evita mezclar responsabilidades y facilita el mantenimiento del código
+- **Principio Abierto Cerrado (Open/Closed):** las entidades y caso de uso están abiertos a extension pero cerrados a modificación, si necesitamos agregar una nueva funcionalidad, podemos extender los casos de uso (nuevos adaptadores) sin modificar el código existente
+- **Pincipio de sustitución de Liskov (Liskov Substitution):** los adaptadores y las implementaciones de los puertos deben ser sustituibles sin afectar al comportamiento del sistema, lo que permite cambiar facilmente entre diferentes implementaciones de infraestructura o servicios externos.
+- **Principio de Segregación de Interfaces (Interface Segregation):** los puertos de entrada/salida definen interfaces pequeñas y específicas para cada funcionalidad, lo que facilita implementación de adaptadores y evita depender de interfaces innecesariamente grandes.
+- **Principio de Inversión de Dependencias (Dependency Inversion):** las capas más internas no dependen de las capas más externas 
+  - La capa de Dominio no depende de Infraestructura o Aplicación 
+  - La capa de Aplicación no depende de Infraestructura
+  - La capa de Infraestructura es la más externa. 
