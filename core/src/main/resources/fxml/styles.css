@@ -636,3 +636,364 @@
     -fx-stroke: #0ba360;
     -fx-stroke-width: 3;
 }
+
+/* ================= TARJETAS EN COLUMNAS ================= */
+.task-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-padding: 12;
+    -fx-cursor: hand;
+}
+
+.task-card:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+}
+
+.task-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #0f172a;
+}
+
+.task-menu-button {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+}
+
+.task-menu-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.task-content {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.task-checklist-item {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.task-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+
+/* ================= TARJETAS EN LISTAS ================= */
+.card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #0f172a;
+}
+
+.card-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.card-checklist-item {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.card-progress {
+    -fx-font-size: 11px;
+    -fx-text-fill: #0ba360;
+    -fx-font-weight: bold;
+}
+
+.card-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+
+.card-menu-button {
+    -fx-background-color: transparent;
+    -fx-padding: 2 4;
+    -fx-cursor: hand;
+}
+
+.card-menu-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* ================= TARJETAS DE LISTAS ================= */
+.text-card, .checklist-card {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+}
+
+.text-card:hover, .checklist-card:hover {
+    -fx-effect: dropshadow(gaussian, #00000026, 4, 0, 0, 2);
+}
+
+.text-card-title, .checklist-card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0f172a;
+}
+
+.text-card-content {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+    -fx-wrap-text: true;
+}
+
+.text-card-desc {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-wrap-text: true;
+    -fx-padding: 4 0 0 0;
+}
+
+.text-card-date, .checklist-card-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+
+/* Toggle buttons en checklist */
+.checklist-card .toggle-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4 0;
+    -fx-alignment: LEFT;
+    -fx-cursor: hand;
+}
+
+.checklist-card .toggle-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* CheckBox en checklist */
+.checklist-card .check-box {
+    -fx-padding: 4 0;
+}
+
+.checklist-card .check-box .text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #0f172a;
+}
+
+.checklist-card .check-box:selected .text {
+    -fx-text-fill: #94a3b8;
+}
+
+/* ================= TARJETAS MODERNAS ================= */
+.card-modern {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-padding: 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 6, 0, 0, 2);
+}
+
+.card-modern:hover {
+    -fx-background-color: #fafcfc;
+    -fx-border-color: #cbd5e1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);
+}
+
+/* Header de tarjeta con menú */
+.card-header {
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 8;
+}
+
+/* Título de tarjeta moderna */
+.card-title-modern {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+    -fx-wrap-text: true;
+}
+
+/* Contenido de tarjeta */
+.card-content {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 4;
+}
+
+/* Descripción de tarjeta */
+.card-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+    -fx-wrap-text: true;
+    -fx-padding: 4 0 0 0;
+}
+
+/* Fecha de tarjeta */
+.card-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 8 0 0 0;
+}
+
+/* Contenedor de etiquetas */
+.card-tags {
+    -fx-spacing: 6;
+    -fx-padding: 0 0 8 0;
+}
+
+/* Etiqueta individual */
+.tag-chip {
+    -fx-background-radius: 4;
+    -fx-padding: 2 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+    -fx-text-fill: white;
+}
+
+/* Menú de opciones de tarjeta */
+.card-menu {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 4;
+    -fx-min-width: 24;
+    -fx-min-height: 24;
+    -fx-cursor: hand;
+}
+
+.card-menu:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #334155;
+    -fx-background-radius: 4;
+}
+
+.card-menu .arrow {
+    -fx-background-color: transparent;
+}
+
+/* Checklist item moderno */
+.checklist-item {
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.checklist-item .check-box {
+    -fx-padding: 2 0;
+}
+
+.checklist-item .check-box .text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.checklist-item .check-box:selected .text {
+    -fx-strikethrough: true;
+    -fx-text-fill: #94a3b8;
+}
+
+/* Progreso del checklist */
+.checklist-progress {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0ba360;
+}
+
+/* ================= BARRA DE PROGRESO ================= */
+.progress-bar-mini {
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 4;
+    -fx-min-height: 6;
+}
+
+.progress-bar-mini .bar {
+    -fx-background-color: #0ba360;
+    -fx-background-radius: 4;
+}
+
+/* Checklist items container */
+.checklist-items {
+    -fx-spacing: 4;
+}
+
+.checklist-items .check-box {
+    -fx-padding: 4 0;
+}
+
+.checklist-items .check-box .text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.checklist-items .check-box:selected .text {
+    -fx-strikethrough: true;
+    -fx-text-fill: #94a3b8;
+}
+
+/* ================= ETIQUETAS EN TARJETAS ================= */
+.card-label-chip {
+    -fx-background-radius: 4;
+    -fx-padding: 3 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-wrap-text: true;
+}
+
+.card-label-chip:hover {
+    -fx-opacity: 0.9;
+}
+
+/* ================= LABELS DE SECCIÓN ================= */
+.label-section {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: #475569;
+}
+
+.label-helper {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+
+.label-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+/* ================= LISTVIEW MODERNO ================= */
+.listview-modern {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.listview-modern .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 12 16;
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 0 0 1 0;
+}
+
+.listview-modern .list-cell:filled:hover {
+    -fx-background-color: #f8fafc;
+}
+
+/* ================= BOTÓN CERRAR ================= */
+.btn-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 18px;
+    -fx-cursor: hand;
+    -fx-padding: 4 8;
+    -fx-background-radius: 6;
+}
+
+.btn-close:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #0f172a;
+}

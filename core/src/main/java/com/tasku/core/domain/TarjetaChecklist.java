@@ -16,18 +16,22 @@ public class TarjetaChecklist extends Tarjeta {
         this(new TarjetaId(), titulo, descripcion, new ListaItems());
     }
 
+    public TarjetaChecklist(TarjetaId id, String titulo, String descripcion) {
+        this(id, titulo, descripcion, new ListaItems());
+    }
+
     // Getter
     public ListaItems getListaItems() {
         return listaItems;
     }
 
     // Función para agregar items a la lista de checklist
-    void agregarItemChecklist(String descripcion) {
+    public void agregarItemChecklist(String descripcion) {
         listaItems.agregarItem(new ElementoChecklist(descripcion, false));
     }
 
     // Función para marcar o desmarcar items de la lista de checklist
-    void marcarItemChecklist(int indice, boolean marcado) {
+    public void marcarItemChecklist(int indice, boolean marcado) {
         listaItems.marcarItem(indice, marcado);
     }
 }
