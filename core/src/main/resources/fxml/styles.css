@@ -161,6 +161,21 @@
     -fx-translate-y: -1;
 }
 
+.btn-primary-red {
+    -fx-background-color: #e40b0b;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+}
+.btn-primary-red:hover {
+    /* -fx-background-color: #05f5a9; */
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-translate-y: -1;
+}
+
 /* ================= TABLERO Y COLUMNAS ================= */
 .board-scroll {
     -fx-background-color: transparent;
