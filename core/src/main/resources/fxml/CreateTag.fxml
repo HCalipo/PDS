@@ -20,14 +20,14 @@
     </padding>
 
     <!-- Header -->
-    <Label styleClass="header-title" text="Crear Etiqueta" />
+    <Label styleClass="label-title" text="Crear Etiqueta" />
 
     <!-- Nombre de la etiqueta -->
-    <Label styleClass="template-card-desc" text="Nombre" />
+    <Label styleClass="label-section" text="Nombre" />
     <TextField fx:id="txtNombre" promptText="Ej. Urgente, Backend, Diseño..." styleClass="join-input" />
 
     <!-- Selector de paleta -->
-    <Label styleClass="template-card-desc" text="Paleta de colores" />
+    <Label styleClass="label-section" text="Paleta de colores" />
     <HBox spacing="16.0">
         <ToggleButton fx:id="toggleNormal" selected="true" styleClass="toggle-card-type" text="Normal">
             <toggleGroup>
@@ -38,7 +38,7 @@
     </HBox>
 
     <!-- Selector de color -->
-    <Label styleClass="template-card-desc" text="Color" />
+    <Label styleClass="label-section" text="Color" />
     <GridPane fx:id="gridColores" hgap="10.0" vgap="10.0">
         <columnConstraints>
             <ColumnConstraints />
@@ -51,9 +51,9 @@
 
     <!-- Preview del color seleccionado -->
     <HBox alignment="CENTER_LEFT" spacing="12.0">
-        <Label styleClass="template-card-desc" text="Preview:" />
+        <Label styleClass="label-section" text="Preview:" />
         <Circle fx:id="colorPreview" radius="12.0" strokeWidth="2.0" />
-        <Label fx:id="lblColorHex" styleClass="template-label" text="#000000" />
+        <Label fx:id="lblColorHex" styleClass="label-helper" text="#000000" />
     </HBox>
 
     <!-- Botones -->

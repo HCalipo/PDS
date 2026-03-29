@@ -63,11 +63,11 @@
                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
             </padding>
 
-            <Label text="Inicia Sesión" textFill="#2d3436">
-               <font>
-                  <Font name="System Bold" size="28.0" />
-               </font>
-            </Label>
+             <Label styleClass="label-title" text="Inicia Sesión">
+                <font>
+                   <Font name="System Bold" size="28.0" />
+                </font>
+             </Label>
 
             <GridPane hgap="10.0" vgap="20.0">
               <columnConstraints>
@@ -79,20 +79,12 @@
               </rowConstraints>
                <children>
                
-                  <Label maxWidth="1.7976931348623157E308" text="Email:" textFill="#636e72" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" stylesheets="@styles.css" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                     <style>
-                        -fx-background-color: #fafbfc;
-                        -fx-background-radius: 20;
-                        -fx-padding: 10 15 10 15;
-                        -fx-border-color: #dfe6e9;
-                        -fx-border-radius: 20;
-                     </style>
-                  </TextField>
+                <Label maxWidth="1.7976931348623157E308" styleClass="label-section" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                      <font>
+                         <Font size="14.0" />
+                      </font>
+                   </Label>
+                   <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                </children>
             </GridPane>
             <GridPane hgap="10.0" vgap="20.0">
@@ -104,11 +96,11 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label maxWidth="1.7976931348623157E308" text="Nombre:" textFill="#636e72" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                   <Label maxWidth="1.7976931348623157E308" styleClass="label-section" text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                      <font>
+                         <Font size="14.0" />
+                      </font>
+                   </Label>
                   <TextField id="texFieldNombre" fx:id="txtNombre" maxWidth="1.7976931348623157E308" prefHeight="41.0" prefWidth="245.0" promptText="Inserte aquí su nombre" style="-fx-border-radius: 20;" styleClass="textfield-login" stylesheets="@styles.css" GridPane.columnIndex="1" />
                </children>
             </GridPane>
