@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "tasku.traces.retention-days",
+      "type": "java.lang.Integer",
+      "description": "Dias de retencion para trazas de actividad antes de compactar.",
+      "defaultValue": 30
+    },
+    {
+      "name": "tasku.traces.compaction-cron",
+      "type": "java.lang.String",
+      "description": "Expresion cron de ejecucion del job de compactacion de trazas.",
+      "defaultValue": "0 0 3 * * *"
+    }
+  ]
+}
