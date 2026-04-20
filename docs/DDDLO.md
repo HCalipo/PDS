@@ -240,11 +240,404 @@ Estos diagramas de clases representan la estructura de nuestro dominio, definien
 ## Ventajas de emplear la arquitectura hexagonal
 
 La arquitectura hexagonal se adhiere perfectamente a los principios *S.O.L.I.D*
+
 - **Principio de responsabilidad única (Single Responsibility):** cada capa tiene una responsabilidad única bien definida, lo cual evita mezclar responsabilidades y facilita el mantenimiento del código
 - **Principio Abierto Cerrado (Open/Closed):** las entidades y caso de uso están abiertos a extension pero cerrados a modificación, si necesitamos agregar una nueva funcionalidad, podemos extender los casos de uso (nuevos adaptadores) sin modificar el código existente
 - **Pincipio de sustitución de Liskov (Liskov Substitution):** los adaptadores y las implementaciones de los puertos deben ser sustituibles sin afectar al comportamiento del sistema, lo que permite cambiar facilmente entre diferentes implementaciones de infraestructura o servicios externos.
 - **Principio de Segregación de Interfaces (Interface Segregation):** los puertos de entrada/salida definen interfaces pequeñas y específicas para cada funcionalidad, lo que facilita implementación de adaptadores y evita depender de interfaces innecesariamente grandes.
-- **Principio de Inversión de Dependencias (Dependency Inversion):** las capas más internas no dependen de las capas más externas 
-  - La capa de Dominio no depende de Infraestructura o Aplicación 
+- **Principio de Inversión de Dependencias (Dependency Inversion):** las capas más internas no dependen de las capas más externas
+  - La capa de Dominio no depende de Infraestructura o Aplicación
   - La capa de Aplicación no depende de Infraestructura
-  - La capa de Infraestructura es la más externa. 
+  - La capa de Infraestructura es la más externa.
+
+---
+
+## Implementación de la Persistencia
+
+### 1. Tecnologías y Herramientas Utilizadas ("Qué se ha usado")
+
+La persistencia de este proyecto se apoya en una base de datos **relacional SQL**.
+
+| Categoría | Implementación real en el proyecto | Dónde se evidencia |
+|---|---|---|
+| Base de datos | **H2** en modo archivo (`jdbc:h2:file`) | `core/src/main/resources/application.properties` |
+| ORM | **Hibernate ORM** vía **Spring Data JPA** | `spring-boot-starter-data-jpa` en `core/pom.xml` |
+| Abstracción de acceso | **Spring Data JPA (`JpaRepository`)** | `SpringDataTableroRepository`, `SpringDataTarjetaRepository`, `SpringDataTrazaRepository`, etc. |
+| Driver de conexión | **org.h2.Driver** | `spring.datasource.driver-class-name` |
+| Consola de soporte | **spring-boot-h2console** | Dependencia + `spring.h2.console.enabled=true` |
+| Gestión de transacciones | **Spring Transaction Management** (`@Transactional`) | `BoardApplicationService`, `ActivityTraceService` |
+
+Notas técnicas:
+
+- No se utiliza un gestor explícito de migraciones (Flyway/Liquibase) en el estado actual.
+- El esquema se gestiona con `spring.jpa.hibernate.ddl-auto=update`.
+
+Configuración activa real:
+
+```properties
+spring.datasource.url=jdbc:h2:file:./data/tasku-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
+
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+```
+
+### 2. Arquitectura y Estructura de Directorios ("Cómo está estructurado")
+
+La persistencia se implementa siguiendo DDD + arquitectura hexagonal:
+
+1. **Dominio** define contratos (puertos) y modelo puro.
+2. **Aplicación** orquesta casos de uso y transacciones.
+3. **Infraestructura** implementa puertos con JPA/Hibernate.
+
+Árbol representativo de persistencia (estado real):
+
+```text
+core/src/main/java/com/tasku/core
+├─ application/board
+│  ├─ BoardApplicationService.java
+│  └─ ActivityTraceService.java
+├─ domain/board
+│  ├─ model/
+│  │  ├─ Tablero.java
+│  │  ├─ ListaTablero.java
+│  │  ├─ Tarjeta.java
+│  │  ├─ TarjetaTarea.java
+│  │  ├─ TarjetaChecklist.java
+│  │  ├─ TrazaActividad.java
+│  │  └─ CuentaUsuario.java
+│  │
+│  └─ port/
+│     ├─ TableroStore.java
+│     ├─ ListaTableroStore.java
+│     ├─ TarjetaStore.java
+│     ├─ TrazaStore.java
+│     └─ UsuarioStore.java
+└─ infrastructure
+   ├─ bootstrap/CoreApplication.java
+   ├─ config/ProgramacionPersistenciaConfig.java
+   ├─ config/CompactacionTrazasProperties.java
+   ├─ scheduler/CompactacionTrazasJob.java
+   ├─ events/TarjetaMovidaTrazaListener.java
+   └─ persistence/jpa
+      ├─ adapter/
+      │  ├─ JpaTableroStoreAdapter.java
+      │  ├─ JpaListaTableroStoreAdapter.java
+      │  ├─ JpaTarjetaStoreAdapter.java
+      │  ├─ JpaTrazaStoreAdapter.java
+      │  └─ JpaUsuarioStoreAdapter.java
+      ├─ repository/
+      │  ├─ SpringDataTableroRepository.java
+      │  ├─ SpringDataListaTableroRepository.java
+      │  ├─ SpringDataTarjetaRepository.java
+      │  ├─ SpringDataTrazaRepository.java
+      │  └─ SpringDataUsuarioRepository.java
+      ├─ entity/
+      │  ├─ TableroJpaEntity.java
+      │  ├─ ListaTableroJpaEntity.java
+      │  ├─ TableroCompartidoJpaEntity.java
+      │  ├─ TarjetaJpaEntity.java
+      │  ├─ TarjetaTareaJpaEntity.java
+      │  ├─ TarjetaChecklistJpaEntity.java
+      │  ├─ TrazaJpaEntity.java
+      │  ├─ UsuarioJpaEntity.java
+      │  └─ embeddables...
+      └─ mapper/
+         ├─ TableroJpaMapper.java
+         ├─ TarjetaJpaMapper.java
+         ├─ TrazaJpaMapper.java
+         └─ UsuarioJpaMapper.java
+```
+
+Propósito de los componentes clave:
+
+- **`domain/board/port/*Store.java`**: contratos de persistencia independientes de JPA.
+- **`infrastructure/persistence/jpa/adapter/*Adapter.java`**: implementación concreta de los contratos de dominio.
+- **`infrastructure/persistence/jpa/repository/SpringData*Repository.java`**: capa Spring Data para CRUD/queries.
+- **`infrastructure/persistence/jpa/entity/*JpaEntity.java`**: modelo de base de datos con anotaciones JPA.
+- **`infrastructure/persistence/jpa/mapper/*Mapper.java`**: traducción bidireccional Dominio <-> JPA.
+
+### 3. Implementación Paso a Paso ("Cómo se ha usado")
+
+#### Paso 1: Configuración de la Conexión
+
+La conexión y el wiring se configuran por propiedades + autoconfiguración de Spring Boot.
+
+En `CoreApplication` se declara el escaneo explícito de entidades y repositorios:
+
+```java
+@SpringBootApplication(scanBasePackages = "com.tasku.core")
+@EntityScan(basePackages = "com.tasku.core.infrastructure.persistence.jpa.entity")
+@EnableJpaRepositories(basePackages = "com.tasku.core.infrastructure.persistence.jpa.repository")
+public class CoreApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(CoreApplication.class, args);
+  }
+}
+```
+
+Resultado práctico:
+
+1. Spring crea `DataSource` (pool HikariCP).
+2. Crea `EntityManagerFactory` y `JpaTransactionManager`.
+3. Registra automáticamente los `SpringData*Repository`.
+4. Inyecta adapters y servicios por constructor.
+
+#### Paso 2: Modelado de Datos (Data Models/Schemas)
+
+**Diferencia técnica en este proyecto:**
+
+- **Entidad de Dominio**: representa reglas de negocio y no contiene anotaciones JPA.
+- **Modelo de Base de Datos (JPA Entity)**: representa tablas/relaciones y sí contiene anotaciones de persistencia.
+
+Ejemplo de entidad de dominio (sin anotaciones ORM):
+
+```java
+public abstract class Tarjeta {
+  private final UUID id;
+  private UUID listId;
+  private final TipoTarjeta type;
+  private String title;
+  private String description;
+  private boolean archived;
+  private final Set<EtiquetaTarjeta> labels;
+}
+```
+
+Ejemplo de modelo JPA (acoplado a SQL):
+
+```java
+@Entity
+@Table(name = "tarjetas")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_tarjeta", discriminatorType = DiscriminatorType.STRING)
+public abstract class TarjetaJpaEntity {
+  @Id
+  @Column(name = "id", nullable = false)
+  private UUID id;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "lista_id", nullable = false)
+  private ListaTableroJpaEntity list;
+}
+```
+
+Además, la herencia de tarjetas se materializa con subtipos persistentes:
+
+- `TarjetaTareaJpaEntity` (`@DiscriminatorValue("TAREA")`)
+- `TarjetaChecklistJpaEntity` (`@DiscriminatorValue("CHECKLIST")`)
+
+#### Paso 3: Implementación del Patrón Repositorio
+
+El patrón se implementa en dos niveles:
+
+1. **Contrato de dominio** (puerto).
+2. **Adapter de infraestructura** (implementación con Spring Data).
+
+Contrato (dominio):
+
+```java
+public interface TarjetaStore {
+  Tarjeta save(Tarjeta card);
+  Optional<Tarjeta> findById(UUID cardId);
+  long countByListId(UUID listId);
+  List<Tarjeta> findByListId(UUID listId);
+}
+```
+
+Implementación (infraestructura):
+
+```java
+@Repository
+public class JpaTarjetaStoreAdapter implements TarjetaStore {
+  private final SpringDataTarjetaRepository repository;
+  private final SpringDataListaTableroRepository boardListRepository;
+  private final TarjetaJpaMapper mapper;
+
+  @Override
+  public Tarjeta save(Tarjeta card) {
+    ListaTableroJpaEntity listEntity = boardListRepository.findById(card.listId())
+      .orElseThrow(() -> new DomainNotFoundException("No existe la lista para persistir la tarjeta"));
+    return mapper.toDomain(repository.save(mapper.toJpa(card, listEntity)));
+  }
+}
+```
+
+Patrón resultante:
+
+- **Repository + Data Mapper**.
+- No se usa Active Record en el dominio.
+
+#### Paso 4: Mapeo de Datos (Mappers)
+
+La transformación entre dominio y persistencia se concentra en:
+
+- `TableroJpaMapper`
+- `TarjetaJpaMapper`
+- `TrazaJpaMapper`
+- `UsuarioJpaMapper`
+
+Ejemplo real de `TableroJpaMapper` (Dominio -> JPA):
+
+```java
+entity.setUrl(domain.url());
+entity.setName(domain.name());
+entity.setOwnerEmail(domain.ownerEmail());
+entity.setColor(domain.color());
+entity.setDescription(domain.description());
+entity.setStatus(domain.status().name());
+```
+
+Ejemplo real de `TarjetaJpaMapper` para polimorfismo:
+
+```java
+if (domain instanceof TarjetaChecklist tarjetaChecklist) {
+  TarjetaChecklistJpaEntity checklistEntity = new TarjetaChecklistJpaEntity();
+  checklistEntity.setItems(mapItemsToJpa(tarjetaChecklist.items()));
+  entity = checklistEntity;
+} else if (domain instanceof TarjetaTarea) {
+  entity = new TarjetaTareaJpaEntity();
+}
+```
+
+Ventaja clave del mapeo explícito:
+
+1. El dominio permanece limpio (sin `@Entity`, `@Column`, etc.).
+2. Cambios de infraestructura no fuerzan cambios en reglas de negocio.
+3. Se puede testear el dominio sin dependencias de ORM.
+
+#### Paso 5: Gestión de Transacciones (Unit of Work)
+
+No existe una clase `UnitOfWork` explícita, pero el comportamiento de unidad de trabajo se implementa con `@Transactional` de Spring.
+
+Ejemplo de operación que usa múltiples repositorios dentro de la misma transacción:
+
+```java
+@Transactional
+public Tablero createBoard(CreateBoardRequest request) {
+  if (boardStore.existsByOwnerEmailAndNameIgnoreCase(request.ownerEmail(), request.name())) {
+    throw new DomainConflictException("Ya existe un tablero con ese nombre para el mismo duenio");
+  }
+
+  ensureOwnerExists(request.ownerEmail()); // usa userStore
+  Tablero board = Tablero.createNew(...);
+  return boardStore.save(board); // usa boardStore
+}
+```
+
+En este caso, la creación/aseguramiento de usuario y la persistencia del tablero comparten frontera transaccional.
+
+También se observa transaccionalidad en:
+
+- `createCard(...)`
+- `moveCard(...)`
+- `ActivityTraceService.registerTrace(...)`
+- `ActivityTraceService.compactOlderThan(...)`
+
+### 4. Decisiones de Diseño y Trade-offs
+
+#### Por qué esta configuración encaja con el enfoque DDD del proyecto
+
+1. **Puertos en Dominio + Adapters en Infraestructura**: refuerza la inversión de dependencias.
+2. **Mappers explícitos**: evita contaminar el modelo de dominio con detalles del ORM.
+3. **Spring Data JPA**: acelera acceso a datos y consultas sin sacrificar separación de capas.
+4. **`@Transactional` en servicios de aplicación**: centraliza consistencia en casos de uso.
+
+#### Ventajas concretas
+
+- Alto desacoplamiento entre lógica de negocio y persistencia.
+- Mayor testabilidad del dominio.
+- Evolución independiente del modelo de base de datos.
+
+#### Trade-offs reales
+
+- Mayor volumen de código por mapeo manual (más clases y mantenimiento).
+- Dependencia actual de `ddl-auto=update` (sin migraciones versionadas explícitas).
+- H2 en modo archivo es excelente para desarrollo/pruebas, pero no es objetivo de producción de alta concurrencia.
+
+---
+
+## 5. Recomendación Arquitectónica (Dominio vs Persistencia)
+
+Esta sección responde la duda sobre si la persistencia debe tener modelos propios (entidades/data models) o si puede usar directamente el modelo de dominio.
+
+### 5.1 Modelos de dominio directos en persistencia vs modelos de datos separados
+
+#### Opción A: usar directamente modelos de dominio en persistencia
+
+Ventajas:
+
+- Menos clases al inicio.
+- Menos código de mapeo.
+- Arranque más rápido para un MVP pequeño.
+
+Desventajas:
+
+- El dominio queda condicionado por el ORM (anotaciones, proxys, restricciones de constructor, mutabilidad técnica).
+- Se mezclan reglas de negocio con detalles de base de datos.
+- Mayor costo de cambio si luego se migra de tecnología de persistencia.
+- Más riesgo de efectos laterales por carga perezosa dentro del dominio.
+
+#### Opción B: modelos de persistencia separados (infraestructura)
+
+Ventajas:
+
+- Dominio limpio y estable, sin dependencias de JPA/Hibernate.
+- Frontera clara entre negocio e infraestructura.
+- Facilidad para evolucionar tablas, consultas y optimizaciones sin romper reglas de dominio.
+- Mejor testabilidad del dominio puro.
+
+Desventajas:
+
+- Más clases y más mantenimiento.
+- Necesidad de mapear de forma explícita (Domain <-> JPA).
+
+### 5.2 Evaluación de acoplamiento para este proyecto
+
+Para la escala actual del proyecto, el acoplamiento de mantener modelos separados es aceptable y recomendable.
+
+Razones:
+
+- Ya existe un dominio con reglas e invariantes relevantes.
+- Ya existe una capa de aplicación basada en puertos y casos de uso.
+- Ya existe una capa de infraestructura con adapters, repositories y mappers.
+- Ya existen pruebas de integración de persistencia.
+
+En este contexto, mantener entidades de persistencia separadas protege mejor la arquitectura que mezclar JPA dentro del dominio.
+
+### 5.3 Recomendación final para este código
+
+Recomendación:
+
+- Mantener el modelo de dominio separado del modelo de persistencia.
+- Mantener puertos en dominio y adapters en infraestructura.
+- Mantener mapeo explícito entre ambos modelos.
+- Unificar progresivamente el dominio para evitar duplicidades semánticas entre modelo legacy y modelo `board`.
+
+### 5.4 Sobre el nombre de la carpeta: ¿debe llamarse `board`?
+
+No es obligatorio por convenio que se llame `board`.
+
+Lo importante es:
+
+- Que el nombre represente bien el bounded context o módulo funcional.
+- Que sea consistente en todo el proyecto.
+- Que siga el lenguaje ubicuo del equipo y del dominio.
+
+Ejemplos válidos según contexto:
+
+- `board`
+- `tablero`
+- `kanban`
+- `work-management`
+- `collaboration`
+
+Recomendación práctica para este proyecto:
+
+- Puedes mantener `board` si ya está extendido en clases, paquetes y pruebas.
+- Si el equipo prefiere español, `tablero` también es correcto, pero conviene hacer la migración de nombres de forma planificada y en un único refactor para evitar inconsistencia temporal.
