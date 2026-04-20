@@ -1,6 +1,8 @@
-package com.tasku.core;
+package com.tasku.core.infrastructure.bootstrap;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.tasku.core.domain.model.ColorEtiqueta;
 import com.tasku.core.domain.model.Email;
@@ -14,52 +16,59 @@ import com.tasku.core.domain.model.Tarjeta;
 import com.tasku.core.domain.model.TarjetaChecklist;
 import com.tasku.core.domain.model.TarjetaTarea;
 import com.tasku.core.domain.model.Usuario;
+import org.springframework.boot.SpringApplication;
 
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.tasku.core")
+@EntityScan(basePackages = "com.tasku.core.infrastructure.persistence.jpa.entity")
+@EnableJpaRepositories(basePackages = "com.tasku.core.infrastructure.persistence.jpa.repository")
 public class CoreApplication {
 
 	public static void main(String[] args) {
-		runCli();
+		if (args != null && args.length > 0 && "--cli".equalsIgnoreCase(args[0])) {
+			runCli();
+			return;
+		}
+		SpringApplication.run(CoreApplication.class, args);
 	}
 
 	private static void runCli() {
 		System.out.println("=== CLI Tasku ===");
 		printHelp();
 
-		Scanner scanner = new Scanner(System.in);
-		Tablero tablero = null;
-		Usuario dueno = null;
+		try (Scanner scanner = new Scanner(System.in)) {
+			Tablero tablero = null;
+			Usuario dueno = null;
 
-		while (true) {
-			System.out.print("> ");
-			if (!scanner.hasNextLine()) {
-				break;
-			}
+			while (true) {
+				System.out.print("> ");
+				if (!scanner.hasNextLine()) {
+					break;
+				}
 
-			String line = scanner.nextLine().trim();
-			if (line.isEmpty()) {
-				continue;
-			}
+				String line = scanner.nextLine().trim();
+				if (line.isEmpty()) {
+					continue;
+				}
 
-			String lower = line.toLowerCase();
-			if ("salir".equals(lower)) {
-				break;
-			}
-			if ("ayuda".equals(lower)) {
-				printHelp();
-				continue;
-			}
+				String lower = line.toLowerCase();
+				if ("salir".equals(lower)) {
+					break;
+				}
+				if ("ayuda".equals(lower)) {
+					printHelp();
+					continue;
+				}
 
-			String[] parts = line.split(" ", 2);
-			String cmd = parts[0].toLowerCase();
-			String rest = parts.length > 1 ? parts[1].trim() : "";
+				String[] parts = line.split(" ", 2);
+				String cmd = parts[0].toLowerCase();
+				String rest = parts.length > 1 ? parts[1].trim() : "";
 
-			try {
-				switch (cmd) {
+				try {
+					switch (cmd) {
 					case "crear-tablero" -> {
 						String[] args = splitArgs(rest, 2, "crear-tablero <email>|<nombre>");
 						Email correo = new Email(args[0]);
@@ -215,9 +224,10 @@ public class CoreApplication {
 						}
 					}
 					default -> System.out.println("Comando no reconocido. Escribe 'ayuda' para ver opciones.");
+					}
+				} catch (Exception ex) {
+					System.out.println("Error: " + ex.getMessage());
 				}
-			} catch (Exception ex) {
-				System.out.println("Error: " + ex.getMessage());
 			}
 		}
 
