@@ -1,65 +1,186 @@
 package com.tasku.core.infrastructure.desktop.controllers;
 
-
+import com.tasku.core.domain.model.TipoTarjeta;
+import com.tasku.core.infrastructure.api.rest.request.CardLabelApiRequest;
+import com.tasku.core.infrastructure.api.rest.request.CreateCardApiRequest;
+import com.tasku.core.infrastructure.api.rest.response.CardApiResponse;
+import com.tasku.core.infrastructure.desktop.api.DesktopApiException;
+import com.tasku.core.infrastructure.desktop.api.TaskuApiClient;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 public class CrearTarjetaController {
     @FXML
     private TextField titleField;
-    
+
+    @FXML
+    private TextField listIdField;
+
     @FXML
     private TextArea descriptionArea;
-    
+
     @FXML
     private ToggleButton toggleTipo;
-    
+
     @FXML
     private ToggleGroup tipoCardGroup;
-    
+
     @FXML
     private ChoiceBox<String> choiceEtiqueta;
-    
+
+    @FXML
+    private Label lblCardResult;
+
     @FXML
     private VBox checklistPanel;
-    
+
     @FXML
     private VBox checklistItemsContainer;
-    
+
+    private final TaskuApiClient apiClient = new TaskuApiClient();
+
+    @FXML
+    private void initialize() {
+        choiceEtiqueta.setItems(FXCollections.observableArrayList("General", "Urgente", "Bloqueada", "Bug"));
+        choiceEtiqueta.getSelectionModel().selectFirst();
+
+        UUID currentListId = DesktopSessionState.getCurrentListId();
+        if (currentListId != null) {
+            listIdField.setText(currentListId.toString());
+        }
+    }
+
     @FXML
     private void handleCancel() {
-        System.out.println("Cancel create card");
+        clearForm();
+        lblCardResult.setText("");
     }
-    
+
     @FXML
     private void handleCreate() {
-        String title = titleField.getText();
-        String description = descriptionArea.getText();
-        
-        if (title == null || title.trim().isEmpty()) {
-            System.out.println("Title is required");
+        String title = normalize(titleField.getText());
+        String description = normalize(descriptionArea.getText());
+
+        if (title.isBlank()) {
+            showError("El titulo es obligatorio.");
             return;
         }
-        
-        String cardType = toggleTipo.isSelected() ? "TEXT" : "CHECKLIST";
-        String etiqueta = choiceEtiqueta.getValue();
-        
-        System.out.println("Create card: " + title + " - Type: " + cardType + " - Etiqueta: " + etiqueta);
-        System.out.println("Description: " + description);
+
+        if (description.isBlank()) {
+            showError("La descripcion es obligatoria.");
+            return;
+        }
+
+        UUID listId;
+        try {
+            listId = UUID.fromString(normalize(listIdField.getText()));
+        } catch (IllegalArgumentException ex) {
+            showError("Debes indicar un UUID de lista valido.");
+            return;
+        }
+
+        TipoTarjeta type = toggleTipo.isSelected() ? TipoTarjeta.TAREA : TipoTarjeta.CHECKLIST;
+        String selectedLabel = choiceEtiqueta.getValue();
+
+        Set<CardLabelApiRequest> labels = new LinkedHashSet<>();
+        if (selectedLabel != null && !selectedLabel.isBlank()) {
+            labels.add(new CardLabelApiRequest(selectedLabel, mapColorForLabel(selectedLabel)));
+        }
+
+        CreateCardApiRequest request = new CreateCardApiRequest(
+                listId,
+                type,
+                title,
+                description,
+                labels,
+                List.of()
+        );
+
+        try {
+            CardApiResponse response = apiClient.createCard(request);
+            DesktopSessionState.setCurrentListId(response.listId());
+            showSuccess("Tarjeta creada correctamente: " + response.id());
+            clearForm();
+            listIdField.setText(response.listId().toString());
+        } catch (DesktopApiException ex) {
+            showError("No se pudo crear la tarjeta: " + ex.getMessage());
+        }
     }
-    
+
     @FXML
     private void handleAddChecklistItem() {
-        System.out.println("Add checklist item");
+        showInfo("El alta de items de checklist se hace por API en un paso posterior.");
     }
-    
+
     @FXML
     private void handleNuevaEtiqueta() {
-        System.out.println("Crear nueva etiqueta");
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nueva etiqueta");
+        dialog.setHeaderText("Crear etiqueta local para esta tarjeta");
+        dialog.setContentText("Nombre:");
+        dialog.showAndWait().ifPresent(value -> {
+            String normalized = normalize(value);
+            if (!normalized.isBlank()) {
+                if (!choiceEtiqueta.getItems().contains(normalized)) {
+                    choiceEtiqueta.getItems().add(normalized);
+                }
+                choiceEtiqueta.setValue(normalized);
+            }
+        });
+    }
+
+    private void clearForm() {
+        titleField.clear();
+        descriptionArea.clear();
+        if (!choiceEtiqueta.getItems().isEmpty()) {
+            choiceEtiqueta.getSelectionModel().selectFirst();
+        }
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private String mapColorForLabel(String label) {
+        String lower = label.toLowerCase();
+        return switch (lower) {
+            case "urgente" -> "#dc2626";
+            case "bloqueada" -> "#f97316";
+            case "bug" -> "#9333ea";
+            default -> "#0ea5e9";
+        };
+    }
+
+    private void showError(String message) {
+        lblCardResult.setStyle("-fx-text-fill: #d63031;");
+        lblCardResult.setText(message);
+    }
+
+    private void showSuccess(String message) {
+        lblCardResult.setStyle("-fx-text-fill: #0ba360;");
+        lblCardResult.setText(message);
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Informacion");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
+

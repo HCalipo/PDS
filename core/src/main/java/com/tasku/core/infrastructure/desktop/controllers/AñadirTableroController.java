@@ -1,10 +1,20 @@
 package com.tasku.core.infrastructure.desktop.controllers;
 
+import com.tasku.core.infrastructure.api.rest.request.CreateBoardApiRequest;
+import com.tasku.core.infrastructure.api.rest.request.InitialListApiRequest;
+import com.tasku.core.infrastructure.api.rest.response.BoardApiResponse;
+import com.tasku.core.infrastructure.desktop.api.DesktopApiException;
+import com.tasku.core.infrastructure.desktop.api.TaskuApiClient;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+
+import java.util.List;
+
 public class AñadirTableroController {
-    
+
     @FXML
     private VBox templateBlank;
 
@@ -14,7 +24,14 @@ public class AñadirTableroController {
     @FXML
     private VBox template2;
 
+    @FXML
+    private TextField boardNameField;
+
+    @FXML
+    private Label lblBoardResult;
+
     private static final String ACTIVE_CLASS = "template-selector-active";
+    private final TaskuApiClient apiClient = new TaskuApiClient();
 
     @FXML
     private void onTemplateSelected(javafx.scene.input.MouseEvent event) {
@@ -45,5 +62,82 @@ public class AñadirTableroController {
         templateBlank.getStyleClass().remove(ACTIVE_CLASS);
         template1.getStyleClass().remove(ACTIVE_CLASS);
         template2.getStyleClass().remove(ACTIVE_CLASS);
+    }
+
+    @FXML
+    private void handleCreateBoard() {
+        String ownerEmail = DesktopSessionState.getOwnerEmail();
+        if (ownerEmail == null || ownerEmail.isBlank()) {
+            showError("Primero debes iniciar sesion.");
+            return;
+        }
+
+        String boardName = normalize(boardNameField.getText());
+        if (boardName.isBlank()) {
+            showError("El nombre del tablero es obligatorio.");
+            return;
+        }
+
+        CreateBoardApiRequest request = new CreateBoardApiRequest(
+                ownerEmail,
+                boardName,
+                selectedBoardColor(),
+                "Tablero creado desde la interfaz desktop",
+                selectedInitialLists()
+        );
+
+        try {
+            BoardApiResponse board = apiClient.createBoard(request);
+            DesktopSessionState.setCurrentBoard(board.url());
+            if (board.lists() != null && !board.lists().isEmpty()) {
+                DesktopSessionState.setCurrentListId(board.lists().get(0).id());
+            }
+            showSuccess("Tablero creado correctamente: " + board.url());
+            boardNameField.clear();
+        } catch (DesktopApiException ex) {
+            showError("No se pudo crear el tablero: " + ex.getMessage());
+        }
+    }
+
+    private List<InitialListApiRequest> selectedInitialLists() {
+        if (template1.getStyleClass().contains(ACTIVE_CLASS)) {
+            return List.of(
+                    new InitialListApiRequest("Pendientes", 80),
+                    new InitialListApiRequest("En progreso", 40),
+                    new InitialListApiRequest("Completado", 80)
+            );
+        }
+        if (template2.getStyleClass().contains(ACTIVE_CLASS)) {
+            return List.of(
+                    new InitialListApiRequest("Sprint", 50),
+                    new InitialListApiRequest("QA", 50),
+                    new InitialListApiRequest("Done", 50)
+            );
+        }
+        return List.of(new InitialListApiRequest("General", 100));
+    }
+
+    private String selectedBoardColor() {
+        if (template1.getStyleClass().contains(ACTIVE_CLASS)) {
+            return "#0ea5e9";
+        }
+        if (template2.getStyleClass().contains(ACTIVE_CLASS)) {
+            return "#f97316";
+        }
+        return "#22c55e";
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private void showError(String message) {
+        lblBoardResult.setStyle("-fx-text-fill: #d63031;");
+        lblBoardResult.setText(message);
+    }
+
+    private void showSuccess(String message) {
+        lblBoardResult.setStyle("-fx-text-fill: #0ba360;");
+        lblBoardResult.setText(message);
     }
 }

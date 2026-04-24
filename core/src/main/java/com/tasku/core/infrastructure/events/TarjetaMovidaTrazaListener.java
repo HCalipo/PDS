@@ -1,24 +1,24 @@
 package com.tasku.core.infrastructure.events;
 
-import com.tasku.core.application.board.ActivityTraceService;
-import com.tasku.core.application.board.dto.RegisterTraceRequest;
-import com.tasku.core.application.board.event.CardMovedEvent;
+import com.tasku.core.application.tablero.usecase.TrazaActividadUseCaseService;
+import com.tasku.core.application.tablero.usecase.dto.RegisterTraceRequest;
+import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TarjetaMovidaTrazaListener {
-    private final ActivityTraceService activityTraceService;
+    private final TrazaActividadUseCaseService TrazaActividadUseCaseService;
 
-    public TarjetaMovidaTrazaListener(ActivityTraceService activityTraceService) {
-        this.activityTraceService = activityTraceService;
+    public TarjetaMovidaTrazaListener(TrazaActividadUseCaseService TrazaActividadUseCaseService) {
+        this.TrazaActividadUseCaseService = TrazaActividadUseCaseService;
     }
 
     @EventListener
-    public void onCardMoved(CardMovedEvent event) {
+    public void onCardMoved(TarjetaMovidaEvent event) {
         String description = "Tarjeta " + event.cardId() + " movida de " + event.sourceListId() + " a "
                 + event.destinationListId();
-        activityTraceService.registerTrace(new RegisterTraceRequest(
+        TrazaActividadUseCaseService.registerTrace(new RegisterTraceRequest(
                 event.boardUrl(),
                 event.authorEmail(),
                 description,

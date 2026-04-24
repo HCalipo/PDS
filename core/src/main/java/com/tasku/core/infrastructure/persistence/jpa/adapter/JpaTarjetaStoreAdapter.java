@@ -1,7 +1,7 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
 import com.tasku.core.domain.board.exception.DomainNotFoundException;
-import com.tasku.core.domain.model.board.Tarjeta;
+import com.tasku.core.domain.model.Tarjeta;
 import com.tasku.core.domain.board.port.TarjetaStore;
 import com.tasku.core.infrastructure.persistence.jpa.entity.ListaTableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.TarjetaJpaMapper;
@@ -49,4 +49,5 @@ public class JpaTarjetaStoreAdapter implements TarjetaStore {
         return repository.findByListId(listId).stream().map(mapper::toDomain).toList();
     }
 }
+
 

@@ -1,10 +1,10 @@
 package com.tasku.core.infrastructure.persistence.jpa.mapper;
 
-import com.tasku.core.domain.model.board.Tarjeta;
-import com.tasku.core.domain.model.board.EtiquetaTarjeta;
-import com.tasku.core.domain.model.board.TarjetaChecklist;
-import com.tasku.core.domain.model.board.ElementoChecklist;
-import com.tasku.core.domain.model.board.TarjetaTarea;
+import com.tasku.core.domain.model.Tarjeta;
+import com.tasku.core.domain.model.EtiquetaTarjeta;
+import com.tasku.core.domain.model.TarjetaChecklist;
+import com.tasku.core.domain.model.ElementoChecklist;
+import com.tasku.core.domain.model.TarjetaTarea;
 import com.tasku.core.infrastructure.persistence.jpa.entity.ListaTableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TarjetaJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.EtiquetaTarjetaEmbeddable;
@@ -102,4 +102,5 @@ public class TarjetaJpaMapper {
         return mapped;
     }
 }
+
 

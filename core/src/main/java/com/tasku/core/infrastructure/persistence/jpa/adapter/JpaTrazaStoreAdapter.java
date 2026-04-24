@@ -1,7 +1,7 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
 import com.tasku.core.domain.board.exception.DomainNotFoundException;
-import com.tasku.core.domain.model.board.TrazaActividad;
+import com.tasku.core.domain.model.TrazaActividad;
 import com.tasku.core.domain.board.port.TrazaStore;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.TrazaJpaMapper;
@@ -43,4 +43,5 @@ public class JpaTrazaStoreAdapter implements TrazaStore {
         return repository.findByBoardUrl(boardUrl).stream().map(mapper::toDomain).toList();
     }
 }
+
 

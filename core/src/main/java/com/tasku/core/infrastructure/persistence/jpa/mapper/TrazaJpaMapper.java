@@ -1,6 +1,6 @@
 package com.tasku.core.infrastructure.persistence.jpa.mapper;
 
-import com.tasku.core.domain.model.board.TrazaActividad;
+import com.tasku.core.domain.model.TrazaActividad;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TrazaJpaEntity;
 import org.springframework.stereotype.Component;
@@ -27,4 +27,5 @@ public class TrazaJpaMapper {
         );
     }
 }
+
 

@@ -71,7 +71,7 @@
         <VBox spacing="8.0">
             <children>
                 <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #475569;" text="NOMBRE DEL TABLERO" />
-                <TextField prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
+                <TextField fx:id="boardNameField" prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
             </children>
             <VBox.margin>
                 <Insets top="12.0" />
@@ -80,11 +80,13 @@
 
         <HBox alignment="CENTER_RIGHT">
             <children>
-                <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear tablero" />
+                <Button mnemonicParsing="false" onAction="#handleCreateBoard" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear tablero" />
             </children>
             <VBox.margin>
                 <Insets top="16.0" />
             </VBox.margin>
         </HBox>
+
+        <Label fx:id="lblBoardResult" textFill="#d63031" wrapText="true" />
     </children>
 </VBox>

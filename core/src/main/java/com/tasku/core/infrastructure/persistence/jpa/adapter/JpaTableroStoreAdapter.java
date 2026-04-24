@@ -1,6 +1,6 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
-import com.tasku.core.domain.model.board.Tablero;
+import com.tasku.core.domain.model.Tablero;
 import com.tasku.core.domain.board.port.TableroStore;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.TableroJpaMapper;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataTableroRepository;
@@ -44,4 +44,5 @@ public class JpaTableroStoreAdapter implements TableroStore {
         return repository.existsByOwnerEmailIgnoreCaseAndNameIgnoreCase(ownerEmail, boardName);
     }
 }
+
 

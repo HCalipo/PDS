@@ -1,6 +1,6 @@
 package com.tasku.core.infrastructure.persistence.jpa.mapper;
 
-import com.tasku.core.domain.model.board.CuentaUsuario;
+import com.tasku.core.domain.model.CuentaUsuario;
 import com.tasku.core.infrastructure.persistence.jpa.entity.UsuarioJpaEntity;
 import org.springframework.stereotype.Component;
 
@@ -17,4 +17,5 @@ public class UsuarioJpaMapper {
         return new CuentaUsuario(entity.getEmail(), entity.getRegistrationDate());
     }
 }
+
 

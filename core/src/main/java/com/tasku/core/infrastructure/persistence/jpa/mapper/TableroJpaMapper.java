@@ -1,10 +1,10 @@
 package com.tasku.core.infrastructure.persistence.jpa.mapper;
 
-import com.tasku.core.domain.model.board.Tablero;
-import com.tasku.core.domain.model.board.ListaTablero;
-import com.tasku.core.domain.model.board.TableroCompartido;
-import com.tasku.core.domain.model.board.EstadoTablero;
-import com.tasku.core.domain.model.board.RolComparticion;
+import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.TableroCompartido;
+import com.tasku.core.domain.model.EstadoTablero;
+import com.tasku.core.domain.model.RolComparticion;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.ListaTableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TableroCompartidoJpaEntity;
@@ -93,4 +93,5 @@ public class TableroJpaMapper {
         );
     }
 }
+
 

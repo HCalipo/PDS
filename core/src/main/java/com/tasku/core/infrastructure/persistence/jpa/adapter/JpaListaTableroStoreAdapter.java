@@ -1,6 +1,6 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
-import com.tasku.core.domain.model.board.ListaTablero;
+import com.tasku.core.domain.model.ListaTablero;
 import com.tasku.core.domain.board.port.ListaTableroStore;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.TableroJpaMapper;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataListaTableroRepository;
@@ -24,4 +24,5 @@ public class JpaListaTableroStoreAdapter implements ListaTableroStore {
         return repository.findById(listId).map(tableroJpaMapper::toDomain);
     }
 }
+
 

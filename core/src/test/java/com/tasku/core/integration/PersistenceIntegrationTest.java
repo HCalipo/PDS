@@ -1,20 +1,20 @@
 package com.tasku.core.integration;
 
-import com.tasku.core.application.board.ActivityTraceService;
-import com.tasku.core.application.board.BoardApplicationService;
-import com.tasku.core.application.board.dto.CreateBoardRequest;
-import com.tasku.core.application.board.dto.CreateCardRequest;
-import com.tasku.core.application.board.dto.MoveCardRequest;
-import com.tasku.core.application.board.dto.RegisterTraceRequest;
+import com.tasku.core.application.tablero.usecase.TrazaActividadUseCaseService;
+import com.tasku.core.application.tablero.usecase.TableroUseCaseService;
+import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
+import com.tasku.core.application.tablero.usecase.dto.CreateCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.MoveCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.RegisterTraceRequest;
 import com.tasku.core.domain.board.exception.DomainConflictException;
-import com.tasku.core.domain.model.board.Tablero;
-import com.tasku.core.domain.model.board.ListaTablero;
-import com.tasku.core.domain.model.board.Tarjeta;
-import com.tasku.core.domain.model.board.EtiquetaTarjeta;
-import com.tasku.core.domain.model.board.TipoTarjeta;
-import com.tasku.core.domain.model.board.TarjetaChecklist;
-import com.tasku.core.domain.model.board.ElementoChecklist;
-import com.tasku.core.domain.model.board.DefinicionListaInicial;
+import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.Tarjeta;
+import com.tasku.core.domain.model.EtiquetaTarjeta;
+import com.tasku.core.domain.model.TipoTarjeta;
+import com.tasku.core.domain.model.TarjetaChecklist;
+import com.tasku.core.domain.model.ElementoChecklist;
+import com.tasku.core.domain.model.DefinicionListaInicial;
 import com.tasku.core.infrastructure.bootstrap.CoreApplication;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataListaTableroRepository;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataTableroRepository;
@@ -47,10 +47,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PersistenceIntegrationTest {
 
     @Autowired
-    private BoardApplicationService boardService;
+    private TableroUseCaseService boardService;
 
     @Autowired
-    private ActivityTraceService traceService;
+    private TrazaActividadUseCaseService traceService;
 
     @Autowired
     private SpringDataTrazaRepository traceRepository;
@@ -271,4 +271,5 @@ class PersistenceIntegrationTest {
         ));
     }
 }
+
 
