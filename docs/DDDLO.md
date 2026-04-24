@@ -267,14 +267,14 @@ La arquitectura hexagonal se adhiere perfectamente a los principios *S.O.L.I.D*
 
 La persistencia de este proyecto se apoya en una base de datos **relacional SQL**.
 
-| Categoría | Implementación real en el proyecto | Dónde se evidencia |
-|---|---|---|
-| Base de datos | **H2** en modo archivo (`jdbc:h2:file`) | `core/src/main/resources/application.properties` |
-| ORM | **Hibernate ORM** vía **Spring Data JPA** | `spring-boot-starter-data-jpa` en `core/pom.xml` |
-| Abstracción de acceso | **Spring Data JPA (`JpaRepository`)** | `SpringDataTableroRepository`, `SpringDataTarjetaRepository`, `SpringDataTrazaRepository`, etc. |
-| Driver de conexión | **org.h2.Driver** | `spring.datasource.driver-class-name` |
-| Consola de soporte | **spring-boot-h2console** | Dependencia + `spring.h2.console.enabled=true` |
-| Gestión de transacciones | **Spring Transaction Management** (`@Transactional`) | `TableroUseCaseService`, `TrazaActividadUseCaseService` |
+| Categoría                | Implementación real en el proyecto                          | Dónde se evidencia                                                                                   |
+| ------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Base de datos             | **H2** en modo archivo (`jdbc:h2:file`)              | `core/src/main/resources/application.properties`                                                    |
+| ORM                       | **Hibernate ORM** vía **Spring Data JPA**       | `spring-boot-starter-data-jpa` en `core/pom.xml`                                                  |
+| Abstracción de acceso    | **Spring Data JPA (`JpaRepository`)**                | `SpringDataTableroRepository`, `SpringDataTarjetaRepository`, `SpringDataTrazaRepository`, etc. |
+| Driver de conexión       | **org.h2.Driver**                                      | `spring.datasource.driver-class-name`                                                               |
+| Consola de soporte        | **spring-boot-h2console**                              | Dependencia +`spring.h2.console.enabled=true`                                                       |
+| Gestión de transacciones | **Spring Transaction Management** (`@Transactional`) | `TableroUseCaseService`, `TrazaActividadUseCaseService`                                           |
 
 Notas técnicas:
 
@@ -571,85 +571,3 @@ También se observa transaccionalidad en:
 - Mayor volumen de código por mapeo manual (más clases y mantenimiento).
 - Dependencia actual de `ddl-auto=update` (sin migraciones versionadas explícitas).
 - H2 en modo archivo es excelente para desarrollo/pruebas, pero no es objetivo de producción de alta concurrencia.
-
----
-
-## 5. Recomendación Arquitectónica (Dominio vs Persistencia)
-
-Esta sección responde la duda sobre si la persistencia debe tener modelos propios (entidades/data models) o si puede usar directamente el modelo de dominio.
-
-### 5.1 Modelos de dominio directos en persistencia vs modelos de datos separados
-
-#### Opción A: usar directamente modelos de dominio en persistencia
-
-Ventajas:
-
-- Menos clases al inicio.
-- Menos código de mapeo.
-- Arranque más rápido para un MVP pequeño.
-
-Desventajas:
-
-- El dominio queda condicionado por el ORM (anotaciones, proxys, restricciones de constructor, mutabilidad técnica).
-- Se mezclan reglas de negocio con detalles de base de datos.
-- Mayor costo de cambio si luego se migra de tecnología de persistencia.
-- Más riesgo de efectos laterales por carga perezosa dentro del dominio.
-
-#### Opción B: modelos de persistencia separados (infraestructura)
-
-Ventajas:
-
-- Dominio limpio y estable, sin dependencias de JPA/Hibernate.
-- Frontera clara entre negocio e infraestructura.
-- Facilidad para evolucionar tablas, consultas y optimizaciones sin romper reglas de dominio.
-- Mejor testabilidad del dominio puro.
-
-Desventajas:
-
-- Más clases y más mantenimiento.
-- Necesidad de mapear de forma explícita (Domain <-> JPA).
-
-### 5.2 Evaluación de acoplamiento para este proyecto
-
-Para la escala actual del proyecto, el acoplamiento de mantener modelos separados es aceptable y recomendable.
-
-Razones:
-
-- Ya existe un dominio con reglas e invariantes relevantes.
-- Ya existe una capa de aplicación basada en puertos y casos de uso.
-- Ya existe una capa de infraestructura con adapters, repositories y mappers.
-- Ya existen pruebas de integración de persistencia.
-
-En este contexto, mantener entidades de persistencia separadas protege mejor la arquitectura que mezclar JPA dentro del dominio.
-
-### 5.3 Recomendación final para este código
-
-Recomendación:
-
-- Mantener el modelo de dominio separado del modelo de persistencia.
-- Mantener puertos en dominio y adapters en infraestructura.
-- Mantener mapeo explícito entre ambos modelos.
-- Mantener un único modelo de dominio en `domain/model` para evitar duplicidades semánticas.
-
-### 5.4 Sobre el nombre de la carpeta: ¿debe llamarse `board`?
-
-No es obligatorio por convenio que se llame `board`.
-
-Lo importante es:
-
-- Que el nombre represente bien el bounded context o módulo funcional.
-- Que sea consistente en todo el proyecto.
-- Que siga el lenguaje ubicuo del equipo y del dominio.
-
-Ejemplos válidos según contexto:
-
-- `board`
-- `tablero`
-- `kanban`
-- `work-management`
-- `collaboration`
-
-Recomendación práctica para este proyecto:
-
-- Se adopto `tablero` en la capa de aplicación (`application/tablero/usecase`) para alinear nombres con el lenguaje ubicuo.
-- Mantener esta convención en nuevas clases y paquetes para evitar volver a mezclar idiomas.
