@@ -41,6 +41,6 @@ public class ListaItems {
         }
 
         ElementoChecklist actual = items.get(indice);
-        items.set(indice, new ElementoChecklist(actual.descripcion(), estaMarcado));
+        items.set(indice, new ElementoChecklist(actual.description(), estaMarcado));
     }
 }

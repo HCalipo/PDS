@@ -1,104 +1,87 @@
 package com.tasku.core.domain.model;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
+import com.tasku.core.domain.board.exception.DomainValidationException;
+
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 public abstract class Tarjeta {
-    private TarjetaId id;
-    private String titulo;
-    private String descripcion;
-    private boolean completada;
-    private LocalDateTime fechaCreacion;
-    private Set<Etiqueta> etiquetas;
+    private final UUID id;
+    private UUID listId;
+    private final TipoTarjeta type;
+    private String title;
+    private String description;
+    private boolean archived;
+    private final Set<EtiquetaTarjeta> labels;
 
-    // Constructor protegido para ser utilizado por las subclases
-
-    protected Tarjeta(TarjetaId id, String titulo, String descripcion) {
+    protected Tarjeta(UUID id,
+                   UUID listId,
+                   TipoTarjeta type,
+                   String title,
+                   String description,
+                   boolean archived,
+                   Set<EtiquetaTarjeta> labels) {
         this.id = Objects.requireNonNull(id, "El id de la tarjeta no puede ser nulo");
-        this.titulo = validarTexto(titulo, "El título no puede ser nulo ni vacío");
-        this.descripcion = validarTexto(descripcion, "La descripción no puede ser nula ni vacía");
-        this.completada = false;
-        this.fechaCreacion = LocalDateTime.now();
-        this.etiquetas = new HashSet<>();
+        this.listId = Objects.requireNonNull(listId, "El id de la lista no puede ser nulo");
+        this.type = Objects.requireNonNull(type, "El tipo de tarjeta no puede ser nulo");
+        this.title = validateText(title, "El titulo no puede ser nulo ni vacio");
+        this.description = validateText(description, "La descripcion no puede ser nula ni vacia");
+        this.archived = archived;
+        this.labels = new LinkedHashSet<>(Objects.requireNonNull(labels, "Las etiquetas no pueden ser nulas"));
     }
 
-    // Getters 
-    public TarjetaId getId() {
+    public UUID id() {
         return id;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public UUID listId() {
+        return listId;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public TipoTarjeta type() {
+        return type;
     }
 
-    public boolean isCompletada() {
-        return completada;
+    public String title() {
+        return title;
     }
 
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
+    public String description() {
+        return description;
     }
 
-    public Set<Etiqueta> getEtiquetas() {
-        return Set.copyOf(etiquetas);
+    public boolean archived() {
+        return archived;
     }
 
-    // Funcion para modificar el contenido de la tarjeta
-    void actualizarContenido(String titulo, String descripcion) {
-        this.titulo = validarTexto(titulo, "El título no puede ser nulo ni vacío");
-        this.descripcion = validarTexto(descripcion, "La descripción no puede ser nula ni vacía");
+    public Set<EtiquetaTarjeta> labels() {
+        return Set.copyOf(labels);
     }
 
-    // Función para completar la tarjeta y añadirla a la lista de completadas
-    
-    void completar() {
-        this.completada = true;
+    public void addLabel(EtiquetaTarjeta label) {
+        labels.add(Objects.requireNonNull(label, "La etiqueta no puede ser nula"));
     }
 
-    // Función para descompletar la tarjeda y sacarla de la lista de completadas
-    
-    void descompletar() {
-        this.completada = false;
+    public void removeLabel(EtiquetaTarjeta label) {
+        labels.remove(Objects.requireNonNull(label, "La etiqueta no puede ser nula"));
     }
 
-    // Función para agregar o quitar etiquetas de la tarjeta
-    
-    void agregarEtiqueta(Etiqueta etiqueta) {
-        etiquetas.add(Objects.requireNonNull(etiqueta, "La etiqueta no puede ser nula"));
+    public void moveToList(UUID destinationListId) {
+        this.listId = Objects.requireNonNull(destinationListId, "La lista destino no puede ser nula");
     }
 
-    void quitarEtiqueta(Etiqueta etiqueta) {
-        etiquetas.remove(Objects.requireNonNull(etiqueta, "La etiqueta no puede ser nula"));
+    public void archive() {
+        this.archived = true;
     }
 
-    // Redefinición de equals y hashCode
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    protected static String validateText(String value, String message) {
+        if (value == null || value.isBlank()) {
+            throw new DomainValidationException(message);
         }
-        if (!(o instanceof Tarjeta tarjeta)) {
-            return false;
-        }
-        return Objects.equals(id, tarjeta.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    private static String validarTexto(String texto, String mensajeError) {
-        if (texto == null || texto.isBlank()) {
-            throw new IllegalArgumentException(mensajeError);
-        }
-        return texto.trim();
+        return value.trim();
     }
 }
+
+

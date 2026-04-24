@@ -1,22 +1,29 @@
-package com.tasku.core.application.board;
+package com.tasku.core.application.tablero.usecase;
 
-import com.tasku.core.application.board.dto.CreateBoardRequest;
-import com.tasku.core.application.board.dto.CreateCardRequest;
-import com.tasku.core.application.board.dto.MoveCardRequest;
-import com.tasku.core.application.board.dto.ShareBoardRequest;
-import com.tasku.core.application.board.event.CardMovedEvent;
+import com.tasku.core.application.tablero.usecase.dto.AssignCardLabelRequest;
+import com.tasku.core.application.tablero.usecase.dto.ChangeBoardStatusRequest;
+import com.tasku.core.application.tablero.usecase.dto.CompleteCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
+import com.tasku.core.application.tablero.usecase.dto.CreateCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
+import com.tasku.core.application.tablero.usecase.dto.MoveCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
+import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
+import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
 import com.tasku.core.domain.board.exception.DomainConflictException;
+import com.tasku.core.domain.board.exception.DomainForbiddenException;
 import com.tasku.core.domain.board.exception.DomainNotFoundException;
 import com.tasku.core.domain.board.exception.DomainValidationException;
-import com.tasku.core.domain.model.board.Tablero;
-import com.tasku.core.domain.model.board.ListaTablero;
-import com.tasku.core.domain.model.board.Tarjeta;
-import com.tasku.core.domain.model.board.TipoTarjeta;
-import com.tasku.core.domain.model.board.TarjetaChecklist;
-import com.tasku.core.domain.model.board.DefinicionListaInicial;
-import com.tasku.core.domain.model.board.RolComparticion;
-import com.tasku.core.domain.model.board.TarjetaTarea;
-import com.tasku.core.domain.model.board.CuentaUsuario;
+import com.tasku.core.domain.model.EtiquetaTarjeta;
+import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.Tarjeta;
+import com.tasku.core.domain.model.TipoTarjeta;
+import com.tasku.core.domain.model.TarjetaChecklist;
+import com.tasku.core.domain.model.DefinicionListaInicial;
+import com.tasku.core.domain.model.RolComparticion;
+import com.tasku.core.domain.model.TarjetaTarea;
+import com.tasku.core.domain.model.CuentaUsuario;
 import com.tasku.core.domain.board.port.ListaTableroStore;
 import com.tasku.core.domain.board.port.TableroStore;
 import com.tasku.core.domain.board.port.TarjetaStore;
@@ -30,14 +37,14 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class BoardApplicationService {
+public class TableroUseCaseService {
     private final UsuarioStore userStore;
     private final TableroStore boardStore;
     private final ListaTableroStore boardListStore;
     private final TarjetaStore cardStore;
     private final ApplicationEventPublisher eventPublisher;
 
-    public BoardApplicationService(UsuarioStore userStore,
+    public TableroUseCaseService(UsuarioStore userStore,
                                    TableroStore boardStore,
                                    ListaTableroStore boardListStore,
                                    TarjetaStore cardStore,
@@ -104,10 +111,50 @@ public class BoardApplicationService {
     }
 
     @Transactional
+    public Tablero createList(CreateListRequest request) {
+        Objects.requireNonNull(request, "La solicitud para crear lista no puede ser nula");
+        validateText(request.boardUrl(), "La url del tablero es obligatoria");
+        validateText(request.name(), "El nombre de la lista es obligatorio");
+        if (request.cardLimit() <= 0) {
+            throw new DomainValidationException("El limite de tarjetas de la lista debe ser mayor que cero");
+        }
+
+        Tablero board = getBoardByUrl(request.boardUrl());
+        Tablero updatedBoard = board.withAddedList(request.name(), request.cardLimit());
+        return boardStore.save(updatedBoard);
+    }
+
+    @Transactional
+    public Tablero renameList(RenameListRequest request) {
+        Objects.requireNonNull(request, "La solicitud para renombrar lista no puede ser nula");
+        validateText(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.listId(), "El id de la lista es obligatorio");
+        validateText(request.name(), "El nombre de la lista es obligatorio");
+
+        Tablero board = getBoardByUrl(request.boardUrl());
+        Tablero updatedBoard = board.withRenamedList(request.listId(), request.name());
+        return boardStore.save(updatedBoard);
+    }
+
+    @Transactional
+    public Tablero changeBoardStatus(ChangeBoardStatusRequest request) {
+        Objects.requireNonNull(request, "La solicitud para cambiar estado no puede ser nula");
+        validateText(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.status(), "El estado del tablero es obligatorio");
+
+        Tablero board = getBoardByUrl(request.boardUrl());
+        Tablero updatedBoard = board.withStatus(request.status());
+        return boardStore.save(updatedBoard);
+    }
+
+    @Transactional
     public Tarjeta createCard(CreateCardRequest request) {
         validateCreateCardRequest(request);
         ListaTablero list = boardListStore.findById(request.listId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la lista indicada para crear la tarjeta"));
+        Tablero board = boardStore.findByUrl(list.boardUrl())
+                .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la lista"));
+        ensureBoardAllowsCardMutations(board);
 
         long currentCards = cardStore.countByListId(request.listId());
         if (currentCards >= list.cardLimit()) {
@@ -155,6 +202,10 @@ public class BoardApplicationService {
             throw new DomainValidationException("No se puede mover una tarjeta entre tableros distintos");
         }
 
+        Tablero board = boardStore.findByUrl(sourceList.boardUrl())
+                .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
+        ensureBoardAllowsCardMutations(board);
+
         if (!card.listId().equals(request.destinationListId())) {
             long destinationCount = cardStore.countByListId(request.destinationListId());
             if (destinationCount >= destinationList.cardLimit()) {
@@ -163,7 +214,7 @@ public class BoardApplicationService {
             card.moveToList(request.destinationListId());
             Tarjeta updated = cardStore.save(card);
 
-            eventPublisher.publishEvent(new CardMovedEvent(
+            eventPublisher.publishEvent(new TarjetaMovidaEvent(
                     updated.id(),
                     sourceList.id(),
                     destinationList.id(),
@@ -177,10 +228,54 @@ public class BoardApplicationService {
         return card;
     }
 
+    @Transactional
+    public Tarjeta completeCard(CompleteCardRequest request) {
+        Objects.requireNonNull(request, "La solicitud para completar tarjeta no puede ser nula");
+        validateText(request.authorEmail(), "El autor es obligatorio");
+        Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
+
+        Tarjeta card = cardStore.findById(request.cardId())
+                .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
+        ListaTablero list = boardListStore.findById(card.listId())
+                .orElseThrow(() -> new DomainNotFoundException("La lista de la tarjeta no existe"));
+        Tablero board = boardStore.findByUrl(list.boardUrl())
+                .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
+        ensureBoardAllowsCardMutations(board);
+
+        card.archive();
+        return cardStore.save(card);
+    }
+
+    @Transactional
+    public Tarjeta assignLabelToCard(AssignCardLabelRequest request) {
+        Objects.requireNonNull(request, "La solicitud para asignar etiqueta no puede ser nula");
+        Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
+        validateText(request.labelName(), "El nombre de la etiqueta es obligatorio");
+        validateText(request.colorHex(), "El color de la etiqueta es obligatorio");
+
+        Tarjeta card = cardStore.findById(request.cardId())
+            .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
+        ListaTablero list = boardListStore.findById(card.listId())
+            .orElseThrow(() -> new DomainNotFoundException("La lista de la tarjeta no existe"));
+        Tablero board = boardStore.findByUrl(list.boardUrl())
+            .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
+        ensureBoardAllowsCardMutations(board);
+
+        card.addLabel(new EtiquetaTarjeta(request.labelName(), request.colorHex()));
+        return cardStore.save(card);
+    }
+
     @Transactional(readOnly = true)
     public List<Tarjeta> findCardsByListId(java.util.UUID listId) {
         Objects.requireNonNull(listId, "El id de lista no puede ser nulo");
         return cardStore.findByListId(listId);
+    }
+
+    @Transactional(readOnly = true)
+    public Tarjeta getCardById(java.util.UUID cardId) {
+        Objects.requireNonNull(cardId, "El id de tarjeta no puede ser nulo");
+        return cardStore.findById(cardId)
+                .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
     }
 
     private void ensureOwnerExists(String ownerEmail) {
@@ -214,5 +309,12 @@ public class BoardApplicationService {
         }
         return value.trim();
     }
+
+    private static void ensureBoardAllowsCardMutations(Tablero board) {
+        if (board.isBlocked()) {
+            throw new DomainForbiddenException("El tablero esta bloqueado y no permite modificar tarjetas");
+        }
+    }
 }
+
 

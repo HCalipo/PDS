@@ -1,6 +1,6 @@
-package com.tasku.core.application.board.dto;
+package com.tasku.core.application.tablero.usecase.dto;
 
-import com.tasku.core.domain.model.board.DefinicionListaInicial;
+import com.tasku.core.domain.model.DefinicionListaInicial;
 
 import java.util.List;
 
@@ -12,4 +12,5 @@ public record CreateBoardRequest(
         List<DefinicionListaInicial> initialLists
 ) {
 }
+
 

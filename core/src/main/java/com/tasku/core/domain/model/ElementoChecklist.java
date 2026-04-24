@@ -1,11 +1,14 @@
 package com.tasku.core.domain.model;
 
-public record ElementoChecklist(String descripcion, boolean estaMarcado) {
-	public ElementoChecklist {
-		if (descripcion == null || descripcion.isBlank()) {
-			throw new IllegalArgumentException("La descripción no puede ser nula ni vacía");
-		}
+import com.tasku.core.domain.board.exception.DomainValidationException;
 
-		descripcion = descripcion.trim();
-	}
+public record ElementoChecklist(String description, boolean completed) {
+    public ElementoChecklist {
+        if (description == null || description.isBlank()) {
+            throw new DomainValidationException("La descripcion del item no puede ser nula ni vacia");
+        }
+        description = description.trim();
+    }
 }
+
+

@@ -1,6 +1,6 @@
 package com.tasku.core.domain.board.port;
 
-import com.tasku.core.domain.model.board.Tarjeta;
+import com.tasku.core.domain.model.Tarjeta;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +15,5 @@ public interface TarjetaStore {
 
     List<Tarjeta> findByListId(UUID listId);
 }
+
 

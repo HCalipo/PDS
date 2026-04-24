@@ -1,4 +1,4 @@
-package com.tasku.core.domain.model.board;
+package com.tasku.core.domain.model;
 
 import com.tasku.core.domain.board.exception.DomainValidationException;
 
@@ -41,6 +41,10 @@ public final class ListaTablero {
         return cardLimit;
     }
 
+    public ListaTablero withName(String newName) {
+        return new ListaTablero(id, boardUrl, newName, cardLimit);
+    }
+
     private static String validateText(String value, String message) {
         if (value == null || value.isBlank()) {
             throw new DomainValidationException(message);
@@ -48,4 +52,5 @@ public final class ListaTablero {
         return value.trim();
     }
 }
+
 

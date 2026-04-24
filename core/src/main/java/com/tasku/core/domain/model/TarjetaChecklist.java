@@ -1,33 +1,38 @@
 package com.tasku.core.domain.model;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
-public class TarjetaChecklist extends Tarjeta {
-    private ListaItems listaItems;
+public final class TarjetaChecklist extends Tarjeta {
+    private final List<ElementoChecklist> items;
 
-    // Constructores 
-
-    public TarjetaChecklist(TarjetaId id, String titulo, String descripcion, ListaItems listaItems) {
-        super(id, titulo, descripcion);
-        this.listaItems = Objects.requireNonNull(listaItems, "La lista de items no puede ser nula");
+    public TarjetaChecklist(UUID id,
+                         UUID listId,
+                         String title,
+                         String description,
+                         boolean archived,
+                         Set<EtiquetaTarjeta> labels,
+                         List<ElementoChecklist> items) {
+        super(id, listId, TipoTarjeta.CHECKLIST, title, description, archived, Objects.requireNonNullElseGet(labels, LinkedHashSet::new));
+        this.items = new ArrayList<>(Objects.requireNonNullElseGet(items, ArrayList::new));
     }
 
-    public TarjetaChecklist(String titulo, String descripcion) {
-        this(new TarjetaId(), titulo, descripcion, new ListaItems());
+    public static TarjetaChecklist createNew(UUID listId,
+                                          String title,
+                                          String description,
+                                          Set<EtiquetaTarjeta> labels,
+                                          List<ElementoChecklist> items) {
+        return new TarjetaChecklist(UUID.randomUUID(), listId, title, description, false, labels == null ? Set.of() : labels,
+                items == null ? List.of() : items);
     }
 
-    // Getter
-    public ListaItems getListaItems() {
-        return listaItems;
-    }
-
-    // Función para agregar items a la lista de checklist
-    void agregarItemChecklist(String descripcion) {
-        listaItems.agregarItem(new ElementoChecklist(descripcion, false));
-    }
-
-    // Función para marcar o desmarcar items de la lista de checklist
-    void marcarItemChecklist(int indice, boolean marcado) {
-        listaItems.marcarItem(indice, marcado);
+    public List<ElementoChecklist> items() {
+        return List.copyOf(items);
     }
 }
+
+

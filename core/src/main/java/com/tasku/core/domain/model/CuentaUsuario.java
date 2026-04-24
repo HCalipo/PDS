@@ -1,4 +1,4 @@
-package com.tasku.core.domain.model.board;
+package com.tasku.core.domain.model;
 
 import com.tasku.core.domain.board.exception.DomainValidationException;
 
@@ -33,4 +33,5 @@ public final class CuentaUsuario {
         return email.trim().toLowerCase();
     }
 }
+
 

@@ -1,8 +1,8 @@
-package com.tasku.core.application.board.dto;
+package com.tasku.core.application.tablero.usecase.dto;
 
-import com.tasku.core.domain.model.board.EtiquetaTarjeta;
-import com.tasku.core.domain.model.board.TipoTarjeta;
-import com.tasku.core.domain.model.board.ElementoChecklist;
+import com.tasku.core.domain.model.EtiquetaTarjeta;
+import com.tasku.core.domain.model.TipoTarjeta;
+import com.tasku.core.domain.model.ElementoChecklist;
 
 import java.util.List;
 import java.util.Set;
@@ -17,4 +17,5 @@ public record CreateCardRequest(
         List<ElementoChecklist> checklistItems
 ) {
 }
+
 

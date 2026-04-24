@@ -1,35 +1,23 @@
 package com.tasku.core.domain.model;
 
-public class TarjetaTarea extends Tarjeta {
-    private String texto;
-    
-    // Constructores
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
-    public TarjetaTarea(TarjetaId id, String titulo, String descripcion, String texto) {
-        super(id, titulo, descripcion);
-        this.texto = validarTexto(texto);
+public final class TarjetaTarea extends Tarjeta {
+    public TarjetaTarea(UUID id,
+                    UUID listId,
+                    String title,
+                    String description,
+                    boolean archived,
+                    Set<EtiquetaTarjeta> labels) {
+        super(id, listId, TipoTarjeta.TAREA, title, description, archived, Objects.requireNonNullElseGet(labels, LinkedHashSet::new));
     }
 
-    public TarjetaTarea(String titulo, String descripcion, String texto) {
-        this(new TarjetaId(), titulo, descripcion, texto);
-    }
-
-    // Getter
-
-    public String getTexto() {
-        return texto;
-    }
-
-    // Función para modificar el texto de la tarjeta
-    void actualizarTexto(String texto) {
-        this.texto = validarTexto(texto);
-    }
-
-    // Función para validar el contenido 
-    private static String validarTexto(String texto) {
-        if (texto == null || texto.isBlank()) {
-            throw new IllegalArgumentException("El texto de la tarea no puede ser nulo ni vacío");
-        }
-        return texto.trim();
+    public static TarjetaTarea createNew(UUID listId, String title, String description, Set<EtiquetaTarjeta> labels) {
+        return new TarjetaTarea(UUID.randomUUID(), listId, title, description, false, labels == null ? Set.of() : labels);
     }
 }
+
+

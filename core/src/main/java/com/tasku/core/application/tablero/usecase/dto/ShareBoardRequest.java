@@ -1,6 +1,6 @@
-package com.tasku.core.application.board.dto;
+package com.tasku.core.application.tablero.usecase.dto;
 
-import com.tasku.core.domain.model.board.RolComparticion;
+import com.tasku.core.domain.model.RolComparticion;
 
 public record ShareBoardRequest(
         String boardUrl,
@@ -8,4 +8,5 @@ public record ShareBoardRequest(
         RolComparticion role
 ) {
 }
+
 

@@ -4,21 +4,19 @@ Este documento define los conceptos fundamentales de nuestra aplicación de gest
 
 ## Estado real del código (abril 2026)
 
-Actualmente coexisten dos modelos en el repositorio:
+Actualmente el repositorio utiliza un unico modelo de dominio en `com.tasku.core.domain.model`.
 
-- **Modelo legacy (CLI):** `com.tasku.core.domain.model`, utilizado por el flujo CLI en `CoreApplication` cuando se ejecuta con `--cli`.
-- **Modelo board (aplicación + persistencia):** `com.tasku.core.domain.model.board` junto con `com.tasku.core.domain.board.port`, utilizado por `BoardApplicationService`, `ActivityTraceService` y la capa JPA.
-
-Este documento describe ambos, marcando explícitamente cuándo un apartado corresponde al modelo legacy y cuándo al modelo board.
+- La implementacion CLI fue retirada del arranque de `CoreApplication`.
+- La capa de aplicacion, la capa de persistencia y los adaptadores acceden al mismo modelo unificado en `domain/model`.
 
 ## Glosario de Términos
 
 * **Usuario:** Persona identificada en el sistema mediante un correo electrónico. Puede crear tableros o colaborar en ellos.
-* **Tablero:** Es el espacio de trabajo principal. En el modelo legacy contiene listas, lista de completadas e historial de movimientos. En el modelo board contiene listas con límite, estado (`ACTIVE/BLOCKED`) y configuración de compartición por email.
+* **Tablero:** Es el espacio de trabajo principal. Contiene listas con limite, estado (`ACTIVE/BLOCKED`) y configuracion de comparticion por email.
 * **Lista de Tareas:** Contenedor de tarjetas dentro de un tablero. Representa una fase o estado del flujo de trabajo (ej. *TODO, DOING, DONE*).
 * **Lista de Completadas:** Una lista especial dentro del tablero que contiene las tarjetas que han sido finalizadas.
 * **Tarjeta:** La unidad base de la aplicación. Puede moverse entre listas, recibir etiquetas y marcarse como completada.
-* **Tarjeta de Tarea:** Subtipo de tarjeta. En legacy añade un campo `texto`; en el modelo board mantiene los campos base de la tarjeta con tipo `TAREA`.
+* **Tarjeta de Tarea:** Subtipo de tarjeta con tipo `TAREA`.
 * **Tarjeta de Checklist:** Subtipo de tarjeta que contiene una lista de comprobación de subtareas.
 * **Etiqueta:** Elemento clasificador asignado a las tarjetas. Está definida por un color y una descripción.
 * **Historial de movimientos:** Registro cronológico de acciones realizadas por usuarios sobre un tablero.
@@ -26,7 +24,7 @@ Este documento describe ambos, marcando explícitamente cuándo un apartado corr
 * **URL de Acceso:** Identificador único que actúa como mecanismo de invitación y acceso al tablero para los colaboradores.
 * **Dueño del tablero:** Usuario creador del tablero con control sobre su configuración y gestión general.
 * **Colaborador:** Usuario invitado mediante URL que puede participar en el tablero según las reglas definidas.
-* **Estado de bloqueo:** Condición del tablero. En legacy bloquea operaciones de modificación sobre tarjetas; en board se representa con el enum `EstadoTablero`.
+* **Estado de bloqueo:** Condición del tablero representada con el enum `EstadoTablero`, que bloquea operaciones de modificación sobre tarjetas.
 * **Elemento de checklist:** Subtarea individual de una tarjeta de checklist que puede marcarse como completada o pendiente.
 * **Lista de ítems:** Colección de elementos de checklist asociada a una tarjeta de tipo checklist.
 * **TarjetaId:** Identificador de valor único que distingue cada tarjeta dentro del dominio.
@@ -37,7 +35,7 @@ Este documento describe ambos, marcando explícitamente cuándo un apartado corr
 
 ---
 
-Diagrama del **modelo legacy (CLI)**:
+Diagrama del **modelo legacy (historico, retirado)**:
 
 ```mermaid
 classDiagram
@@ -184,7 +182,7 @@ Estos diagramas de clases representan la estructura de nuestro dominio, definien
 * **Tablero:** Es el componente principal. Contiene las listas de tareas, la lista de tarjetas terminadas y el historial de cambios. Cada tablero tiene una `URL` única para compartirlo, un `Usuario` dueño y una colección de `Usuario` colaboradores.
 * **Organización en Listas:** Un `Tablero` agrupa varias `ListaTareas` y una `ListaCompletadas`. Dentro de estas listas es donde se guardan y organizan las diferentes `Tarjetas`.
 * **Tipos de Tarjetas (Herencia):** Existe una `Tarjeta` básica que guarda la información común (título, descripción, estado). De ella nacen dos tipos especiales: la `TarjetaTarea` (en legacy añade `texto`) y la `TarjetaChecklist` (que tiene subtareas que se pueden ir marcando).
-* **Value Objects:** En lugar de usar texto simple (`String`) para cosas importantes, creamos clases específicas como `Email`, `TableroId` o `ColorEtiqueta` (en el modelo legacy). Así nos aseguramos de que un correo tenga formato válido o que un color sea correcto desde el momento en que se crean.
+* **Value Objects:** En lugar de usar texto simple (`String`) para cosas importantes, creamos clases específicas como `Email`, `TableroId` o `ColorEtiqueta` (en la etapa legacy). Así nos aseguramos de que un correo tenga formato válido o que un color sea correcto desde el momento en que se crean.
 * **Etiquetas e Historial:** Las tarjetas usan `Etiqueta` para clasificarse visualmente. Por otro lado, el tablero usa el `HistorialMovimientos` como una "caja negra" para recordar qué usuario hizo cada cambio y en qué momento.
 * **Usuarios:** El `Usuario` es la persona que usa la aplicación. Se identifica por su correo electrónico y puede crear sus propios tableros o colaborar en los tableros de otras personas.
 
@@ -276,7 +274,7 @@ La persistencia de este proyecto se apoya en una base de datos **relacional SQL*
 | Abstracción de acceso | **Spring Data JPA (`JpaRepository`)** | `SpringDataTableroRepository`, `SpringDataTarjetaRepository`, `SpringDataTrazaRepository`, etc. |
 | Driver de conexión | **org.h2.Driver** | `spring.datasource.driver-class-name` |
 | Consola de soporte | **spring-boot-h2console** | Dependencia + `spring.h2.console.enabled=true` |
-| Gestión de transacciones | **Spring Transaction Management** (`@Transactional`) | `BoardApplicationService`, `ActivityTraceService` |
+| Gestión de transacciones | **Spring Transaction Management** (`@Transactional`) | `TableroUseCaseService`, `TrazaActividadUseCaseService` |
 
 Notas técnicas:
 
@@ -310,9 +308,9 @@ La persistencia se implementa siguiendo DDD + arquitectura hexagonal:
 
 ```text
 core/src/main/java/com/tasku/core
-├─ application/board
-│  ├─ BoardApplicationService.java
-│  ├─ ActivityTraceService.java
+├─ application/tablero/usecase
+│  ├─ TableroUseCaseService.java
+│  ├─ TrazaActividadUseCaseService.java
 │  ├─ dto/
 │  └─ event/
 ├─ domain/board
@@ -323,7 +321,7 @@ core/src/main/java/com/tasku/core
 │     ├─ TarjetaStore.java
 │     ├─ TrazaStore.java
 │     └─ UsuarioStore.java
-├─ domain/model/board
+├─ domain/model
 │  ├─ Tablero.java
 │  ├─ ListaTablero.java
 │  ├─ Tarjeta.java
@@ -331,8 +329,6 @@ core/src/main/java/com/tasku/core
 │  ├─ TarjetaChecklist.java
 │  ├─ TrazaActividad.java
 │  └─ CuentaUsuario.java
-├─ domain/model
-│  └─ ... (modelo legacy usado por CLI)
 └─ infrastructure
    ├─ bootstrap/CoreApplication.java
    ├─ config/ProgramacionPersistenciaConfig.java
@@ -372,8 +368,7 @@ core/src/main/java/com/tasku/core
 Propósito de los componentes clave:
 
 - **`domain/board/port/*Store.java`**: contratos de persistencia independientes de JPA.
-- **`domain/model/board/*`**: modelo de dominio del contexto board usado por aplicación y persistencia.
-- **`domain/model/*`**: modelo legacy utilizado por el modo CLI.
+- **`domain/model/*`**: modelo de dominio unificado usado por aplicación y persistencia.
 - **`infrastructure/persistence/jpa/adapter/*Adapter.java`**: implementación concreta de los contratos de dominio.
 - **`infrastructure/persistence/jpa/repository/SpringData*Repository.java`**: capa Spring Data para CRUD/queries.
 - **`infrastructure/persistence/jpa/entity/*JpaEntity.java`**: modelo de base de datos con anotaciones JPA.
@@ -393,10 +388,6 @@ En `CoreApplication` se declara el escaneo explícito de entidades y repositorio
 @EnableJpaRepositories(basePackages = "com.tasku.core.infrastructure.persistence.jpa.repository")
 public class CoreApplication {
   public static void main(String[] args) {
-    if (args != null && args.length > 0 && "--cli".equalsIgnoreCase(args[0])) {
-      runCli();
-      return;
-    }
     SpringApplication.run(CoreApplication.class, args);
   }
 }
@@ -557,8 +548,8 @@ También se observa transaccionalidad en:
 
 - `createCard(...)`
 - `moveCard(...)`
-- `ActivityTraceService.registerTrace(...)`
-- `ActivityTraceService.compactOlderThan(...)`
+- `TrazaActividadUseCaseService.registerTrace(...)`
+- `TrazaActividadUseCaseService.compactOlderThan(...)`
 
 ### 4. Decisiones de Diseño y Trade-offs
 
@@ -638,7 +629,7 @@ Recomendación:
 - Mantener el modelo de dominio separado del modelo de persistencia.
 - Mantener puertos en dominio y adapters en infraestructura.
 - Mantener mapeo explícito entre ambos modelos.
-- Unificar progresivamente el dominio para evitar duplicidades semánticas entre modelo legacy y modelo `board`.
+- Mantener un único modelo de dominio en `domain/model` para evitar duplicidades semánticas.
 
 ### 5.4 Sobre el nombre de la carpeta: ¿debe llamarse `board`?
 
@@ -660,5 +651,5 @@ Ejemplos válidos según contexto:
 
 Recomendación práctica para este proyecto:
 
-- Puedes mantener `board` si ya está extendido en clases, paquetes y pruebas.
-- Si el equipo prefiere español, `tablero` también es correcto, pero conviene hacer la migración de nombres de forma planificada y en un único refactor para evitar inconsistencia temporal.
+- Se adopto `tablero` en la capa de aplicación (`application/tablero/usecase`) para alinear nombres con el lenguaje ubicuo.
+- Mantener esta convención en nuevas clases y paquetes para evitar volver a mezclar idiomas.

@@ -39,7 +39,7 @@ public class ListaCompletadas {
     // Función para añadir una tarjeta a la lista de completadas
     void anadirAcompletadas(Tarjeta tarjeta) {
         Tarjeta tarjetaACompletar = Objects.requireNonNull(tarjeta, "La tarjeta no puede ser nula");
-        tarjetaACompletar.completar();
+        tarjetaACompletar.archive();
         tarjetas.add(tarjetaACompletar);
     }
 

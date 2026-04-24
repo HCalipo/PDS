@@ -1,6 +1,6 @@
 package com.tasku.core.domain.board.port;
 
-import com.tasku.core.domain.model.board.CuentaUsuario;
+import com.tasku.core.domain.model.CuentaUsuario;
 
 import java.util.Optional;
 
@@ -9,4 +9,5 @@ public interface UsuarioStore {
 
     Optional<CuentaUsuario> findByEmail(String email);
 }
+
 

@@ -1,4 +1,4 @@
-package com.tasku.core.application.board.dto;
+package com.tasku.core.application.tablero.usecase.dto;
 
 import java.time.LocalDateTime;
 

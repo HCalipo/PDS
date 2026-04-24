@@ -1,6 +1,6 @@
 package com.tasku.core.domain.board.port;
 
-import com.tasku.core.domain.model.board.Tablero;
+import com.tasku.core.domain.model.Tablero;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +16,5 @@ public interface TableroStore {
 
     boolean existsByOwnerEmailAndNameIgnoreCase(String ownerEmail, String boardName);
 }
+
 

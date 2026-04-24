@@ -1,245 +1,195 @@
 package com.tasku.core.domain.model;
 
+import com.tasku.core.domain.board.exception.DomainConflictException;
+import com.tasku.core.domain.board.exception.DomainNotFoundException;
+import com.tasku.core.domain.board.exception.DomainValidationException;
+
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public class Tablero {
-    private TableroId url;
-    private boolean estaBloqueado;
-    private Usuario dueno;
-    private Set<Usuario> colaboradores;
-    private List<ListaTareas> listasTareas;
-    private ListaCompletadas listaCompletadas;
-    private HistorialMovimientos historial;
+public final class Tablero {
+    private static final String URL_PREFIX = "tasku://tablero/";
 
-    public Tablero(TableroId url, Usuario dueno) {
-        this.url = Objects.requireNonNull(url, "La URL del tablero no puede ser nula");
-        this.dueno = Objects.requireNonNull(dueno, "El dueño del tablero no puede ser nulo");
-        this.estaBloqueado = false;
-        this.colaboradores = new HashSet<>();
-        this.listasTareas = new ArrayList<>();
-        this.listaCompletadas = new ListaCompletadas(url);
-        this.historial = new HistorialMovimientos();
+    private final String url;
+    private final String name;
+    private final String ownerEmail;
+    private final String color;
+    private final String description;
+    private final EstadoTablero status;
+    private final List<ListaTablero> lists;
+    private final Set<TableroCompartido> sharedWith;
+
+    public Tablero(String url,
+                 String name,
+                 String ownerEmail,
+                 String color,
+                 String description,
+                 EstadoTablero status,
+                 List<ListaTablero> lists,
+                 Set<TableroCompartido> sharedWith) {
+        this.url = validateBoardUrl(url);
+        this.name = validateText(name, "El nombre del tablero no puede ser nulo ni vacio");
+        this.ownerEmail = CuentaUsuario.normalizeEmail(ownerEmail);
+        this.color = validateText(color, "El color del tablero no puede ser nulo ni vacio");
+        this.description = validateText(description, "La descripcion del tablero no puede ser nula ni vacia");
+        this.status = Objects.requireNonNull(status, "El estado del tablero no puede ser nulo");
+        this.lists = new ArrayList<>(Objects.requireNonNullElseGet(lists, ArrayList::new));
+        this.sharedWith = new LinkedHashSet<>(Objects.requireNonNullElseGet(sharedWith, LinkedHashSet::new));
     }
 
-    // Getters
+    public static Tablero createNew(String ownerEmail,
+                                  String name,
+                                  String color,
+                                  String description,
+                                  List<DefinicionListaInicial> initialLists) {
+        String url = URL_PREFIX + UUID.randomUUID();
+        List<ListaTablero> generatedLists = new ArrayList<>();
+        if (initialLists != null) {
+            for (DefinicionListaInicial definition : initialLists) {
+                generatedLists.add(ListaTablero.createNew(url, definition.name(), definition.cardLimit()));
+            }
+        }
+        return new Tablero(url, name, ownerEmail, color, description, EstadoTablero.ACTIVE,
+                generatedLists,
+                Set.of());
+    }
 
-    public TableroId getUrl() {
+    public String url() {
         return url;
     }
 
-    public boolean isEstaBloqueado() {
-        return estaBloqueado;
+    public String name() {
+        return name;
     }
 
-    public Usuario getDueno() {
-        return dueno;
+    public String ownerEmail() {
+        return ownerEmail;
     }
 
-    public Set<Usuario> getColaboradores() {
-        return Set.copyOf(colaboradores);
+    public String color() {
+        return color;
     }
 
-    public List<ListaTareas> getListasTareas() {
-        return List.copyOf(listasTareas);
+    public String description() {
+        return description;
     }
 
-    public List<Tarjeta> getTarjetasActivas() {
-        List<Tarjeta> resultado = new ArrayList<>();
-        for (ListaTareas lista : listasTareas) {
-            resultado.addAll(lista.getTarjetas());
+    public EstadoTablero status() {
+        return status;
+    }
+
+    public List<ListaTablero> lists() {
+        return List.copyOf(lists);
+    }
+
+    public Set<TableroCompartido> sharedWith() {
+        return Set.copyOf(sharedWith);
+    }
+
+    public Tablero withAddedList(String listName, int cardLimit) {
+        String normalizedName = validateText(listName, "El nombre de la lista no puede ser nulo ni vacio");
+        if (cardLimit <= 0) {
+            throw new DomainValidationException("El limite de tarjetas de la lista debe ser mayor que cero");
         }
-        return List.copyOf(resultado);
-    }
-
-    public List<Tarjeta> getTarjetasCompletadas() {
-        return listaCompletadas.getTarjetas();
-    }
-
-    public List<Movimiento> getHistorial() {
-        return historial.getMovimientos();
-    }
-
-    // Funciones del Tablero
-
-    public void bloquear() {
-        this.estaBloqueado = true;
-    }
-
-    public void desbloquear() {
-        this.estaBloqueado = false;
-    }
-
-    public void agregarColaborador(Usuario colaborador) {
-        Usuario usuario = Objects.requireNonNull(colaborador, "El colaborador no puede ser nulo");
-        if (usuario.equals(dueno)) {
-            throw new IllegalArgumentException("El dueño ya pertenece al tablero");
-        }
-        colaboradores.add(usuario);
-    }
-
-    public UUID crearListaTareas() {
-        ListaTareas nuevaLista = new ListaTareas(url);
-        listasTareas.add(nuevaLista);
-        return nuevaLista.getId().id();
-    }
-
-    public UUID crearTarjetaTarea(UUID listaId, String titulo, String descripcion, String texto, Usuario autor) {
-        validarModificacion(autor);
-        ListaTareas listaDestino = buscarLista(listaId);
-        TarjetaTarea tarjeta = new TarjetaTarea(titulo, descripcion, texto);
-        listaDestino.agregarTarjeta(tarjeta);
-        historial.registrar(new Movimiento("Tarjeta creada: " + tarjeta.getTitulo(), autor.getCorreo()));
-        return tarjeta.getId().id();
-    }
-
-    public UUID crearTarjetaChecklist(UUID listaId, String titulo, String descripcion, Usuario autor) {
-        validarModificacion(autor);
-        ListaTareas listaDestino = buscarLista(listaId);
-        TarjetaChecklist tarjeta = new TarjetaChecklist(titulo, descripcion);
-        listaDestino.agregarTarjeta(tarjeta);
-        historial.registrar(new Movimiento("Tarjeta creada: " + tarjeta.getTitulo(), autor.getCorreo()));
-        return tarjeta.getId().id();
-    }
-
-    public void agregarEtiqueta(UUID tarjetaId, String texto, ColorEtiqueta color, Usuario autor) {
-        validarModificacion(autor);
-        Tarjeta tarjeta = buscarTarjeta(tarjetaId);
-        tarjeta.agregarEtiqueta(new Etiqueta(texto, color));
-        historial.registrar(new Movimiento("Etiqueta agregada: " + texto, autor.getCorreo()));
-    }
-
-    public void quitarEtiqueta(UUID tarjetaId, String texto, ColorEtiqueta color, Usuario autor) {
-        validarModificacion(autor);
-        Tarjeta tarjeta = buscarTarjeta(tarjetaId);
-        tarjeta.quitarEtiqueta(new Etiqueta(texto, color));
-        historial.registrar(new Movimiento("Etiqueta removida: " + texto, autor.getCorreo()));
-    }
-
-    public void agregarItemChecklist(UUID tarjetaId, String descripcion, Usuario autor) {
-        validarModificacion(autor);
-        TarjetaChecklist checklist = requireChecklist(buscarTarjeta(tarjetaId));
-        checklist.agregarItemChecklist(descripcion);
-        historial.registrar(new Movimiento("Item checklist agregado", autor.getCorreo()));
-    }
-
-    public void marcarItemChecklist(UUID tarjetaId, int indice, boolean marcado, Usuario autor) {
-        validarModificacion(autor);
-        TarjetaChecklist checklist = requireChecklist(buscarTarjeta(tarjetaId));
-        checklist.marcarItemChecklist(indice, marcado);
-        historial.registrar(new Movimiento("Item checklist actualizado", autor.getCorreo()));
-    }
-
-    public void completarTarjeta(UUID tarjetaId, Usuario autor) {
-        validarModificacion(autor);
-        ListaTareas listaOrigen = buscarListaPorTarjeta(tarjetaId);
-        Tarjeta tarjeta = buscarTarjeta(tarjetaId);
-        if (!listaOrigen.quitarTarjeta(tarjeta)) {
-            throw new IllegalArgumentException("La tarjeta no pertenece a la lista indicada");
-        }
-        listaCompletadas.anadirAcompletadas(tarjeta);
-        historial.registrar(new Movimiento("Tarjeta completada: " + tarjeta.getTitulo(), autor.getCorreo()));
-    }
-
-    public void moverTarjeta(UUID tarjetaId, UUID listaDestinoId, Usuario autor) {
-        validarModificacion(autor);
-        if (estaCompletada(tarjetaId)) {
-            throw new IllegalStateException("La tarjeta ya esta completada");
-        }
-        ListaTareas listaOrigen = buscarListaPorTarjeta(tarjetaId);
-        ListaTareas listaDestino = buscarLista(listaDestinoId);
-        if (listaOrigen.equals(listaDestino)) {
-            return;
+        if (hasListName(normalizedName, null)) {
+            throw new DomainConflictException("Ya existe una lista con ese nombre en el tablero");
         }
 
-        Tarjeta tarjeta = buscarTarjeta(tarjetaId);
-        if (!listaOrigen.quitarTarjeta(tarjeta)) {
-            throw new IllegalArgumentException("La tarjeta no pertenece a la lista indicada");
+        List<ListaTablero> updatedLists = new ArrayList<>(lists);
+        updatedLists.add(ListaTablero.createNew(url, normalizedName, cardLimit));
+        return new Tablero(url, name, ownerEmail, color, description, status, updatedLists, sharedWith);
+    }
+
+    public Tablero withRenamedList(UUID listId, String newName) {
+        Objects.requireNonNull(listId, "El id de la lista no puede ser nulo");
+        String normalizedName = validateText(newName, "El nombre de la lista no puede ser nulo ni vacio");
+
+        if (hasListName(normalizedName, listId)) {
+            throw new DomainConflictException("Ya existe una lista con ese nombre en el tablero");
         }
-        listaDestino.agregarTarjeta(tarjeta);
-        historial.registrar(new Movimiento("Tarjeta movida: " + tarjeta.getTitulo(), autor.getCorreo()));
-    }
 
-    public Tarjeta obtenerTarjeta(UUID tarjetaId) {
-        return buscarTarjeta(tarjetaId);
-    }
-
-    private void validarModificacion(Usuario usuario) {
-        if (estaBloqueado) {
-            throw new IllegalStateException("No se pueden modificar tarjetas en un tablero bloqueado");
-        }
-        if (!dueno.equals(usuario) && !colaboradores.contains(usuario)) {
-            throw new IllegalArgumentException("El usuario no tiene permisos para modificar este tablero");
-        }
-    }
-
-    private ListaTareas buscarLista(UUID listaId) {
-        return listasTareas.stream()
-                .filter(lista -> lista.getId().id().equals(listaId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("La lista de tareas no existe en este tablero"));
-    }
-
-    private Tarjeta buscarTarjeta(UUID tarjetaId) {
-        for (ListaTareas lista : listasTareas) {
-            for (Tarjeta tarjeta : lista.getTarjetas()) {
-                if (tarjeta.getId().id().equals(tarjetaId)) {
-                    return tarjeta;
-                }
+        List<ListaTablero> updatedLists = new ArrayList<>();
+        boolean found = false;
+        for (ListaTablero list : lists) {
+            if (list.id().equals(listId)) {
+                updatedLists.add(list.withName(normalizedName));
+                found = true;
+            } else {
+                updatedLists.add(list);
             }
         }
-        for (Tarjeta tarjeta : listaCompletadas.getTarjetas()) {
-            if (tarjeta.getId().id().equals(tarjetaId)) {
-                return tarjeta;
-            }
+
+        if (!found) {
+            throw new DomainNotFoundException("No existe la lista indicada en el tablero");
         }
-        throw new IllegalArgumentException("La tarjeta no existe en este tablero");
+
+        return new Tablero(url, name, ownerEmail, color, description, status, updatedLists, sharedWith);
     }
 
-    private ListaTareas buscarListaPorTarjeta(UUID tarjetaId) {
-        for (ListaTareas lista : listasTareas) {
-            for (Tarjeta tarjeta : lista.getTarjetas()) {
-                if (tarjeta.getId().id().equals(tarjetaId)) {
-                    return lista;
-                }
-            }
+    public Tablero withStatus(EstadoTablero newStatus) {
+        EstadoTablero validatedStatus = Objects.requireNonNull(newStatus, "El estado del tablero no puede ser nulo");
+        if (validatedStatus == status) {
+            return this;
         }
-        throw new IllegalArgumentException("La tarjeta no pertenece a ninguna lista activa");
+        return new Tablero(url, name, ownerEmail, color, description, validatedStatus, lists, sharedWith);
     }
 
-    private boolean estaCompletada(UUID tarjetaId) {
-        for (Tarjeta tarjeta : listaCompletadas.getTarjetas()) {
-            if (tarjeta.getId().id().equals(tarjetaId)) {
+    public boolean isBlocked() {
+        return status == EstadoTablero.BLOCKED;
+    }
+
+    public Tablero withAddedShare(String email, RolComparticion role) {
+        String normalizedEmail = CuentaUsuario.normalizeEmail(email);
+        for (TableroCompartido share : sharedWith) {
+            if (share.email().equalsIgnoreCase(normalizedEmail)) {
+                throw new DomainConflictException("El tablero ya esta compartido con ese email");
+            }
+        }
+        Set<TableroCompartido> updatedShares = new LinkedHashSet<>(sharedWith);
+        updatedShares.add(new TableroCompartido(null, url, normalizedEmail, role));
+        return new Tablero(url, name, ownerEmail, color, description, status, lists, updatedShares);
+    }
+
+    public ListaTablero findListOrFail(UUID listId) {
+        Objects.requireNonNull(listId, "El id de la lista no puede ser nulo");
+        for (ListaTablero list : lists) {
+            if (list.id().equals(listId)) {
+                return list;
+            }
+        }
+        throw new DomainValidationException("La lista indicada no pertenece al tablero");
+    }
+
+    private static String validateBoardUrl(String value) {
+        String url = validateText(value, "La url del tablero no puede ser nula ni vacia");
+        if (!url.startsWith(URL_PREFIX)) {
+            throw new DomainValidationException("La url del tablero debe usar el prefijo tasku://tablero/");
+        }
+        return url;
+    }
+
+    private boolean hasListName(String candidateName, UUID ignoredListId) {
+        for (ListaTablero list : lists) {
+            if (ignoredListId != null && list.id().equals(ignoredListId)) {
+                continue;
+            }
+            if (list.name().equalsIgnoreCase(candidateName)) {
                 return true;
             }
         }
         return false;
     }
 
-    private TarjetaChecklist requireChecklist(Tarjeta tarjeta) {
-        if (tarjeta instanceof TarjetaChecklist checklist) {
-            return checklist;
+    private static String validateText(String value, String message) {
+        if (value == null || value.isBlank()) {
+            throw new DomainValidationException(message);
         }
-        throw new IllegalArgumentException("La tarjeta no es checklist");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Tablero tablero)) {
-            return false;
-        }
-        return Objects.equals(url, tablero.url);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(url);
+        return value.trim();
     }
 }
+
+

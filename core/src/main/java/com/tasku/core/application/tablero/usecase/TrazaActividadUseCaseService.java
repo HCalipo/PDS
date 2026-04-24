@@ -1,8 +1,8 @@
-package com.tasku.core.application.board;
+package com.tasku.core.application.tablero.usecase;
 
-import com.tasku.core.application.board.dto.RegisterTraceRequest;
+import com.tasku.core.application.tablero.usecase.dto.RegisterTraceRequest;
 import com.tasku.core.domain.board.exception.DomainValidationException;
-import com.tasku.core.domain.model.board.TrazaActividad;
+import com.tasku.core.domain.model.TrazaActividad;
 import com.tasku.core.domain.board.port.TrazaStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ActivityTraceService {
+public class TrazaActividadUseCaseService {
     private final TrazaStore traceStore;
 
-    public ActivityTraceService(TrazaStore traceStore) {
+    public TrazaActividadUseCaseService(TrazaStore traceStore) {
         this.traceStore = traceStore;
     }
 
@@ -56,4 +56,5 @@ public class ActivityTraceService {
         return value.trim();
     }
 }
+
 
