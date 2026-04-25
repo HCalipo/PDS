@@ -1,11 +1,12 @@
-package com.tasku.core.infrastructure.desktop.controllers;
+package com.tasku.ui.presentation.controllers;
 
-import com.tasku.core.domain.model.TipoTarjeta;
-import com.tasku.core.infrastructure.api.rest.request.CardLabelApiRequest;
-import com.tasku.core.infrastructure.api.rest.request.CreateCardApiRequest;
-import com.tasku.core.infrastructure.api.rest.response.CardApiResponse;
-import com.tasku.core.infrastructure.desktop.api.DesktopApiException;
-import com.tasku.core.infrastructure.desktop.api.TaskuApiClient;
+import com.tasku.ui.client.dto.TipoTarjeta;
+import com.tasku.ui.client.dto.request.CardLabelApiRequest;
+import com.tasku.ui.client.dto.request.CreateCardApiRequest;
+import com.tasku.ui.client.dto.response.CardApiResponse;
+import com.tasku.ui.client.http.DesktopApiException;
+import com.tasku.ui.client.http.TaskuApiClient;
+import com.tasku.ui.state.DesktopSessionState;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

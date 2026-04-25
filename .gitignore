@@ -7,3 +7,7 @@
 !/README.md
 
 /core/data/
+!/pom.xml
+!/ui
+!/ui/*
+/ui/target/

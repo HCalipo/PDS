@@ -35,7 +35,7 @@ Actualmente el repositorio utiliza un unico modelo de dominio en `com.tasku.core
 
 ---
 
-Diagrama del **modelo legacy (historico, retirado)**:
+Diagrama del modelo:
 
 ```mermaid
 classDiagram

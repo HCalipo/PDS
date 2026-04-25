@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="450.0" spacing="5.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.infrastructure.desktop.controllers.CrearTarjetaController">
+<VBox prefWidth="450.0" spacing="5.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CrearTarjetaController">
     <padding>
         <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
     </padding>

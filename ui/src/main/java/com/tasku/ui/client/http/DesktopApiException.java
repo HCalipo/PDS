@@ -1,4 +1,4 @@
-package com.tasku.core.infrastructure.desktop.api;
+package com.tasku.ui.client.http;
 
 public class DesktopApiException extends RuntimeException {
     private final Integer statusCode;

@@ -1,9 +1,9 @@
-package com.tasku.core.infrastructure.desktop.api;
+package com.tasku.ui.client.http;
 
-import com.tasku.core.infrastructure.api.rest.request.CreateBoardApiRequest;
-import com.tasku.core.infrastructure.api.rest.request.CreateCardApiRequest;
-import com.tasku.core.infrastructure.api.rest.response.BoardApiResponse;
-import com.tasku.core.infrastructure.api.rest.response.CardApiResponse;
+import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
+import com.tasku.ui.client.dto.request.CreateCardApiRequest;
+import com.tasku.ui.client.dto.response.BoardApiResponse;
+import com.tasku.ui.client.dto.response.CardApiResponse;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.ResourceAccessException;

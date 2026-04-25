@@ -1,7 +1,8 @@
-package com.tasku.core.infrastructure.desktop.controllers;
+package com.tasku.ui.presentation.controllers;
 
-import com.tasku.core.infrastructure.desktop.api.DesktopApiException;
-import com.tasku.core.infrastructure.desktop.api.TaskuApiClient;
+import com.tasku.ui.client.http.DesktopApiException;
+import com.tasku.ui.client.http.TaskuApiClient;
+import com.tasku.ui.state.DesktopSessionState;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;

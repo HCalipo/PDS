@@ -1,4 +1,4 @@
-package com.tasku.core.infrastructure.desktop.controllers;
+package com.tasku.ui.state;
 
 import java.util.UUID;
 
