@@ -34,11 +34,23 @@ public class TrazaJpaEntity {
     public TrazaJpaEntity() {
     }
 
+    public TrazaJpaEntity(UUID id,
+                          TableroJpaEntity board,
+                          String authorEmail,
+                          String description,
+                          LocalDateTime date) {
+        this.id = id;
+        this.board = board;
+        this.authorEmail = authorEmail;
+        this.description = description;
+        this.date = date;
+    }
+
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    protected void setId(UUID id) {
         this.id = id;
     }
 
@@ -46,7 +58,7 @@ public class TrazaJpaEntity {
         return board;
     }
 
-    public void setBoard(TableroJpaEntity board) {
+    protected void setBoard(TableroJpaEntity board) {
         this.board = board;
     }
 
@@ -54,7 +66,7 @@ public class TrazaJpaEntity {
         return authorEmail;
     }
 
-    public void setAuthorEmail(String authorEmail) {
+    protected void setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
     }
 
@@ -62,7 +74,7 @@ public class TrazaJpaEntity {
         return description;
     }
 
-    public void setDescription(String description) {
+    protected void setDescription(String description) {
         this.description = description;
     }
 
@@ -70,7 +82,7 @@ public class TrazaJpaEntity {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    protected void setDate(LocalDateTime date) {
         this.date = date;
     }
 }

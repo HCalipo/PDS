@@ -20,8 +20,12 @@ import com.tasku.core.infrastructure.api.rest.request.RenameListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.ShareBoardApiRequest;
 import com.tasku.core.infrastructure.api.rest.response.BoardApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@Validated
 @RequestMapping("/api/boards")
 public class BoardRestController {
     private final TableroUseCaseService boardService;
@@ -65,19 +70,19 @@ public class BoardRestController {
     }
 
     @GetMapping("/by-url")
-    public BoardApiResponse getBoardByUrl(@RequestParam("url") String boardUrl) {
+    public BoardApiResponse getBoardByUrl(@RequestParam("url") @NotBlank @Pattern(regexp = "^tasku://tablero/[0-9a-fA-F\\-]{36}$") String boardUrl) {
         return mapper.toBoardResponse(boardService.getBoardByUrl(new TableroUrl(boardUrl)));
     }
 
     @GetMapping("/owned")
-    public List<BoardApiResponse> findBoardsByOwner(@RequestParam("ownerEmail") String ownerEmail) {
+    public List<BoardApiResponse> findBoardsByOwner(@RequestParam("ownerEmail") @NotBlank @Email String ownerEmail) {
         return boardService.findBoardsByOwnerEmail(new Email(ownerEmail)).stream()
                 .map(mapper::toBoardResponse)
                 .toList();
     }
 
     @GetMapping("/shared")
-    public List<BoardApiResponse> findBoardsSharedWith(@RequestParam("email") String email) {
+    public List<BoardApiResponse> findBoardsSharedWith(@RequestParam("email") @NotBlank @Email String email) {
         return boardService.findBoardsSharedWithEmail(new Email(email)).stream()
                 .map(mapper::toBoardResponse)
                 .toList();

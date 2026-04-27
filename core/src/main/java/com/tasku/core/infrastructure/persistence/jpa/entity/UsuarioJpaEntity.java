@@ -20,11 +20,16 @@ public class UsuarioJpaEntity {
     public UsuarioJpaEntity() {
     }
 
+    public UsuarioJpaEntity(String email, LocalDateTime registrationDate) {
+        this.email = email;
+        this.registrationDate = registrationDate;
+    }
+
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    protected void setEmail(String email) {
         this.email = email;
     }
 
@@ -32,7 +37,7 @@ public class UsuarioJpaEntity {
         return registrationDate;
     }
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
+    protected void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
     }
 }

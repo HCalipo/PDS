@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @DiscriminatorValue("CHECKLIST")
@@ -20,11 +22,29 @@ public class TarjetaChecklistJpaEntity extends TarjetaJpaEntity {
     public TarjetaChecklistJpaEntity() {
     }
 
+    public TarjetaChecklistJpaEntity(UUID id,
+                                     ListaTableroJpaEntity list,
+                                     String title,
+                                     String description,
+                                     boolean archived,
+                                     Set<EtiquetaTarjetaEmbeddable> labels,
+                                     List<ElementoChecklistEmbeddable> items) {
+        super(id, list, title, description, archived, labels);
+        replaceItems(items);
+    }
+
     public List<ElementoChecklistEmbeddable> getItems() {
         return items;
     }
 
-    public void setItems(List<ElementoChecklistEmbeddable> items) {
+    protected void setItems(List<ElementoChecklistEmbeddable> items) {
         this.items = items;
+    }
+
+    public void replaceItems(List<ElementoChecklistEmbeddable> items) {
+        this.items.clear();
+        if (items != null) {
+            this.items.addAll(items);
+        }
     }
 }

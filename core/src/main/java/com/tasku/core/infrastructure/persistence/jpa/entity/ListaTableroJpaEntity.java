@@ -30,11 +30,18 @@ public class ListaTableroJpaEntity {
     public ListaTableroJpaEntity() {
     }
 
+    public ListaTableroJpaEntity(UUID id, TableroJpaEntity board, String name, int cardLimit) {
+        this.id = id;
+        this.board = board;
+        this.name = name;
+        this.cardLimit = cardLimit;
+    }
+
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    protected void setId(UUID id) {
         this.id = id;
     }
 
@@ -42,7 +49,7 @@ public class ListaTableroJpaEntity {
         return board;
     }
 
-    public void setBoard(TableroJpaEntity board) {
+    protected void setBoard(TableroJpaEntity board) {
         this.board = board;
     }
 
@@ -50,7 +57,7 @@ public class ListaTableroJpaEntity {
         return name;
     }
 
-    public void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
 
@@ -58,7 +65,7 @@ public class ListaTableroJpaEntity {
         return cardLimit;
     }
 
-    public void setCardLimit(int cardLimit) {
+    protected void setCardLimit(int cardLimit) {
         this.cardLimit = cardLimit;
     }
 }

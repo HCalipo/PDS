@@ -44,11 +44,25 @@ public class TableroJpaEntity {
     public TableroJpaEntity() {
     }
 
+    public TableroJpaEntity(String url,
+                            String name,
+                            String ownerEmail,
+                            String color,
+                            String description,
+                            String status) {
+        this.url = url;
+        this.name = name;
+        this.ownerEmail = ownerEmail;
+        this.color = color;
+        this.description = description;
+        this.status = status;
+    }
+
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    protected void setUrl(String url) {
         this.url = url;
     }
 
@@ -56,7 +70,7 @@ public class TableroJpaEntity {
         return name;
     }
 
-    public void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
 
@@ -64,7 +78,7 @@ public class TableroJpaEntity {
         return ownerEmail;
     }
 
-    public void setOwnerEmail(String ownerEmail) {
+    protected void setOwnerEmail(String ownerEmail) {
         this.ownerEmail = ownerEmail;
     }
 
@@ -72,7 +86,7 @@ public class TableroJpaEntity {
         return color;
     }
 
-    public void setColor(String color) {
+    protected void setColor(String color) {
         this.color = color;
     }
 
@@ -80,7 +94,7 @@ public class TableroJpaEntity {
         return description;
     }
 
-    public void setDescription(String description) {
+    protected void setDescription(String description) {
         this.description = description;
     }
 
@@ -88,7 +102,7 @@ public class TableroJpaEntity {
         return status;
     }
 
-    public void setStatus(String status) {
+    protected void setStatus(String status) {
         this.status = status;
     }
 
@@ -96,7 +110,7 @@ public class TableroJpaEntity {
         return lists;
     }
 
-    public void setLists(List<ListaTableroJpaEntity> lists) {
+    protected void setLists(List<ListaTableroJpaEntity> lists) {
         this.lists = lists;
     }
 
@@ -104,7 +118,21 @@ public class TableroJpaEntity {
         return sharedBoards;
     }
 
-    public void setSharedBoards(Set<TableroCompartidoJpaEntity> sharedBoards) {
+    protected void setSharedBoards(Set<TableroCompartidoJpaEntity> sharedBoards) {
         this.sharedBoards = sharedBoards;
+    }
+
+    public void replaceLists(List<ListaTableroJpaEntity> lists) {
+        this.lists.clear();
+        if (lists != null) {
+            this.lists.addAll(lists);
+        }
+    }
+
+    public void replaceSharedBoards(Set<TableroCompartidoJpaEntity> sharedBoards) {
+        this.sharedBoards.clear();
+        if (sharedBoards != null) {
+            this.sharedBoards.addAll(sharedBoards);
+        }
     }
 }

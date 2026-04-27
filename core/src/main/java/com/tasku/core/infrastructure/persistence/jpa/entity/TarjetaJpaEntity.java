@@ -47,11 +47,25 @@ public abstract class TarjetaJpaEntity {
     public TarjetaJpaEntity() {
     }
 
+    protected TarjetaJpaEntity(UUID id,
+                               ListaTableroJpaEntity list,
+                               String title,
+                               String description,
+                               boolean archived,
+                               Set<EtiquetaTarjetaEmbeddable> labels) {
+        this.id = id;
+        this.list = list;
+        this.title = title;
+        this.description = description;
+        this.archived = archived;
+        replaceLabels(labels);
+    }
+
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    protected void setId(UUID id) {
         this.id = id;
     }
 
@@ -59,7 +73,7 @@ public abstract class TarjetaJpaEntity {
         return list;
     }
 
-    public void setList(ListaTableroJpaEntity list) {
+    protected void setList(ListaTableroJpaEntity list) {
         this.list = list;
     }
 
@@ -67,7 +81,7 @@ public abstract class TarjetaJpaEntity {
         return title;
     }
 
-    public void setTitle(String title) {
+    protected void setTitle(String title) {
         this.title = title;
     }
 
@@ -75,7 +89,7 @@ public abstract class TarjetaJpaEntity {
         return description;
     }
 
-    public void setDescription(String description) {
+    protected void setDescription(String description) {
         this.description = description;
     }
 
@@ -83,7 +97,7 @@ public abstract class TarjetaJpaEntity {
         return archived;
     }
 
-    public void setArchived(boolean archived) {
+    protected void setArchived(boolean archived) {
         this.archived = archived;
     }
 
@@ -91,7 +105,14 @@ public abstract class TarjetaJpaEntity {
         return labels;
     }
 
-    public void setLabels(Set<EtiquetaTarjetaEmbeddable> labels) {
+    protected void setLabels(Set<EtiquetaTarjetaEmbeddable> labels) {
         this.labels = labels;
+    }
+
+    public void replaceLabels(Set<EtiquetaTarjetaEmbeddable> labels) {
+        this.labels.clear();
+        if (labels != null) {
+            this.labels.addAll(labels);
+        }
     }
 }

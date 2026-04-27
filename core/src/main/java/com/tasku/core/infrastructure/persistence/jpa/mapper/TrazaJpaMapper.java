@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class TrazaJpaMapper {
     public TrazaJpaEntity toJpa(TrazaActividad domain, TableroJpaEntity boardEntity) {
-        TrazaJpaEntity entity = new TrazaJpaEntity();
-        entity.setId(domain.id());
-        entity.setBoard(boardEntity);
-        entity.setAuthorEmail(domain.authorEmailValue().email());
-        entity.setDescription(domain.description());
-        entity.setDate(domain.date());
-        return entity;
+    return new TrazaJpaEntity(
+        domain.id(),
+        boardEntity,
+        domain.authorEmailValue().email(),
+        domain.description(),
+        domain.date()
+    );
     }
 
     public TrazaActividad toDomain(TrazaJpaEntity entity) {

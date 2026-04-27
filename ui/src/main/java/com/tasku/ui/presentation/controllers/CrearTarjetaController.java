@@ -76,23 +76,7 @@ public class CrearTarjetaController {
         String title = normalize(titleField.getText());
         String description = normalize(descriptionArea.getText());
 
-        if (title.isBlank()) {
-            showError("El titulo es obligatorio.");
-            return;
-        }
-
-        if (description.isBlank()) {
-            showError("La descripcion es obligatoria.");
-            return;
-        }
-
-        UUID listId;
-        try {
-            listId = UUID.fromString(normalize(listIdField.getText()));
-        } catch (IllegalArgumentException ex) {
-            showError("Debes indicar un UUID de lista valido.");
-            return;
-        }
+        UUID listId = parseUuidOrNull(normalize(listIdField.getText()));
 
         TipoTarjeta type = toggleTipo.isSelected() ? TipoTarjeta.TAREA : TipoTarjeta.CHECKLIST;
         String selectedLabel = choiceEtiqueta.getValue();
@@ -154,6 +138,17 @@ public class CrearTarjetaController {
 
     private static String normalize(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private static UUID parseUuidOrNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     private String mapColorForLabel(String label) {

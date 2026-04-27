@@ -24,11 +24,6 @@ public class InicioSesionController {
 		String email = normalize(txtEmail.getText());
 		String nombre = normalize(txtNombre.getText());
 
-		if (email.isBlank() || nombre.isBlank()) {
-			showError("Email y nombre son obligatorios.");
-			return;
-		}
-
 		try {
 			int boardsCount = apiClient.findBoardsByOwner(email).size();
 			DesktopSessionState.setUser(email, nombre);

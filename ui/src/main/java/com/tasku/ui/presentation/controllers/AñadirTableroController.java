@@ -74,10 +74,6 @@ public class AñadirTableroController {
         }
 
         String boardName = normalize(boardNameField.getText());
-        if (boardName.isBlank()) {
-            showError("El nombre del tablero es obligatorio.");
-            return;
-        }
 
         CreateBoardApiRequest request = new CreateBoardApiRequest(
                 ownerEmail,

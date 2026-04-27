@@ -8,10 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioJpaMapper {
     public UsuarioJpaEntity toJpa(Usuario domain) {
-        UsuarioJpaEntity entity = new UsuarioJpaEntity();
-        entity.setEmail(domain.email());
-        entity.setRegistrationDate(domain.registrationDate());
-        return entity;
+        return new UsuarioJpaEntity(domain.email(), domain.registrationDate());
     }
 
     public Usuario toDomain(UsuarioJpaEntity entity) {

@@ -23,24 +23,29 @@ import java.util.Set;
 @Component
 public class TarjetaJpaMapper {
     public TarjetaJpaEntity toJpa(Tarjeta domain, ListaTableroJpaEntity listEntity) {
-        TarjetaJpaEntity entity;
+        Set<EtiquetaTarjetaEmbeddable> mappedLabels = mapLabelsToJpa(domain.labels());
         if (domain instanceof TarjetaChecklist tarjetaChecklist) {
-            TarjetaChecklistJpaEntity checklistEntity = new TarjetaChecklistJpaEntity();
-            checklistEntity.setItems(mapItemsToJpa(tarjetaChecklist.items()));
-            entity = checklistEntity;
+            return new TarjetaChecklistJpaEntity(
+                    domain.id(),
+                    listEntity,
+                    domain.title(),
+                    domain.description(),
+                    domain.archived(),
+                    mappedLabels,
+                    mapItemsToJpa(tarjetaChecklist.items())
+            );
         } else if (domain instanceof TarjetaTarea) {
-            entity = new TarjetaTareaJpaEntity();
+            return new TarjetaTareaJpaEntity(
+                    domain.id(),
+                    listEntity,
+                    domain.title(),
+                    domain.description(),
+                    domain.archived(),
+                    mappedLabels
+            );
         } else {
             throw new IllegalArgumentException("Tipo de tarjeta no soportado para persistencia: " + domain.getClass().getName());
         }
-
-        entity.setId(domain.id());
-        entity.setList(listEntity);
-        entity.setTitle(domain.title());
-        entity.setDescription(domain.description());
-        entity.setArchived(domain.archived());
-        entity.setLabels(mapLabelsToJpa(domain.labels()));
-        return entity;
     }
 
     public Tarjeta toDomain(TarjetaJpaEntity entity) {

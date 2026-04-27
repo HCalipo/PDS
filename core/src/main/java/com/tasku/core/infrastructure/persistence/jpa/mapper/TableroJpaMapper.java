@@ -21,35 +21,38 @@ import java.util.Set;
 @Component
 public class TableroJpaMapper {
     public TableroJpaEntity toJpa(Tablero domain) {
-        TableroJpaEntity entity = new TableroJpaEntity();
-        entity.setUrl(domain.url());
-        entity.setName(domain.name());
-        entity.setOwnerEmail(domain.ownerEmail());
-        entity.setColor(domain.color());
-        entity.setDescription(domain.description());
-        entity.setStatus(domain.status().name());
+        TableroJpaEntity entity = new TableroJpaEntity(
+                domain.url(),
+                domain.name(),
+                domain.ownerEmail(),
+                domain.color(),
+                domain.description(),
+                domain.status().name()
+        );
 
         List<ListaTableroJpaEntity> listEntities = new ArrayList<>();
         for (ListaTablero list : domain.lists()) {
-            ListaTableroJpaEntity listEntity = new ListaTableroJpaEntity();
-            listEntity.setId(list.id());
-            listEntity.setBoard(entity);
-            listEntity.setName(list.name());
-            listEntity.setCardLimit(list.cardLimit());
+            ListaTableroJpaEntity listEntity = new ListaTableroJpaEntity(
+                    list.id(),
+                    entity,
+                    list.name(),
+                    list.cardLimit()
+            );
             listEntities.add(listEntity);
         }
-        entity.setLists(listEntities);
+        entity.replaceLists(listEntities);
 
         Set<TableroCompartidoJpaEntity> sharedEntities = new LinkedHashSet<>();
         for (TableroCompartido share : domain.sharedWith()) {
-            TableroCompartidoJpaEntity sharedEntity = new TableroCompartidoJpaEntity();
-            sharedEntity.setId(share.id());
-            sharedEntity.setBoard(entity);
-            sharedEntity.setEmail(share.email());
-            sharedEntity.setRole(share.role().name());
+            TableroCompartidoJpaEntity sharedEntity = new TableroCompartidoJpaEntity(
+                    share.id(),
+                    entity,
+                    share.email(),
+                    share.role().name()
+            );
             sharedEntities.add(sharedEntity);
         }
-        entity.setSharedBoards(sharedEntities);
+        entity.replaceSharedBoards(sharedEntities);
 
         return entity;
     }

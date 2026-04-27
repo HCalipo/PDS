@@ -12,8 +12,10 @@ import com.tasku.core.infrastructure.api.rest.request.CreateCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.MoveCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.response.CardApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@Validated
 @RequestMapping("/api/cards")
 public class CardRestController {
     private final TableroUseCaseService boardService;
@@ -66,12 +69,12 @@ public class CardRestController {
     }
 
     @GetMapping("/{cardId}")
-    public CardApiResponse getCardById(@PathVariable UUID cardId) {
+    public CardApiResponse getCardById(@PathVariable @NotNull UUID cardId) {
         return mapper.toCardResponse(boardService.getCardById(new TarjetaId(cardId)));
     }
 
     @GetMapping
-    public List<CardApiResponse> findCardsByList(@RequestParam("listId") UUID listId) {
+    public List<CardApiResponse> findCardsByList(@RequestParam("listId") @NotNull UUID listId) {
         return boardService.findCardsByListId(new ListaTableroId(listId)).stream()
                 .map(mapper::toCardResponse)
                 .toList();
