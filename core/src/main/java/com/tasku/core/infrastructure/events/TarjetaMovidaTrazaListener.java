@@ -16,8 +16,8 @@ public class TarjetaMovidaTrazaListener {
 
     @EventListener
     public void onCardMoved(TarjetaMovidaEvent event) {
-        String description = "Tarjeta " + event.cardId() + " movida de " + event.sourceListId() + " a "
-                + event.destinationListId();
+        String description = "Tarjeta " + event.cardId().id() + " movida de " + event.sourceListId().id() + " a "
+            + event.destinationListId().id();
         TrazaActividadUseCaseService.registerTrace(new RegisterTraceRequest(
                 event.boardUrl(),
                 event.authorEmail(),

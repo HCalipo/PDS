@@ -7,7 +7,10 @@ import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
 import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
 import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
 import com.tasku.core.domain.model.DefinicionListaInicial;
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.ListaTableroId;
 import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.TableroUrl;
 import com.tasku.core.infrastructure.api.rest.mapper.ApiRestMapper;
 import com.tasku.core.infrastructure.api.rest.request.ChangeBoardStatusApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CreateBoardApiRequest;
@@ -52,7 +55,7 @@ public class BoardRestController {
         }
 
         Tablero board = boardService.createBoard(new CreateBoardRequest(
-                request.ownerEmail(),
+            new Email(request.ownerEmail()),
                 request.name(),
                 request.color(),
                 request.description(),
@@ -63,19 +66,19 @@ public class BoardRestController {
 
     @GetMapping("/by-url")
     public BoardApiResponse getBoardByUrl(@RequestParam("url") String boardUrl) {
-        return mapper.toBoardResponse(boardService.getBoardByUrl(boardUrl));
+        return mapper.toBoardResponse(boardService.getBoardByUrl(new TableroUrl(boardUrl)));
     }
 
     @GetMapping("/owned")
     public List<BoardApiResponse> findBoardsByOwner(@RequestParam("ownerEmail") String ownerEmail) {
-        return boardService.findBoardsByOwnerEmail(ownerEmail).stream()
+        return boardService.findBoardsByOwnerEmail(new Email(ownerEmail)).stream()
                 .map(mapper::toBoardResponse)
                 .toList();
     }
 
     @GetMapping("/shared")
     public List<BoardApiResponse> findBoardsSharedWith(@RequestParam("email") String email) {
-        return boardService.findBoardsSharedWithEmail(email).stream()
+        return boardService.findBoardsSharedWithEmail(new Email(email)).stream()
                 .map(mapper::toBoardResponse)
                 .toList();
     }
@@ -83,8 +86,8 @@ public class BoardRestController {
     @PostMapping("/share")
     public BoardApiResponse shareBoard(@Valid @RequestBody ShareBoardApiRequest request) {
         Tablero board = boardService.shareBoard(new ShareBoardRequest(
-                request.boardUrl(),
-                request.email(),
+                new TableroUrl(request.boardUrl()),
+                new Email(request.email()),
                 request.role()
         ));
         return mapper.toBoardResponse(board);
@@ -93,7 +96,7 @@ public class BoardRestController {
     @PostMapping("/lists")
     public ResponseEntity<BoardApiResponse> createList(@Valid @RequestBody CreateListApiRequest request) {
         Tablero board = boardService.createList(new CreateListRequest(
-                request.boardUrl(),
+            new TableroUrl(request.boardUrl()),
                 request.name(),
                 request.cardLimit()
         ));
@@ -103,8 +106,8 @@ public class BoardRestController {
     @PatchMapping("/lists/{listId}")
     public BoardApiResponse renameList(@PathVariable UUID listId, @Valid @RequestBody RenameListApiRequest request) {
         Tablero board = boardService.renameList(new RenameListRequest(
-                request.boardUrl(),
-                listId,
+            new TableroUrl(request.boardUrl()),
+            new ListaTableroId(listId),
                 request.name()
         ));
         return mapper.toBoardResponse(board);
@@ -113,7 +116,7 @@ public class BoardRestController {
     @PatchMapping("/status")
     public BoardApiResponse changeBoardStatus(@Valid @RequestBody ChangeBoardStatusApiRequest request) {
         Tablero board = boardService.changeBoardStatus(new ChangeBoardStatusRequest(
-                request.boardUrl(),
+            new TableroUrl(request.boardUrl()),
                 request.status()
         ));
         return mapper.toBoardResponse(board);

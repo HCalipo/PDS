@@ -1,6 +1,7 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
-import com.tasku.core.domain.model.CuentaUsuario;
+import com.tasku.core.domain.model.Usuario;
+import com.tasku.core.domain.model.Email;
 import com.tasku.core.domain.board.port.UsuarioStore;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.UsuarioJpaMapper;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataUsuarioRepository;
@@ -19,13 +20,13 @@ public class JpaUsuarioStoreAdapter implements UsuarioStore {
     }
 
     @Override
-    public CuentaUsuario save(CuentaUsuario user) {
+    public Usuario save(Usuario user) {
         return mapper.toDomain(repository.save(mapper.toJpa(user)));
     }
 
     @Override
-    public Optional<CuentaUsuario> findByEmail(String email) {
-        return repository.findById(CuentaUsuario.normalizeEmail(email)).map(mapper::toDomain);
+    public Optional<Usuario> findByEmail(Email email) {
+        return repository.findById(email.email()).map(mapper::toDomain);
     }
 }
 

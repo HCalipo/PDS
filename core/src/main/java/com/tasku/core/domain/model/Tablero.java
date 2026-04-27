@@ -12,28 +12,26 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class Tablero {
-    private static final String URL_PREFIX = "tasku://tablero/";
-
-    private final String url;
+    private final TableroUrl url;
     private final String name;
-    private final String ownerEmail;
+    private final Email ownerEmail;
     private final String color;
     private final String description;
     private final EstadoTablero status;
     private final List<ListaTablero> lists;
     private final Set<TableroCompartido> sharedWith;
 
-    public Tablero(String url,
+    public Tablero(TableroUrl url,
                  String name,
-                 String ownerEmail,
+                 Email ownerEmail,
                  String color,
                  String description,
                  EstadoTablero status,
                  List<ListaTablero> lists,
                  Set<TableroCompartido> sharedWith) {
-        this.url = validateBoardUrl(url);
+        this.url = Objects.requireNonNull(url, "La url del tablero no puede ser nula");
         this.name = validateText(name, "El nombre del tablero no puede ser nulo ni vacio");
-        this.ownerEmail = CuentaUsuario.normalizeEmail(ownerEmail);
+        this.ownerEmail = Objects.requireNonNull(ownerEmail, "El email del duenio no puede ser nulo");
         this.color = validateText(color, "El color del tablero no puede ser nulo ni vacio");
         this.description = validateText(description, "La descripcion del tablero no puede ser nula ni vacia");
         this.status = Objects.requireNonNull(status, "El estado del tablero no puede ser nulo");
@@ -46,19 +44,23 @@ public final class Tablero {
                                   String color,
                                   String description,
                                   List<DefinicionListaInicial> initialLists) {
-        String url = URL_PREFIX + UUID.randomUUID();
+        TableroUrl url = TableroUrl.createNew();
         List<ListaTablero> generatedLists = new ArrayList<>();
         if (initialLists != null) {
             for (DefinicionListaInicial definition : initialLists) {
                 generatedLists.add(ListaTablero.createNew(url, definition.name(), definition.cardLimit()));
             }
         }
-        return new Tablero(url, name, ownerEmail, color, description, EstadoTablero.ACTIVE,
+        return new Tablero(url, name, new Email(ownerEmail), color, description, EstadoTablero.ACTIVE,
                 generatedLists,
                 Set.of());
     }
 
     public String url() {
+        return url.value();
+    }
+
+    public TableroUrl urlValue() {
         return url;
     }
 
@@ -67,6 +69,10 @@ public final class Tablero {
     }
 
     public String ownerEmail() {
+        return ownerEmail.email();
+    }
+
+    public Email ownerEmailValue() {
         return ownerEmail;
     }
 
@@ -104,7 +110,7 @@ public final class Tablero {
         return new Tablero(url, name, ownerEmail, color, description, status, updatedLists, sharedWith);
     }
 
-    public Tablero withRenamedList(UUID listId, String newName) {
+    public Tablero withRenamedList(ListaTableroId listId, String newName) {
         Objects.requireNonNull(listId, "El id de la lista no puede ser nulo");
         String normalizedName = validateText(newName, "El nombre de la lista no puede ser nulo ni vacio");
 
@@ -115,7 +121,7 @@ public final class Tablero {
         List<ListaTablero> updatedLists = new ArrayList<>();
         boolean found = false;
         for (ListaTablero list : lists) {
-            if (list.id().equals(listId)) {
+            if (list.listIdValue().equals(listId)) {
                 updatedLists.add(list.withName(normalizedName));
                 found = true;
             } else {
@@ -128,6 +134,10 @@ public final class Tablero {
         }
 
         return new Tablero(url, name, ownerEmail, color, description, status, updatedLists, sharedWith);
+    }
+
+    public Tablero withRenamedList(UUID listId, String newName) {
+        return withRenamedList(new ListaTableroId(listId), newName);
     }
 
     public Tablero withStatus(EstadoTablero newStatus) {
@@ -143,9 +153,9 @@ public final class Tablero {
     }
 
     public Tablero withAddedShare(String email, RolComparticion role) {
-        String normalizedEmail = CuentaUsuario.normalizeEmail(email);
+        Email normalizedEmail = new Email(email);
         for (TableroCompartido share : sharedWith) {
-            if (share.email().equalsIgnoreCase(normalizedEmail)) {
+            if (share.email().equalsIgnoreCase(normalizedEmail.email())) {
                 throw new DomainConflictException("El tablero ya esta compartido con ese email");
             }
         }
@@ -154,27 +164,23 @@ public final class Tablero {
         return new Tablero(url, name, ownerEmail, color, description, status, lists, updatedShares);
     }
 
-    public ListaTablero findListOrFail(UUID listId) {
+    public ListaTablero findListOrFail(ListaTableroId listId) {
         Objects.requireNonNull(listId, "El id de la lista no puede ser nulo");
         for (ListaTablero list : lists) {
-            if (list.id().equals(listId)) {
+            if (list.listIdValue().equals(listId)) {
                 return list;
             }
         }
         throw new DomainValidationException("La lista indicada no pertenece al tablero");
     }
 
-    private static String validateBoardUrl(String value) {
-        String url = validateText(value, "La url del tablero no puede ser nula ni vacia");
-        if (!url.startsWith(URL_PREFIX)) {
-            throw new DomainValidationException("La url del tablero debe usar el prefijo tasku://tablero/");
-        }
-        return url;
+    public ListaTablero findListOrFail(UUID listId) {
+        return findListOrFail(new ListaTableroId(listId));
     }
 
-    private boolean hasListName(String candidateName, UUID ignoredListId) {
+    private boolean hasListName(String candidateName, ListaTableroId ignoredListId) {
         for (ListaTablero list : lists) {
-            if (ignoredListId != null && list.id().equals(ignoredListId)) {
+            if (ignoredListId != null && list.listIdValue().equals(ignoredListId)) {
                 continue;
             }
             if (list.name().equalsIgnoreCase(candidateName)) {

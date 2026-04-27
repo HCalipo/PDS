@@ -5,13 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 public final class TarjetaChecklist extends Tarjeta {
     private final List<ElementoChecklist> items;
 
-    public TarjetaChecklist(UUID id,
-                         UUID listId,
+    public TarjetaChecklist(TarjetaId id,
+                         ListaTableroId listId,
                          String title,
                          String description,
                          boolean archived,
@@ -21,13 +20,21 @@ public final class TarjetaChecklist extends Tarjeta {
         this.items = new ArrayList<>(Objects.requireNonNullElseGet(items, ArrayList::new));
     }
 
-    public static TarjetaChecklist createNew(UUID listId,
+    public static TarjetaChecklist createNew(ListaTableroId listId,
                                           String title,
                                           String description,
                                           Set<EtiquetaTarjeta> labels,
                                           List<ElementoChecklist> items) {
-        return new TarjetaChecklist(UUID.randomUUID(), listId, title, description, false, labels == null ? Set.of() : labels,
+        return new TarjetaChecklist(new TarjetaId(), listId, title, description, false, labels == null ? Set.of() : labels,
                 items == null ? List.of() : items);
+    }
+
+    public static TarjetaChecklist createNew(java.util.UUID listId,
+                                          String title,
+                                          String description,
+                                          Set<EtiquetaTarjeta> labels,
+                                          List<ElementoChecklist> items) {
+        return createNew(new ListaTableroId(listId), title, description, labels, items);
     }
 
     public List<ElementoChecklist> items() {

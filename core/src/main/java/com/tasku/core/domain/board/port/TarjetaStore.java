@@ -1,19 +1,20 @@
 package com.tasku.core.domain.board.port;
 
 import com.tasku.core.domain.model.Tarjeta;
+import com.tasku.core.domain.model.TarjetaId;
+import com.tasku.core.domain.model.ListaTableroId;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface TarjetaStore {
     Tarjeta save(Tarjeta card);
 
-    Optional<Tarjeta> findById(UUID cardId);
+    Optional<Tarjeta> findById(TarjetaId cardId);
 
-    long countByListId(UUID listId);
+    long countByListId(ListaTableroId listId);
 
-    List<Tarjeta> findByListId(UUID listId);
+    List<Tarjeta> findByListId(ListaTableroId listId);
 }
 
 

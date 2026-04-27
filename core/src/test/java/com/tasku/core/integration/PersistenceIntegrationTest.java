@@ -15,6 +15,10 @@ import com.tasku.core.domain.model.TipoTarjeta;
 import com.tasku.core.domain.model.TarjetaChecklist;
 import com.tasku.core.domain.model.ElementoChecklist;
 import com.tasku.core.domain.model.DefinicionListaInicial;
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.ListaTableroId;
+import com.tasku.core.domain.model.TableroUrl;
+import com.tasku.core.domain.model.TarjetaId;
 import com.tasku.core.infrastructure.bootstrap.CoreApplication;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataListaTableroRepository;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataTableroRepository;
@@ -79,7 +83,7 @@ class PersistenceIntegrationTest {
     @Test
     void integration_createBoard_and_retrieveBoard() {
         CreateBoardRequest request = new CreateBoardRequest(
-                "Owner@Tasku.dev",
+                new Email("Owner@Tasku.dev"),
                 "Backlog Producto",
                 "#0057B8",
                 "Tablero principal",
@@ -90,12 +94,12 @@ class PersistenceIntegrationTest {
         );
 
         Tablero created = boardService.createBoard(request);
-        Tablero loaded = boardService.getBoardByUrl(created.url());
+        Tablero loaded = boardService.getBoardByUrl(new TableroUrl(created.url()));
 
         assertEquals(created.url(), loaded.url());
         assertEquals("owner@tasku.dev", loaded.ownerEmail());
         assertEquals(2, loaded.lists().size());
-        assertEquals(1, boardService.findBoardsByOwnerEmail("OWNER@TASKU.DEV").size());
+        assertEquals(1, boardService.findBoardsByOwnerEmail(new Email("OWNER@TASKU.DEV")).size());
     }
 
     @Test
@@ -104,7 +108,7 @@ class PersistenceIntegrationTest {
         ListaTablero targetList = board.lists().get(0);
 
         boardService.createCard(new CreateCardRequest(
-                targetList.id(),
+                new ListaTableroId(targetList.id()),
                 TipoTarjeta.TAREA,
                 "Implementar login",
                 "Integrar backend",
@@ -113,7 +117,7 @@ class PersistenceIntegrationTest {
         ));
 
         Tarjeta checklistCard = boardService.createCard(new CreateCardRequest(
-                targetList.id(),
+                new ListaTableroId(targetList.id()),
                 TipoTarjeta.CHECKLIST,
                 "Checklist release",
                 "Validar despliegue",
@@ -124,7 +128,7 @@ class PersistenceIntegrationTest {
                 )
         ));
 
-        List<Tarjeta> cards = boardService.findCardsByListId(targetList.id());
+        List<Tarjeta> cards = boardService.findCardsByListId(new ListaTableroId(targetList.id()));
 
         assertEquals(2, cards.size());
         assertTrue(cards.stream().anyMatch(card -> card.id().equals(checklistCard.id())));
@@ -140,7 +144,7 @@ class PersistenceIntegrationTest {
         ListaTablero destination = board.lists().get(1);
 
         Tarjeta card = boardService.createCard(new CreateCardRequest(
-                source.id(),
+                new ListaTableroId(source.id()),
                 TipoTarjeta.TAREA,
                 "Tarjeta mover",
                 "Mover entre listas",
@@ -148,10 +152,10 @@ class PersistenceIntegrationTest {
                 List.of()
         ));
 
-        boardService.moveCard(new MoveCardRequest(card.id(), destination.id(), "move-owner@tasku.dev"));
+        boardService.moveCard(new MoveCardRequest(new TarjetaId(card.id()), new ListaTableroId(destination.id()), new Email("move-owner@tasku.dev")));
 
-        assertTrue(boardService.findCardsByListId(destination.id()).stream().anyMatch(saved -> saved.id().equals(card.id())));
-        assertFalse(boardService.findCardsByListId(source.id()).stream().anyMatch(saved -> saved.id().equals(card.id())));
+        assertTrue(boardService.findCardsByListId(new ListaTableroId(destination.id())).stream().anyMatch(saved -> saved.id().equals(card.id())));
+        assertFalse(boardService.findCardsByListId(new ListaTableroId(source.id())).stream().anyMatch(saved -> saved.id().equals(card.id())));
     }
 
     @Test
@@ -161,7 +165,7 @@ class PersistenceIntegrationTest {
         ListaTablero destination = board.lists().get(1);
 
         Tarjeta card = boardService.createCard(new CreateCardRequest(
-                source.id(),
+                new ListaTableroId(source.id()),
                 TipoTarjeta.TAREA,
                 "Tarjeta traza",
                 "Genera actividad",
@@ -169,9 +173,9 @@ class PersistenceIntegrationTest {
                 List.of()
         ));
 
-        boardService.moveCard(new MoveCardRequest(card.id(), destination.id(), "trace-owner@tasku.dev"));
+        boardService.moveCard(new MoveCardRequest(new TarjetaId(card.id()), new ListaTableroId(destination.id()), new Email("trace-owner@tasku.dev")));
 
-        var traces = traceService.getBoardTraces(board.url());
+        var traces = traceService.getBoardTraces(new TableroUrl(board.url()));
         assertEquals(1, traces.size());
         assertTrue(traces.getFirst().description().contains(card.id().toString()));
     }
@@ -181,15 +185,15 @@ class PersistenceIntegrationTest {
         Tablero board = createBoardWithTwoLists("compact-owner@tasku.dev", "Tablero Compact", 3, 3);
 
         traceService.registerTrace(new RegisterTraceRequest(
-                board.url(),
-                "compact-owner@tasku.dev",
+                new TableroUrl(board.url()),
+                new Email("compact-owner@tasku.dev"),
                 "Traza antigua",
                 LocalDateTime.now().minusDays(45)
         ));
 
         traceService.registerTrace(new RegisterTraceRequest(
-                board.url(),
-                "compact-owner@tasku.dev",
+                new TableroUrl(board.url()),
+                new Email("compact-owner@tasku.dev"),
                 "Traza reciente",
                 LocalDateTime.now().minusDays(5)
         ));
@@ -197,14 +201,14 @@ class PersistenceIntegrationTest {
         long removed = traceService.compactOlderThan(LocalDateTime.now().minusDays(30));
 
         assertEquals(1, removed);
-        assertEquals(1, traceService.getBoardTraces(board.url()).size());
-        assertEquals("Traza reciente", traceService.getBoardTraces(board.url()).getFirst().description());
+        assertEquals(1, traceService.getBoardTraces(new TableroUrl(board.url())).size());
+        assertEquals("Traza reciente", traceService.getBoardTraces(new TableroUrl(board.url())).getFirst().description());
     }
 
     @Test
     void negative_duplicateBoardForSameOwner_isRejected() {
         boardService.createBoard(new CreateBoardRequest(
-                "dup-owner@tasku.dev",
+                new Email("dup-owner@tasku.dev"),
                 "Roadmap",
                 "#111827",
                 "Primer tablero",
@@ -212,7 +216,7 @@ class PersistenceIntegrationTest {
         ));
 
         assertThrows(DomainConflictException.class, () -> boardService.createBoard(new CreateBoardRequest(
-                "DUP-OWNER@TASKU.DEV",
+                new Email("DUP-OWNER@TASKU.DEV"),
                 "roadmap",
                 "#111827",
                 "Duplicado",
@@ -227,7 +231,7 @@ class PersistenceIntegrationTest {
         ListaTablero destination = board.lists().get(1);
 
         Tarjeta sourceCard = boardService.createCard(new CreateCardRequest(
-                source.id(),
+                new ListaTableroId(source.id()),
                 TipoTarjeta.TAREA,
                 "Source full",
                 "Ocupa origen",
@@ -236,7 +240,7 @@ class PersistenceIntegrationTest {
         ));
 
         boardService.createCard(new CreateCardRequest(
-                destination.id(),
+                new ListaTableroId(destination.id()),
                 TipoTarjeta.TAREA,
                 "Destination full",
                 "Ocupa destino",
@@ -245,7 +249,7 @@ class PersistenceIntegrationTest {
         ));
 
         assertThrows(DomainConflictException.class, () -> boardService.createCard(new CreateCardRequest(
-                source.id(),
+                new ListaTableroId(source.id()),
                 TipoTarjeta.TAREA,
                 "Extra",
                 "No cabe",
@@ -254,13 +258,13 @@ class PersistenceIntegrationTest {
         )));
 
         assertThrows(DomainConflictException.class, () -> boardService.moveCard(
-                new MoveCardRequest(sourceCard.id(), destination.id(), "limit-owner@tasku.dev")
+                new MoveCardRequest(new TarjetaId(sourceCard.id()), new ListaTableroId(destination.id()), new Email("limit-owner@tasku.dev"))
         ));
     }
 
     private Tablero createBoardWithTwoLists(String ownerEmail, String name, int firstLimit, int secondLimit) {
         return boardService.createBoard(new CreateBoardRequest(
-                ownerEmail,
+                new Email(ownerEmail),
                 name,
                 "#0369A1",
                 "Descripcion de prueba",

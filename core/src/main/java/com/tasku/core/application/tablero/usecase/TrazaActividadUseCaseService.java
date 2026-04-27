@@ -2,6 +2,7 @@ package com.tasku.core.application.tablero.usecase;
 
 import com.tasku.core.application.tablero.usecase.dto.RegisterTraceRequest;
 import com.tasku.core.domain.board.exception.DomainValidationException;
+import com.tasku.core.domain.model.TableroUrl;
 import com.tasku.core.domain.model.TrazaActividad;
 import com.tasku.core.domain.board.port.TrazaStore;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class TrazaActividadUseCaseService {
     @Transactional
     public TrazaActividad registerTrace(RegisterTraceRequest request) {
         Objects.requireNonNull(request, "La solicitud de traza no puede ser nula");
-        validateText(request.boardUrl(), "La url del tablero es obligatoria");
-        validateText(request.authorEmail(), "El email del autor es obligatorio");
+        Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.authorEmail(), "El email del autor es obligatorio");
         validateText(request.description(), "La descripcion de la traza es obligatoria");
 
         LocalDateTime traceDate = request.date() == null ? LocalDateTime.now() : request.date();
@@ -38,8 +39,8 @@ public class TrazaActividadUseCaseService {
     }
 
     @Transactional(readOnly = true)
-    public List<TrazaActividad> getBoardTraces(String boardUrl) {
-        validateText(boardUrl, "La url del tablero es obligatoria");
+    public List<TrazaActividad> getBoardTraces(TableroUrl boardUrl) {
+        Objects.requireNonNull(boardUrl, "La url del tablero es obligatoria");
         return traceStore.findByBoardUrl(boardUrl);
     }
 

@@ -1,6 +1,8 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
 import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.TableroUrl;
 import com.tasku.core.domain.board.port.TableroStore;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.TableroJpaMapper;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataTableroRepository;
@@ -25,23 +27,23 @@ public class JpaTableroStoreAdapter implements TableroStore {
     }
 
     @Override
-    public Optional<Tablero> findByUrl(String url) {
-        return repository.findById(url).map(mapper::toDomain);
+    public Optional<Tablero> findByUrl(TableroUrl url) {
+        return repository.findById(url.value()).map(mapper::toDomain);
     }
 
     @Override
-    public List<Tablero> findByOwnerEmailIgnoreCase(String ownerEmail) {
-        return repository.findByOwnerEmailIgnoreCase(ownerEmail).stream().map(mapper::toDomain).toList();
+    public List<Tablero> findByOwnerEmailIgnoreCase(Email ownerEmail) {
+        return repository.findByOwnerEmailIgnoreCase(ownerEmail.email()).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public List<Tablero> findBySharedEmailIgnoreCase(String email) {
-        return repository.findSharedBoardsByEmailIgnoreCase(email).stream().map(mapper::toDomain).toList();
+    public List<Tablero> findBySharedEmailIgnoreCase(Email email) {
+        return repository.findSharedBoardsByEmailIgnoreCase(email.email()).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public boolean existsByOwnerEmailAndNameIgnoreCase(String ownerEmail, String boardName) {
-        return repository.existsByOwnerEmailIgnoreCaseAndNameIgnoreCase(ownerEmail, boardName);
+    public boolean existsByOwnerEmailAndNameIgnoreCase(Email ownerEmail, String boardName) {
+        return repository.existsByOwnerEmailIgnoreCaseAndNameIgnoreCase(ownerEmail.email(), boardName);
     }
 }
 

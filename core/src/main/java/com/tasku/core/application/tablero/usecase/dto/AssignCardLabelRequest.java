@@ -1,9 +1,9 @@
 package com.tasku.core.application.tablero.usecase.dto;
 
-import java.util.UUID;
+import com.tasku.core.domain.model.TarjetaId;
 
 public record AssignCardLabelRequest(
-        UUID cardId,
+        TarjetaId cardId,
         String labelName,
         String colorHex
 ) {

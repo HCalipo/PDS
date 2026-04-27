@@ -1,37 +1,40 @@
 package com.tasku.core.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Usuario {
-    private Email correo;
-    private String nombre;
+public final class Usuario {
+    private final Email email;
+    private final LocalDateTime registrationDate;
 
-    // Constructor
-
-    public Usuario(Email correo, String nombre) {
-        this.correo = Objects.requireNonNull(correo, "El correo no puede ser nulo");
-        this.nombre = validarNombre(nombre);
+    public Usuario(Email email, LocalDateTime registrationDate) {
+        this.email = Objects.requireNonNull(email, "El email no puede ser nulo");
+        this.registrationDate = Objects.requireNonNull(registrationDate, "La fecha de registro no puede ser nula");
     }
 
-    // Getters
-    
-    public Email getCorreo() {
-        return correo;
+    public static Usuario createNew(String email) {
+        return new Usuario(new Email(email), LocalDateTime.now());
     }
 
-    public String getNombre() {
-        return nombre;
+    public static Usuario createNew(Email email) {
+        return new Usuario(email, LocalDateTime.now());
     }
 
-    // Validación del nombre de usuario
-        private static String validarNombre(String nombre) {
-        if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo ni vacío");
-        }
-        return nombre.trim();
+    public String email() {
+        return email.email();
     }
-    
-    // Redefinición de equals y hashCode
+
+    public Email emailValue() {
+        return email;
+    }
+
+    public LocalDateTime registrationDate() {
+        return registrationDate;
+    }
+
+    public static String normalizeEmail(String email) {
+        return new Email(email).email();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -41,13 +44,11 @@ public class Usuario {
         if (!(o instanceof Usuario usuario)) {
             return false;
         }
-        return Objects.equals(correo, usuario.correo);
+        return Objects.equals(email, usuario.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(correo);
+        return Objects.hash(email);
     }
-
-
 }

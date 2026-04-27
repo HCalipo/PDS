@@ -4,15 +4,14 @@ import com.tasku.core.domain.board.exception.DomainValidationException;
 
 import java.util.UUID;
 
-public record TarjetaId(UUID id) {
-
-    public TarjetaId {
+public record ListaTableroId(UUID id) {
+    public ListaTableroId {
         if (id == null) {
-            throw new DomainValidationException("El id de la tarjeta no puede ser nulo");
+            throw new DomainValidationException("El id de la lista no puede ser nulo");
         }
     }
 
-    public TarjetaId() {
+    public ListaTableroId() {
         this(UUID.randomUUID());
     }
 }

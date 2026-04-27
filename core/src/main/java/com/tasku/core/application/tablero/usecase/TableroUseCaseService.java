@@ -15,15 +15,19 @@ import com.tasku.core.domain.board.exception.DomainForbiddenException;
 import com.tasku.core.domain.board.exception.DomainNotFoundException;
 import com.tasku.core.domain.board.exception.DomainValidationException;
 import com.tasku.core.domain.model.EtiquetaTarjeta;
-import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.ListaTableroId;
 import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.TableroUrl;
 import com.tasku.core.domain.model.Tarjeta;
+import com.tasku.core.domain.model.TarjetaId;
 import com.tasku.core.domain.model.TipoTarjeta;
 import com.tasku.core.domain.model.TarjetaChecklist;
 import com.tasku.core.domain.model.DefinicionListaInicial;
 import com.tasku.core.domain.model.RolComparticion;
 import com.tasku.core.domain.model.TarjetaTarea;
-import com.tasku.core.domain.model.CuentaUsuario;
+import com.tasku.core.domain.model.Usuario;
 import com.tasku.core.domain.board.port.ListaTableroStore;
 import com.tasku.core.domain.board.port.TableroStore;
 import com.tasku.core.domain.board.port.TarjetaStore;
@@ -75,45 +79,45 @@ public class TableroUseCaseService {
             );
         }
 
-        Tablero board = Tablero.createNew(request.ownerEmail(), request.name(), request.color(), request.description(), initialLists);
+        Tablero board = Tablero.createNew(request.ownerEmail().email(), request.name(), request.color(), request.description(), initialLists);
         return boardStore.save(board);
     }
 
     @Transactional(readOnly = true)
-    public Tablero getBoardByUrl(String boardUrl) {
-        validateText(boardUrl, "La url del tablero es obligatoria");
+    public Tablero getBoardByUrl(TableroUrl boardUrl) {
+        Objects.requireNonNull(boardUrl, "La url del tablero es obligatoria");
         return boardStore.findByUrl(boardUrl)
                 .orElseThrow(() -> new DomainNotFoundException("No existe un tablero con la url indicada"));
     }
 
     @Transactional(readOnly = true)
-    public List<Tablero> findBoardsByOwnerEmail(String ownerEmail) {
-        validateText(ownerEmail, "El email del duenio es obligatorio");
+    public List<Tablero> findBoardsByOwnerEmail(Email ownerEmail) {
+        Objects.requireNonNull(ownerEmail, "El email del duenio es obligatorio");
         return boardStore.findByOwnerEmailIgnoreCase(ownerEmail);
     }
 
     @Transactional(readOnly = true)
-    public List<Tablero> findBoardsSharedWithEmail(String email) {
-        validateText(email, "El email compartido es obligatorio");
+    public List<Tablero> findBoardsSharedWithEmail(Email email) {
+        Objects.requireNonNull(email, "El email compartido es obligatorio");
         return boardStore.findBySharedEmailIgnoreCase(email);
     }
 
     @Transactional
     public Tablero shareBoard(ShareBoardRequest request) {
         Objects.requireNonNull(request, "La solicitud de comparticion no puede ser nula");
-        validateText(request.boardUrl(), "La url del tablero es obligatoria");
-        validateText(request.email(), "El email a compartir es obligatorio");
+        Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.email(), "El email a compartir es obligatorio");
         RolComparticion role = Objects.requireNonNull(request.role(), "El rol a compartir es obligatorio");
 
         Tablero board = getBoardByUrl(request.boardUrl());
-        Tablero updatedBoard = board.withAddedShare(request.email(), role);
+        Tablero updatedBoard = board.withAddedShare(request.email().email(), role);
         return boardStore.save(updatedBoard);
     }
 
     @Transactional
     public Tablero createList(CreateListRequest request) {
         Objects.requireNonNull(request, "La solicitud para crear lista no puede ser nula");
-        validateText(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
         validateText(request.name(), "El nombre de la lista es obligatorio");
         if (request.cardLimit() <= 0) {
             throw new DomainValidationException("El limite de tarjetas de la lista debe ser mayor que cero");
@@ -127,7 +131,7 @@ public class TableroUseCaseService {
     @Transactional
     public Tablero renameList(RenameListRequest request) {
         Objects.requireNonNull(request, "La solicitud para renombrar lista no puede ser nula");
-        validateText(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
         Objects.requireNonNull(request.listId(), "El id de la lista es obligatorio");
         validateText(request.name(), "El nombre de la lista es obligatorio");
 
@@ -139,7 +143,7 @@ public class TableroUseCaseService {
     @Transactional
     public Tablero changeBoardStatus(ChangeBoardStatusRequest request) {
         Objects.requireNonNull(request, "La solicitud para cambiar estado no puede ser nula");
-        validateText(request.boardUrl(), "La url del tablero es obligatoria");
+        Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
         Objects.requireNonNull(request.status(), "El estado del tablero es obligatorio");
 
         Tablero board = getBoardByUrl(request.boardUrl());
@@ -152,7 +156,7 @@ public class TableroUseCaseService {
         validateCreateCardRequest(request);
         ListaTablero list = boardListStore.findById(request.listId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la lista indicada para crear la tarjeta"));
-        Tablero board = boardStore.findByUrl(list.boardUrl())
+        Tablero board = boardStore.findByUrl(list.boardUrlValue())
                 .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la lista"));
         ensureBoardAllowsCardMutations(board);
 
@@ -185,28 +189,28 @@ public class TableroUseCaseService {
     @Transactional
     public Tarjeta moveCard(MoveCardRequest request) {
         Objects.requireNonNull(request, "La solicitud para mover tarjeta no puede ser nula");
-        validateText(request.authorEmail(), "El autor del movimiento es obligatorio");
+        Objects.requireNonNull(request.authorEmail(), "El autor del movimiento es obligatorio");
         Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
         Objects.requireNonNull(request.destinationListId(), "El id de la lista destino no puede ser nulo");
 
         Tarjeta card = cardStore.findById(request.cardId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
 
-        ListaTablero sourceList = boardListStore.findById(card.listId())
+        ListaTablero sourceList = boardListStore.findById(card.listIdValue())
                 .orElseThrow(() -> new DomainNotFoundException("La lista origen de la tarjeta no existe"));
 
         ListaTablero destinationList = boardListStore.findById(request.destinationListId())
                 .orElseThrow(() -> new DomainNotFoundException("La lista destino no existe"));
 
-        if (!sourceList.boardUrl().equals(destinationList.boardUrl())) {
+        if (!sourceList.boardUrlValue().equals(destinationList.boardUrlValue())) {
             throw new DomainValidationException("No se puede mover una tarjeta entre tableros distintos");
         }
 
-        Tablero board = boardStore.findByUrl(sourceList.boardUrl())
+        Tablero board = boardStore.findByUrl(sourceList.boardUrlValue())
                 .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
         ensureBoardAllowsCardMutations(board);
 
-        if (!card.listId().equals(request.destinationListId())) {
+        if (!card.listIdValue().equals(request.destinationListId())) {
             long destinationCount = cardStore.countByListId(request.destinationListId());
             if (destinationCount >= destinationList.cardLimit()) {
                 throw new DomainConflictException("La lista destino alcanzo su limite de tarjetas");
@@ -215,10 +219,10 @@ public class TableroUseCaseService {
             Tarjeta updated = cardStore.save(card);
 
             eventPublisher.publishEvent(new TarjetaMovidaEvent(
-                    updated.id(),
-                    sourceList.id(),
-                    destinationList.id(),
-                    destinationList.boardUrl(),
+                    updated.cardIdValue(),
+                    sourceList.listIdValue(),
+                    destinationList.listIdValue(),
+                    destinationList.boardUrlValue(),
                     request.authorEmail(),
                     LocalDateTime.now()
             ));
@@ -231,14 +235,14 @@ public class TableroUseCaseService {
     @Transactional
     public Tarjeta completeCard(CompleteCardRequest request) {
         Objects.requireNonNull(request, "La solicitud para completar tarjeta no puede ser nula");
-        validateText(request.authorEmail(), "El autor es obligatorio");
+        Objects.requireNonNull(request.authorEmail(), "El autor es obligatorio");
         Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
 
         Tarjeta card = cardStore.findById(request.cardId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
-        ListaTablero list = boardListStore.findById(card.listId())
+        ListaTablero list = boardListStore.findById(card.listIdValue())
                 .orElseThrow(() -> new DomainNotFoundException("La lista de la tarjeta no existe"));
-        Tablero board = boardStore.findByUrl(list.boardUrl())
+        Tablero board = boardStore.findByUrl(list.boardUrlValue())
                 .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
         ensureBoardAllowsCardMutations(board);
 
@@ -255,9 +259,9 @@ public class TableroUseCaseService {
 
         Tarjeta card = cardStore.findById(request.cardId())
             .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
-        ListaTablero list = boardListStore.findById(card.listId())
+        ListaTablero list = boardListStore.findById(card.listIdValue())
             .orElseThrow(() -> new DomainNotFoundException("La lista de la tarjeta no existe"));
-        Tablero board = boardStore.findByUrl(list.boardUrl())
+        Tablero board = boardStore.findByUrl(list.boardUrlValue())
             .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
         ensureBoardAllowsCardMutations(board);
 
@@ -266,26 +270,26 @@ public class TableroUseCaseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Tarjeta> findCardsByListId(java.util.UUID listId) {
+    public List<Tarjeta> findCardsByListId(ListaTableroId listId) {
         Objects.requireNonNull(listId, "El id de lista no puede ser nulo");
         return cardStore.findByListId(listId);
     }
 
     @Transactional(readOnly = true)
-    public Tarjeta getCardById(java.util.UUID cardId) {
+    public Tarjeta getCardById(TarjetaId cardId) {
         Objects.requireNonNull(cardId, "El id de tarjeta no puede ser nulo");
         return cardStore.findById(cardId)
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
     }
 
-    private void ensureOwnerExists(String ownerEmail) {
+    private void ensureOwnerExists(Email ownerEmail) {
         userStore.findByEmail(ownerEmail)
-                .orElseGet(() -> userStore.save(CuentaUsuario.createNew(ownerEmail)));
+                .orElseGet(() -> userStore.save(Usuario.createNew(ownerEmail)));
     }
 
     private void validateCreateBoardRequest(CreateBoardRequest request) {
         Objects.requireNonNull(request, "La solicitud para crear tablero no puede ser nula");
-        validateText(request.ownerEmail(), "El email del duenio es obligatorio");
+        Objects.requireNonNull(request.ownerEmail(), "El email del duenio es obligatorio");
         validateText(request.name(), "El nombre del tablero es obligatorio");
         validateText(request.color(), "El color del tablero es obligatorio");
         validateText(request.description(), "La descripcion del tablero es obligatoria");

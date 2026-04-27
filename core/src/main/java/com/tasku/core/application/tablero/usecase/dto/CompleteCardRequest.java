@@ -1,9 +1,10 @@
 package com.tasku.core.application.tablero.usecase.dto;
 
-import java.util.UUID;
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.TarjetaId;
 
 public record CompleteCardRequest(
-        UUID cardId,
-        String authorEmail
+        TarjetaId cardId,
+        Email authorEmail
 ) {
 }

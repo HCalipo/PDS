@@ -8,16 +8,16 @@ import java.util.Set;
 import java.util.UUID;
 
 public abstract class Tarjeta {
-    private final UUID id;
-    private UUID listId;
+    private final TarjetaId id;
+    private ListaTableroId listId;
     private final TipoTarjeta type;
     private String title;
     private String description;
     private boolean archived;
     private final Set<EtiquetaTarjeta> labels;
 
-    protected Tarjeta(UUID id,
-                   UUID listId,
+    protected Tarjeta(TarjetaId id,
+                   ListaTableroId listId,
                    TipoTarjeta type,
                    String title,
                    String description,
@@ -33,10 +33,18 @@ public abstract class Tarjeta {
     }
 
     public UUID id() {
+        return id.id();
+    }
+
+    public TarjetaId cardIdValue() {
         return id;
     }
 
     public UUID listId() {
+        return listId.id();
+    }
+
+    public ListaTableroId listIdValue() {
         return listId;
     }
 
@@ -68,8 +76,12 @@ public abstract class Tarjeta {
         labels.remove(Objects.requireNonNull(label, "La etiqueta no puede ser nula"));
     }
 
-    public void moveToList(UUID destinationListId) {
+    public void moveToList(ListaTableroId destinationListId) {
         this.listId = Objects.requireNonNull(destinationListId, "La lista destino no puede ser nula");
+    }
+
+    public void moveToList(UUID destinationListId) {
+        moveToList(new ListaTableroId(destinationListId));
     }
 
     public void archive() {

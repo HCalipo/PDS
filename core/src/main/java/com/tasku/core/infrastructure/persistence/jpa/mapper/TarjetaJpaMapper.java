@@ -4,6 +4,8 @@ import com.tasku.core.domain.model.Tarjeta;
 import com.tasku.core.domain.model.EtiquetaTarjeta;
 import com.tasku.core.domain.model.TarjetaChecklist;
 import com.tasku.core.domain.model.ElementoChecklist;
+import com.tasku.core.domain.model.ListaTableroId;
+import com.tasku.core.domain.model.TarjetaId;
 import com.tasku.core.domain.model.TarjetaTarea;
 import com.tasku.core.infrastructure.persistence.jpa.entity.ListaTableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TarjetaJpaEntity;
@@ -46,8 +48,8 @@ public class TarjetaJpaMapper {
         if (entity instanceof TarjetaChecklistJpaEntity checklistEntity) {
             List<ElementoChecklist> items = mapItemsToDomain(checklistEntity.getItems());
             return new TarjetaChecklist(
-                    checklistEntity.getId(),
-                    checklistEntity.getList().getId(),
+                    new TarjetaId(checklistEntity.getId()),
+                    new ListaTableroId(checklistEntity.getList().getId()),
                     checklistEntity.getTitle(),
                     checklistEntity.getDescription(),
                     checklistEntity.isArchived(),
@@ -58,8 +60,8 @@ public class TarjetaJpaMapper {
 
         if (entity instanceof TarjetaTareaJpaEntity tarjetaTareaJpaEntity) {
             return new TarjetaTarea(
-                tarjetaTareaJpaEntity.getId(),
-                tarjetaTareaJpaEntity.getList().getId(),
+                new TarjetaId(tarjetaTareaJpaEntity.getId()),
+                new ListaTableroId(tarjetaTareaJpaEntity.getList().getId()),
                 tarjetaTareaJpaEntity.getTitle(),
                 tarjetaTareaJpaEntity.getDescription(),
                 tarjetaTareaJpaEntity.isArchived(),

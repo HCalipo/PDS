@@ -1,14 +1,18 @@
 package com.tasku.core.application.tablero.usecase.event;
 
+import com.tasku.core.domain.model.Email;
+import com.tasku.core.domain.model.ListaTableroId;
+import com.tasku.core.domain.model.TableroUrl;
+import com.tasku.core.domain.model.TarjetaId;
+
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record TarjetaMovidaEvent(
-        UUID cardId,
-        UUID sourceListId,
-        UUID destinationListId,
-        String boardUrl,
-        String authorEmail,
+        TarjetaId cardId,
+        ListaTableroId sourceListId,
+        ListaTableroId destinationListId,
+        TableroUrl boardUrl,
+        Email authorEmail,
         LocalDateTime movedAt
 ) {
 }

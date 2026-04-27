@@ -1,13 +1,13 @@
 package com.tasku.core.infrastructure.persistence.jpa.adapter;
 
 import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.ListaTableroId;
 import com.tasku.core.domain.board.port.ListaTableroStore;
 import com.tasku.core.infrastructure.persistence.jpa.mapper.TableroJpaMapper;
 import com.tasku.core.infrastructure.persistence.jpa.repository.SpringDataListaTableroRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class JpaListaTableroStoreAdapter implements ListaTableroStore {
@@ -20,8 +20,8 @@ public class JpaListaTableroStoreAdapter implements ListaTableroStore {
     }
 
     @Override
-    public Optional<ListaTablero> findById(UUID listId) {
-        return repository.findById(listId).map(tableroJpaMapper::toDomain);
+    public Optional<ListaTablero> findById(ListaTableroId listId) {
+        return repository.findById(listId.id()).map(tableroJpaMapper::toDomain);
     }
 }
 

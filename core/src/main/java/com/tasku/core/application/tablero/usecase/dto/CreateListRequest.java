@@ -1,7 +1,9 @@
 package com.tasku.core.application.tablero.usecase.dto;
 
+import com.tasku.core.domain.model.TableroUrl;
+
 public record CreateListRequest(
-        String boardUrl,
+        TableroUrl boardUrl,
         String name,
         int cardLimit
 ) {

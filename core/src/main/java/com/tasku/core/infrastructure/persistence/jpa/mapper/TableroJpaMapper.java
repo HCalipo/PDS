@@ -1,9 +1,12 @@
 package com.tasku.core.infrastructure.persistence.jpa.mapper;
 
 import com.tasku.core.domain.model.Tablero;
+import com.tasku.core.domain.model.TableroUrl;
 import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.ListaTableroId;
 import com.tasku.core.domain.model.TableroCompartido;
 import com.tasku.core.domain.model.EstadoTablero;
+import com.tasku.core.domain.model.Email;
 import com.tasku.core.domain.model.RolComparticion;
 import com.tasku.core.infrastructure.persistence.jpa.entity.TableroJpaEntity;
 import com.tasku.core.infrastructure.persistence.jpa.entity.ListaTableroJpaEntity;
@@ -55,8 +58,8 @@ public class TableroJpaMapper {
         List<ListaTablero> lists = new ArrayList<>();
         for (ListaTableroJpaEntity listEntity : entity.getLists()) {
             lists.add(new ListaTablero(
-                    listEntity.getId(),
-                    listEntity.getBoard().getUrl(),
+                    new ListaTableroId(listEntity.getId()),
+                    new TableroUrl(listEntity.getBoard().getUrl()),
                     listEntity.getName(),
                     listEntity.getCardLimit()
             ));
@@ -66,16 +69,16 @@ public class TableroJpaMapper {
         for (TableroCompartidoJpaEntity sharedEntity : entity.getSharedBoards()) {
             shares.add(new TableroCompartido(
                     sharedEntity.getId(),
-                    sharedEntity.getBoard().getUrl(),
-                    sharedEntity.getEmail(),
+                new TableroUrl(sharedEntity.getBoard().getUrl()),
+                new Email(sharedEntity.getEmail()),
                     RolComparticion.valueOf(sharedEntity.getRole())
             ));
         }
 
         return new Tablero(
-                entity.getUrl(),
+            new TableroUrl(entity.getUrl()),
                 entity.getName(),
-                entity.getOwnerEmail(),
+            new Email(entity.getOwnerEmail()),
                 entity.getColor(),
                 entity.getDescription(),
                 EstadoTablero.valueOf(entity.getStatus()),
@@ -86,8 +89,8 @@ public class TableroJpaMapper {
 
     public ListaTablero toDomain(ListaTableroJpaEntity entity) {
         return new ListaTablero(
-                entity.getId(),
-                entity.getBoard().getUrl(),
+                new ListaTableroId(entity.getId()),
+                new TableroUrl(entity.getBoard().getUrl()),
                 entity.getName(),
                 entity.getCardLimit()
         );

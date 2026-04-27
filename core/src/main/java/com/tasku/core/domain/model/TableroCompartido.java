@@ -1,20 +1,22 @@
 package com.tasku.core.domain.model;
 
-import com.tasku.core.domain.board.exception.DomainValidationException;
-
 import java.util.Objects;
 
 public final class TableroCompartido {
     private final Long id;
-    private final String boardUrl;
-    private final String email;
+    private final TableroUrl boardUrl;
+    private final Email email;
     private final RolComparticion role;
 
-    public TableroCompartido(Long id, String boardUrl, String email, RolComparticion role) {
+    public TableroCompartido(Long id, TableroUrl boardUrl, Email email, RolComparticion role) {
         this.id = id;
-        this.boardUrl = validateText(boardUrl, "La url del tablero compartido no puede ser nula ni vacia");
-        this.email = CuentaUsuario.normalizeEmail(email);
+        this.boardUrl = Objects.requireNonNull(boardUrl, "La url del tablero compartido no puede ser nula");
+        this.email = Objects.requireNonNull(email, "El email compartido no puede ser nulo");
         this.role = Objects.requireNonNull(role, "El rol de comparticion no puede ser nulo");
+    }
+
+    public TableroCompartido(Long id, String boardUrl, String email, RolComparticion role) {
+        this(id, new TableroUrl(boardUrl), new Email(email), role);
     }
 
     public Long id() {
@@ -22,10 +24,18 @@ public final class TableroCompartido {
     }
 
     public String boardUrl() {
+        return boardUrl.value();
+    }
+
+    public TableroUrl boardUrlValue() {
         return boardUrl;
     }
 
     public String email() {
+        return email.email();
+    }
+
+    public Email emailValue() {
         return email;
     }
 
@@ -33,12 +43,6 @@ public final class TableroCompartido {
         return role;
     }
 
-    private static String validateText(String value, String message) {
-        if (value == null || value.isBlank()) {
-            throw new DomainValidationException(message);
-        }
-        return value.trim();
-    }
 }
 
 

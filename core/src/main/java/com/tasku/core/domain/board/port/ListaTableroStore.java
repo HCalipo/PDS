@@ -1,12 +1,12 @@
 package com.tasku.core.domain.board.port;
 
 import com.tasku.core.domain.model.ListaTablero;
+import com.tasku.core.domain.model.ListaTableroId;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface ListaTableroStore {
-    Optional<ListaTablero> findById(UUID listId);
+    Optional<ListaTablero> findById(ListaTableroId listId);
 }
 
 
