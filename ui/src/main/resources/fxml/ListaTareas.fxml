@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox styleClass="column" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.tasku.ui.presentation.controllers.ListaTareasController">
+    <HBox alignment="CENTER_LEFT" styleClass="column-header">
+        <Label fx:id="columnTitle" styleClass="column-title" text="Lista" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Label fx:id="taskCounter" styleClass="task-counter" text="0" />
+    </HBox>
+    <VBox fx:id="tasksContainer" styleClass="task-list" VBox.vgrow="ALWAYS">
+        <VBox fx:id="emptyState" alignment="CENTER" styleClass="empty-state">
+            <Label styleClass="empty-title" text="Sin tareas" />
+            <Label styleClass="empty-subtitle" text="Añade una tarea" />
+        </VBox>
+    </VBox>
+</VBox>

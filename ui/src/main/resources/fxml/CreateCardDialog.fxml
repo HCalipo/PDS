@@ -77,12 +77,12 @@
     </Label>
     <TextArea fx:id="descriptionArea" prefRowCount="4" promptText="Describe la tarjeta" wrapText="true" />
 
-    <Label styleClass="template-card-desc" text="Lista destino (UUID)">
+    <Label styleClass="template-card-desc" text="Lista destino">
         <font>
             <Font size="12.0" />
         </font>
     </Label>
-    <TextField fx:id="listIdField" promptText="UUID de la lista donde crear la tarjeta" styleClass="join-input" />
+    <ChoiceBox fx:id="listChoiceBox" maxWidth="1.7976931348623157E308" prefHeight="35.0" styleClass="choice-etiqueta" />
 
     <Label fx:id="lblCardResult" textFill="#d63031" wrapText="true" />
 
