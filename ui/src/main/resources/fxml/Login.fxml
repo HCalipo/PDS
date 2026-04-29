@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f4f7f6;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.LoginController">
+
+   <BorderPane maxHeight="500.0" maxWidth="700.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15;">
+      
+      <effect>
+         <DropShadow blurType="GAUSSIAN" color="#0000001a" height="30.0" radius="14.5" width="30.0" />
+      </effect>
+
+      <left>
+         <VBox alignment="CENTER" prefWidth="300.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+               <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+            </padding>
+            <style>
+               -fx-background-color: linear-gradient(to bottom right, #0ba360, #3cba92);
+               -fx-background-radius: 15 0 0 15;
+            </style>
+
+            <Label text="U" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="64.0" />
+               </font>
+               <style>
+                  -fx-border-color: white;
+                  -fx-border-width: 4px;
+                  -fx-border-radius: 50;
+                  -fx-padding: 0 15 0 15;
+               </style>
+            </Label>
+
+            <Label text="TaskU" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="40.0" />
+               </font>
+            </Label>
+
+            <Label text="Aplicación de organización de tareas" textAlignment="CENTER" textFill="rgba(255,255,255,0.9)" wrapText="true">
+               <font>
+                  <Font name="System Italic" size="14.0" />
+               </font>
+            </Label>
+         </VBox>
+      </left>
+
+      <center>
+         <VBox alignment="CENTER" prefWidth="400.0" spacing="25.0" BorderPane.alignment="CENTER">
+            <padding>
+               <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+
+             <Label styleClass="label-title" text="Inicia Sesión">
+                <font>
+                   <Font name="System Bold" size="28.0" />
+                </font>
+             </Label>
+
+            <GridPane hgap="10.0" vgap="20.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="79.60001220703126" minWidth="10.0" prefWidth="58.799963378906256" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.00003662109378" minWidth="10.0" prefWidth="250.00003662109378" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+               
+                <Label maxWidth="1.7976931348623157E308" styleClass="label-section" text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                      <font>
+                         <Font size="14.0" />
+                      </font>
+                   </Label>
+                   <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+               </children>
+            </GridPane>
+            <GridPane hgap="10.0" vgap="20.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="78.79996337890626" minWidth="10.0" prefWidth="59.599951171875006" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="255.60001220703128" minWidth="10.0" prefWidth="249.20004882812503" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                   <Label maxWidth="1.7976931348623157E308" styleClass="label-section" text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                      <font>
+                         <Font size="14.0" />
+                      </font>
+                   </Label>
+                  <TextField id="texFieldNombre" fx:id="txtNombre" maxWidth="1.7976931348623157E308" prefHeight="41.0" prefWidth="245.0" promptText="Inserte aquí su nombre" style="-fx-border-radius: 20;" styleClass="textfield-login" stylesheets="@styles.css" GridPane.columnIndex="1" />
+               </children>
+            </GridPane>
+
+            <Button fx:id="btnIngresar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="30.0" styleClass="btn-primary" text="Ingresar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <style>
+                  -fx-background-color: #0ba360;
+                  -fx-background-radius: 25;
+                  -fx-cursor: hand;
+               </style>
+               <effect>
+                  <DropShadow color="#0ba36066" radius="5" spread="0.1" />
+               </effect>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+
+            <Label fx:id="lblMensajeError" textFill="#d63031" />
+
+         </VBox>
+      </center>
+   </BorderPane>
+
+</StackPane>
