@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.SVGPath?>
 
 <VBox prefWidth="600.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.AñadirTableroController">
     
@@ -19,24 +17,14 @@
     <children>
         <HBox alignment="CENTER_LEFT">
             <children>
-                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Crear nuevo tablero" />
+                <Label styleClass="label-title" text="Crear nuevo tablero" />
                 <Region HBox.hgrow="ALWAYS" />
-                
-                <Button mnemonicParsing="false" style="-fx-padding: 4;" styleClass="icon-button">
-                    <graphic>
-                        <Group>
-                            <children>
-                                <SVGPath content="M256-200l-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" fill="#64748b" scaleX="0.025" scaleY="0.025" />
-                            </children>
-                        </Group>
-                    </graphic>
-                </Button>
             </children>
         </HBox>
 
         <VBox spacing="12.0">
             <children>
-                <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #475569;" text="SELECCIONA UNA PLANTILLA" />
+                <Label styleClass="label-section" text="SELECCIONA UNA PLANTILLA" />
                 
                 <HBox alignment="CENTER" spacing="24.0">
                     <children>
@@ -70,23 +58,22 @@
 
         <VBox spacing="8.0">
             <children>
-                <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #475569;" text="NOMBRE DEL TABLERO" />
-                <TextField fx:id="boardNameField" prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
+                <Label styleClass="label-section" text="NOMBRE DEL TABLERO" />
+                <TextField fx:id="txtNombreTablero" prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
             </children>
             <VBox.margin>
                 <Insets top="12.0" />
             </VBox.margin>
         </VBox>
 
-        <HBox alignment="CENTER_RIGHT">
+        <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#handleCreateBoard" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear tablero" />
+            <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />
+                <Button mnemonicParsing="false" onAction="#handleCrearTablero" styleClass="btn-primary" text="Crear tablero" />
             </children>
             <VBox.margin>
                 <Insets top="16.0" />
             </VBox.margin>
         </HBox>
-
-        <Label fx:id="lblBoardResult" textFill="#d63031" wrapText="true" />
     </children>
 </VBox>
