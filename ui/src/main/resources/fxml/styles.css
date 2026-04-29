@@ -269,6 +269,12 @@
     -fx-background-radius: 10;
 }
 
+.drop-target {
+    -fx-border-color: #93c5fd;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+}
+
 /* ================= ESTADO VACÍO Y AÑADIR COLUMNA ================= */
 .empty-state {
     -fx-border-color: rgba(203, 213, 225, 0.6);
