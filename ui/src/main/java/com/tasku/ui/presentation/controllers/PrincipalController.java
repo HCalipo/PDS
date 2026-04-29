@@ -309,7 +309,7 @@ public class PrincipalController {
             return;
         }
         SceneManager.getInstance().openDialogAndGetController(
-                "CreateCardDialog",
+                "CreateCard",
             (CrearTarjetaController controller) -> {
                 controller.loadAvailableLists(
                     currentBoardLists,

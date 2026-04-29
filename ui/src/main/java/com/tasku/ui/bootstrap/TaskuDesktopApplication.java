@@ -17,7 +17,7 @@ public class TaskuDesktopApplication extends Application {
         SceneManager.getInstance().setPrimaryStage(stage);
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(
-                getClass().getResource("/fxml/inicioSesion.fxml")));
+                getClass().getResource("/fxml/InicioSesion.fxml")));
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("TaskU");
         stage.setScene(scene);
