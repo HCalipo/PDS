@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="500.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.EditarTarjetaChecklistController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <Label styleClass="label-title" text="Editar Tarjeta Checklist" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnCerrar" onAction="#handleCerrar" styleClass="btn-close" text="✕" />
+    </HBox>
+
+    <Label styleClass="label-section" text="Título" />
+    <TextField fx:id="txtTitulo" styleClass="join-input" />
+
+    <Label styleClass="label-section" text="Elementos del Checklist" />
+    <ScrollPane maxHeight="250.0" styleClass="board-scroll">
+        <VBox fx:id="vboxItems" spacing="8.0">
+            <padding>
+                <Insets bottom="8.0" top="8.0" />
+            </padding>
+        </VBox>
+    </ScrollPane>
+
+    <HBox spacing="8.0">
+        <TextField fx:id="txtNuevoItem" promptText="Nuevo elemento..." styleClass="join-input" HBox.hgrow="ALWAYS" />
+        <Button onAction="#handleAgregarItem" styleClass="btn-add-small" text="+" HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <Region prefHeight="10.0" />
+
+    <HBox alignment="CENTER_RIGHT" spacing="12.0">
+        <Button onAction="#handleEliminar" styleClass="btn-primary-red" text="Eliminar" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#handleCancelar" styleClass="toggle-card-type" text="Cancelar" />
+        <Button onAction="#handleGuardar" styleClass="btn-primary" text="Guardar" />
+    </HBox>
+</VBox>
