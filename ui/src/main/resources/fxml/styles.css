@@ -234,39 +234,6 @@
 
 .task-list {
     -fx-padding: 16;
-    -fx-spacing: 10;
-}
-
-/* ================= TARJETAS ================= */
-.task-card {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 10;
-    -fx-border-color: #e2e8f0;
-    -fx-border-radius: 10;
-    -fx-padding: 10;
-    -fx-spacing: 6;
-}
-
-.task-card-title {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #0f172a;
-}
-
-.task-card-description {
-    -fx-font-size: 12px;
-    -fx-text-fill: #64748b;
-}
-
-.task-card-labels {
-    -fx-spacing: 6;
-}
-
-.task-card-label {
-    -fx-text-fill: white;
-    -fx-font-size: 11px;
-    -fx-padding: 2 6;
-    -fx-background-radius: 10;
 }
 
 /* ================= ESTADO VACÍO Y AÑADIR COLUMNA ================= */
