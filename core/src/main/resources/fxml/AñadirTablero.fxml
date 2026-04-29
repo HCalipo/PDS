@@ -19,8 +19,11 @@
             <children>
                 <Label styleClass="label-title" text="Crear nuevo tablero" />
                 <Region HBox.hgrow="ALWAYS" />
+<<<<<<< Updated upstream:core/src/main/resources/fxml/AñadirTablero.fxml
                 
                 <Button mnemonicParsing="false" styleClass="btn-close" text="✕" />
+=======
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/AñadirTablero.fxml
             </children>
         </HBox>
 

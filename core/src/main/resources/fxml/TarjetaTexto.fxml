@@ -7,7 +7,11 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
+<<<<<<< Updated upstream:core/src/main/resources/fxml/TarjetaTexto.fxml
 <VBox fx:id="cardContainer" maxWidth="300.0" spacing="4.0" styleClass="card-modern" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.TarjetaTextoController">
+=======
+<VBox fx:id="cardContainer" maxWidth="300.0" spacing="4.0" styleClass="card-modern" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.TarjetaTextoController">
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/TarjetaTexto.fxml
     <padding>
         <Insets bottom="12.0" left="14.0" right="14.0" top="12.0" />
     </padding>

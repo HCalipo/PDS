@@ -8,7 +8,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
+<<<<<<< Updated upstream:core/src/main/resources/fxml/Historial.fxml
 <VBox prefWidth="380.0" styleClass="history-panel" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.HistorialController">
+=======
+<VBox prefWidth="420.0" styleClass="history-panel" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.HistorialController">
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/Historial.fxml
     <children>
         <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="history-header">
             <children>
@@ -23,6 +27,10 @@
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
         </HBox>
+<<<<<<< Updated upstream:core/src/main/resources/fxml/Historial.fxml
       <ListView fx:id="listHistorial" prefHeight="200.0" prefWidth="200.0" styleClass="listview-modern" />
+=======
+        <ListView fx:id="listHistorial" styleClass="listview-modern" VBox.vgrow="ALWAYS" />
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/Historial.fxml
     </children>
 </VBox>

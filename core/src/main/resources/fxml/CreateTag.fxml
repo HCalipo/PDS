@@ -11,10 +11,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<<<<<<< Updated upstream:core/src/main/resources/fxml/CreateTag.fxml
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Circle?>
 
 <VBox prefWidth="400.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.CreateTagController">
+=======
+<?import javafx.scene.shape.Circle?>
+
+<VBox prefWidth="400.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CreateTagController">
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/CreateTag.fxml
     <padding>
         <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
     </padding>
@@ -29,12 +35,20 @@
     <!-- Selector de paleta -->
     <Label styleClass="label-section" text="Paleta de colores" />
     <HBox spacing="16.0">
+<<<<<<< Updated upstream:core/src/main/resources/fxml/CreateTag.fxml
         <ToggleButton fx:id="toggleNormal" selected="true" styleClass="toggle-card-type" text="Normal">
+=======
+        <ToggleButton fx:id="toggleNormal" onAction="#handleTogglePaleta" selected="true" styleClass="toggle-card-type" text="Normal">
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/CreateTag.fxml
             <toggleGroup>
                 <ToggleGroup fx:id="paletaGroup" />
             </toggleGroup>
         </ToggleButton>
+<<<<<<< Updated upstream:core/src/main/resources/fxml/CreateTag.fxml
         <ToggleButton styleClass="toggle-card-type" text="Pastel" toggleGroup="$paletaGroup" />
+=======
+        <ToggleButton fx:id="togglePastel" onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Pastel" toggleGroup="$paletaGroup" />
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/CreateTag.fxml
     </HBox>
 
     <!-- Selector de color -->

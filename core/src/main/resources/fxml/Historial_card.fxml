@@ -7,21 +7,21 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<HBox prefHeight="88.0" prefWidth="427.0" spacing="16.0" styleClass="history-card-exact" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<HBox prefHeight="88.0" prefWidth="427.0" spacing="16.0" styleClass="history-card-exact" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.Historial_cardController">
     <children>
-        <Label alignment="CENTER" minHeight="42.0" minWidth="42.0" styleClass="avatar-exact" text="JD" />
+        <Label fx:id="avatarLabel" alignment="CENTER" minHeight="42.0" minWidth="42.0" styleClass="avatar-exact" text="JD" />
 
         <VBox spacing="2.0">
             <children>
                 <TextFlow lineSpacing="2.0">
                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-name" text="Juan Doe " />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-action" text="movió " />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-target" text="Diseño UI" />
+                        <Text fx:id="textNombre" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-name" text="Juan Doe " />
+                        <Text fx:id="textAccion" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-action" text="movió " />
+                        <Text fx:id="textTarget" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-target" text="Diseño UI" />
                     </children>
                 </TextFlow>
 
-                <Label styleClass="text-detail" text="de 'Pendiente' a 'Completado'">
+                <Label fx:id="labelDetalle" styleClass="text-detail" text="de 'Pendiente' a 'Completado'">
                     <VBox.margin>
                         <Insets left="8.0" />
                     </VBox.margin>
@@ -34,7 +34,7 @@
       <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
          <children>
       
-                <Label styleClass="text-timestamp" text="Hoy a las 14:20" />
+                <Label fx:id="labelTimestamp" styleClass="text-timestamp" text="Hoy a las 14:20" />
          </children>
       </VBox>
     </children>

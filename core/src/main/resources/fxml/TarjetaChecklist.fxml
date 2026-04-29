@@ -8,7 +8,11 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
+<<<<<<< Updated upstream:core/src/main/resources/fxml/TarjetaChecklist.fxml
 <VBox fx:id="cardContainer" maxWidth="300.0" spacing="4.0" styleClass="card-modern" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.TarjetaChecklistController">
+=======
+<VBox fx:id="cardContainer" maxWidth="300.0" spacing="4.0" styleClass="card-modern" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.TarjetaChecklistController">
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/TarjetaChecklist.fxml
     <padding>
         <Insets bottom="12.0" left="14.0" right="14.0" top="12.0" />
     </padding>

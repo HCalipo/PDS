@@ -7,7 +7,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<<<<<<< Updated upstream:core/src/main/resources/fxml/AñadirLista.fxml
 <VBox prefWidth="380.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.core.ui.controllers.AñadirListaController">
+=======
+<VBox prefWidth="380.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.AñadirListaController">
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/AñadirLista.fxml
     <padding>
         <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
     </padding>
@@ -24,4 +28,8 @@
         <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />
         <Button onAction="#handleCreate" styleClass="btn-primary" text="Crear" />
     </HBox>
+<<<<<<< Updated upstream:core/src/main/resources/fxml/AñadirLista.fxml
 </VBox>
+=======
+</VBox>
+>>>>>>> Stashed changes:ui/src/main/resources/fxml/AñadirLista.fxml
