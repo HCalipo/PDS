@@ -3,16 +3,18 @@ package com.tasku.ui.presentation.controllers;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
 import com.tasku.ui.client.dto.request.InitialListApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
+import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
-import com.tasku.ui.state.DesktopSessionState;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AñadirTableroController {
 
@@ -33,6 +35,7 @@ public class AñadirTableroController {
 
     private static final String ACTIVE_CLASS = "template-selector-active";
     private final TaskuApiClient apiClient = new TaskuApiClient();
+    private Consumer<BoardApiResponse> onBoardCreated;
 
     @FXML
     private void onTemplateSelected(javafx.scene.input.MouseEvent event) {
@@ -67,13 +70,17 @@ public class AñadirTableroController {
 
     @FXML
     private void handleCreateBoard() {
-        String ownerEmail = DesktopSessionState.getOwnerEmail();
+        String ownerEmail = SceneManager.getInstance().getCurrentUserEmail();
         if (ownerEmail == null || ownerEmail.isBlank()) {
             showError("Primero debes iniciar sesion.");
             return;
         }
 
         String boardName = normalize(boardNameField.getText());
+        if (boardName.isBlank()) {
+            showError("El nombre del tablero es obligatorio.");
+            return;
+        }
 
         CreateBoardApiRequest request = new CreateBoardApiRequest(
                 ownerEmail,
@@ -85,15 +92,24 @@ public class AñadirTableroController {
 
         try {
             BoardApiResponse board = apiClient.createBoard(request);
-            DesktopSessionState.setCurrentBoard(board.url());
+            SceneManager.getInstance().setCurrentBoard(board.url(), board.name());
             if (board.lists() != null && !board.lists().isEmpty()) {
-                DesktopSessionState.setCurrentListId(board.lists().get(0).id());
+                SceneManager.getInstance().setCurrentListId(board.lists().get(0).id());
+            }
+            if (onBoardCreated != null) {
+                onBoardCreated.accept(board);
             }
             showSuccess("Tablero creado correctamente: " + board.url());
             boardNameField.clear();
+            Stage stage = (Stage) boardNameField.getScene().getWindow();
+            stage.close();
         } catch (DesktopApiException ex) {
             showError("No se pudo crear el tablero: " + ex.getMessage());
         }
+    }
+
+    public void setOnBoardCreated(Consumer<BoardApiResponse> onBoardCreated) {
+        this.onBoardCreated = onBoardCreated;
     }
 
     private List<InitialListApiRequest> selectedInitialLists() {

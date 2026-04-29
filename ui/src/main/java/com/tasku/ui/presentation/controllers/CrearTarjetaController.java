@@ -3,10 +3,12 @@ package com.tasku.ui.presentation.controllers;
 import com.tasku.ui.client.dto.TipoTarjeta;
 import com.tasku.ui.client.dto.request.CardLabelApiRequest;
 import com.tasku.ui.client.dto.request.CreateCardApiRequest;
+import com.tasku.ui.client.dto.response.BoardApiResponse;
+import com.tasku.ui.client.dto.response.BoardListApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
+import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
-import com.tasku.ui.state.DesktopSessionState;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -18,18 +20,20 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class CrearTarjetaController {
     @FXML
     private TextField titleField;
 
     @FXML
-    private TextField listIdField;
+    private ChoiceBox<BoardListApiResponse> listChoiceBox;
 
     @FXML
     private TextArea descriptionArea;
@@ -53,16 +57,32 @@ public class CrearTarjetaController {
     private VBox checklistItemsContainer;
 
     private final TaskuApiClient apiClient = new TaskuApiClient();
+    private Consumer<UUID> onCardCreated;
 
     @FXML
     private void initialize() {
         choiceEtiqueta.setItems(FXCollections.observableArrayList("General", "Urgente", "Bloqueada", "Bug"));
         choiceEtiqueta.getSelectionModel().selectFirst();
 
-        UUID currentListId = DesktopSessionState.getCurrentListId();
-        if (currentListId != null) {
-            listIdField.setText(currentListId.toString());
-        }
+        listChoiceBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(BoardListApiResponse list) {
+                return list == null ? "" : list.name();
+            }
+
+            @Override
+            public BoardListApiResponse fromString(String string) {
+                return null;
+            }
+        });
+
+        listChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, old, current) -> {
+            if (current != null) {
+                SceneManager.getInstance().setCurrentListId(current.id());
+            }
+        });
+
+        preloadListsFromContext();
     }
 
     @FXML
@@ -76,7 +96,18 @@ public class CrearTarjetaController {
         String title = normalize(titleField.getText());
         String description = normalize(descriptionArea.getText());
 
-        UUID listId = parseUuidOrNull(normalize(listIdField.getText()));
+        if (title.isBlank()) {
+            showError("El titulo es obligatorio.");
+            return;
+        }
+
+        BoardListApiResponse selectedList = listChoiceBox.getValue();
+        if (selectedList == null) {
+            showError("Selecciona la lista donde crear la tarjeta.");
+            return;
+        }
+
+        UUID listId = selectedList.id();
 
         TipoTarjeta type = toggleTipo.isSelected() ? TipoTarjeta.TAREA : TipoTarjeta.CHECKLIST;
         String selectedLabel = choiceEtiqueta.getValue();
@@ -97,10 +128,13 @@ public class CrearTarjetaController {
 
         try {
             CardApiResponse response = apiClient.createCard(request);
-            DesktopSessionState.setCurrentListId(response.listId());
+            SceneManager.getInstance().setCurrentListId(response.listId());
             showSuccess("Tarjeta creada correctamente: " + response.id());
             clearForm();
-            listIdField.setText(response.listId().toString());
+            selectListById(response.listId());
+            if (onCardCreated != null) {
+                onCardCreated.accept(response.listId());
+            }
         } catch (DesktopApiException ex) {
             showError("No se pudo crear la tarjeta: " + ex.getMessage());
         }
@@ -140,14 +174,51 @@ public class CrearTarjetaController {
         return value == null ? "" : value.trim();
     }
 
-    private static UUID parseUuidOrNull(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
+    private void preloadListsFromContext() {
+        String boardUrl = SceneManager.getInstance().getCurrentBoardUrl();
+        if (boardUrl == null || boardUrl.isBlank()) {
+            return;
         }
         try {
-            return UUID.fromString(value);
-        } catch (IllegalArgumentException ex) {
-            return null;
+            BoardApiResponse board = apiClient.getBoardByUrl(boardUrl);
+            loadAvailableLists(board.lists(), SceneManager.getInstance().getCurrentListId());
+        } catch (DesktopApiException ex) {
+            showError("No se pudieron cargar las listas: " + ex.getMessage());
+        }
+    }
+
+    public void loadAvailableLists(List<BoardListApiResponse> lists, UUID preferredId) {
+        if (lists == null) {
+            listChoiceBox.setItems(FXCollections.observableArrayList());
+            return;
+        }
+        listChoiceBox.setItems(FXCollections.observableArrayList(lists));
+        if (!lists.isEmpty()) {
+            if (preferredId != null) {
+                for (BoardListApiResponse list : lists) {
+                    if (preferredId.equals(list.id())) {
+                        listChoiceBox.getSelectionModel().select(list);
+                        return;
+                    }
+                }
+            }
+            listChoiceBox.getSelectionModel().selectFirst();
+        }
+    }
+
+    public void setOnCardCreated(Consumer<UUID> onCardCreated) {
+        this.onCardCreated = onCardCreated;
+    }
+
+    private void selectListById(UUID listId) {
+        if (listId == null) {
+            return;
+        }
+        for (BoardListApiResponse list : listChoiceBox.getItems()) {
+            if (listId.equals(list.id())) {
+                listChoiceBox.getSelectionModel().select(list);
+                return;
+            }
         }
     }
 
