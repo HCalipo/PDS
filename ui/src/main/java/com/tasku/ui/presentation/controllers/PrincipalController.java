@@ -127,15 +127,6 @@ public class PrincipalController {
             joinBoardMenuItem.getStyleClass().add("menu-action-item");
         }
 
-        MenuItem itemAñadir = new MenuItem("＋ Añadir tablero");
-        itemAñadir.setOnAction(e -> handleAñadirTablero());
-        itemAñadir.getStyleClass().add("menu-action-item");
-        boardMenuButton.getItems().add(itemAñadir);
-
-        MenuItem itemUnirse = new MenuItem("👥 Unirse a tablero");
-        itemUnirse.setOnAction(e -> handleUnirseTablero());
-        itemUnirse.getStyleClass().add("menu-action-item");
-        boardMenuButton.getItems().add(itemUnirse);
     }
 
     private void refreshBoards() {
