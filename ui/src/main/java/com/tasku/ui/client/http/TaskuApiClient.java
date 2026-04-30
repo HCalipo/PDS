@@ -8,7 +8,9 @@ import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
 import com.tasku.ui.client.dto.request.CreateCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateListApiRequest;
+import com.tasku.ui.client.dto.request.LoginUserApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
+import com.tasku.ui.client.dto.request.RegisterUserApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
 
@@ -243,4 +245,33 @@ public class TaskuApiClient {
         if (systemValue != null && !systemValue.isBlank()) return systemValue.strip();
         return DEFAULT_BASE_URL;
     }
+
+
+    public void registerUser(RegisterUserApiRequest payload) {
+        try {
+            String json = objectMapper.writeValueAsString(payload);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/usuarios/registro"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            
+            if (response.statusCode() != 201) {
+                throw new DesktopApiException(extractError(response), response.statusCode());
+            }
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API para el registro.", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud de registro interrumpida.", ex);
+        }
+    }
+
+
+    
 }
