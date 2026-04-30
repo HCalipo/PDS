@@ -31,4 +31,13 @@ public class UsuarioUseCaseService {
         return usuarioStore.save(nuevoUsuario);
     }
 
+    
+    @Transactional(readOnly = true)
+    public Usuario iniciarSesion(String emailStr) {
+            
+        Email emailValidado = new Email(emailStr);
+
+        return usuarioStore.findByEmail(emailValidado)
+                .orElseThrow(() -> new DomainNotFoundException("No existe ninguna cuenta registrada con este correo."));
+    }
 }

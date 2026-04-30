@@ -1,48 +1,72 @@
 package com.tasku.ui.presentation.controllers;
 
 import com.tasku.ui.SceneManager;
+import com.tasku.ui.client.dto.request.LoginUserApiRequest;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
+
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
-import java.util.regex.Pattern;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 
 public class InicioSesionController {
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-    );
+    @FXML
+    private StackPane btnCerrarApp;
 
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtNombre;
-    @FXML private Label lblMensajeError;
+    @FXML
+    private Button btnIniciarSesión;
+
+    @FXML
+    private Label btnRegistrar;
+
+    @FXML
+    private Label lblMensajeError;
+
+    @FXML
+    private TextField txtEmail;
 
     private final TaskuApiClient apiClient = new TaskuApiClient();
 
     @FXML
-    private void iniciarSesion() {
-        String email = normalize(txtEmail.getText());
+    void handleAbrirPanelregistro(MouseEvent event) {
+        SceneManager.getInstance().switchTo("Registro");
+    }
 
-        if (email.isBlank()) {
-            showError("Introduce tu email.");
+    @FXML
+    void handleCerrarApp(MouseEvent event) {
+        Platform.exit();
+        System.exit(0); 
+    }
+
+    @FXML
+    void handleIniciarSesion(ActionEvent event) {
+        
+         
+        String emailStr = normalize(txtEmail.getText());
+
+        if (emailStr.isBlank()) {
+            showError("Por favor, introduce tu email.");
             return;
         }
-
-        if (!EMAIL_PATTERN.matcher(email).matches()) {
-            showError("El email no tiene un formato válido (ej: usuario@dominio.com).");
-            return;
-        }
-
+        
         try {
-            apiClient.findBoardsByOwner(email);
-            SceneManager.getInstance().setCurrentUserEmail(email);
-            SceneManager.getInstance().switchTo("Principal");
+            LoginUserApiRequest request = new LoginUserApiRequest(emailStr);
+            apiClient.loginUser(request);
+
+            SceneManager.getInstance().setCurrentUserEmail(emailStr);
+            SceneManager.getInstance().startMainApp();
+            
         } catch (DesktopApiException ex) {
-            showError("Error al conectar: " + ex.getMessage());
+            showError(ex.getMessage());
         }
     }
+
 
     private static String normalize(String value) {
         return value == null ? "" : value.trim();
@@ -52,4 +76,5 @@ public class InicioSesionController {
         lblMensajeError.setStyle("-fx-text-fill: #d63031;");
         lblMensajeError.setText(message);
     }
+
 }

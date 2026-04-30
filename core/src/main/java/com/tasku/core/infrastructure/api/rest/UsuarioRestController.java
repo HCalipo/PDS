@@ -24,5 +24,9 @@ public class UsuarioRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRegistrado);
     }
 
-    
+    @PostMapping("/login")
+    public ResponseEntity<Usuario> iniciarSesion(@RequestBody LoginUserApiRequest request) {
+        Usuario usuario = usuarioUseCaseService.iniciarSesion(request.email());
+        return ResponseEntity.ok(usuario);
+    }
 }
