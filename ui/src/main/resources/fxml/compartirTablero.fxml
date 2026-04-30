@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="450.0" spacing="16.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CompartirTableroController">
+    
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <children>
+        <HBox alignment="CENTER_LEFT">
+            <children>
+                <Label styleClass="label-title" text="Compartir tablero" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+
+        <VBox spacing="8.0">
+            <children>
+                <Label styleClass="label-section" text="NIVEL DE PERMISOS" />
+                <HBox spacing="10.0">
+                    <children>
+                        <ToggleButton fx:id="toggleLectura" selected="true" styleClass="toggle-card-type" text="Solo lectura">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="permisosGroup" />
+                            </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton styleClass="toggle-card-type" text="Puede editar" toggleGroup="$permisosGroup" />
+                        <ToggleButton styleClass="toggle-card-type" text="Administrador" toggleGroup="$permisosGroup" />
+                    </children>
+                </HBox>
+                <Label styleClass="label-helper" text="Solo lectura: puede ver el tablero. Puede editar: añadir y modificar tarjetas. Administrador: control total." />
+            </children>
+        </VBox>
+
+        <VBox spacing="8.0">
+            <children>
+                <Label styleClass="label-section" text="ENLACE COMPARTIDO" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <TextField fx:id="txtEnlace" editable="false" promptText="Genera un enlace para compartir" styleClass="join-input" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnCopiar" onAction="#handleCopiar" styleClass="btn-add-small" text="Copiar" />
+                    </children>
+                </HBox>
+                <Label styleClass="label-helper" text="Cualquiera con este enlace puede acceder al tablero según el nivel de permisos seleccionado." />
+            </children>
+        </VBox>
+
+        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+            <children>
+                <Button onAction="#handleCancelar" styleClass="toggle-card-type" text="Cancelar" />
+                <Button fx:id="btnGenerar" onAction="#handleGenerarEnlace" styleClass="btn-primary" text="Generar enlace" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
