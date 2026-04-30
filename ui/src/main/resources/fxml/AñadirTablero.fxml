@@ -59,7 +59,7 @@
         <VBox spacing="8.0">
             <children>
                 <Label styleClass="label-section" text="NOMBRE DEL TABLERO" />
-                <TextField fx:id="txtNombreTablero" prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
+                <TextField fx:id="boardNameField" prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
             </children>
             <VBox.margin>
                 <Insets top="12.0" />
@@ -68,8 +68,9 @@
 
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
+            <Label fx:id="lblBoardResult" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />
-                <Button mnemonicParsing="false" onAction="#handleCrearTablero" styleClass="btn-primary" text="Crear tablero" />
+                <Button mnemonicParsing="false" onAction="#handleCreateBoard" styleClass="btn-primary" text="Crear tablero" />
             </children>
             <VBox.margin>
                 <Insets top="16.0" />

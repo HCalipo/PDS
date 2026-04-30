@@ -108,6 +108,12 @@ public class AñadirTableroController {
         }
     }
 
+    @FXML
+    private void handleCancel() {
+        Stage stage = (Stage) boardNameField.getScene().getWindow();
+        stage.close();
+    }
+
     public void setOnBoardCreated(Consumer<BoardApiResponse> onBoardCreated) {
         this.onBoardCreated = onBoardCreated;
     }
