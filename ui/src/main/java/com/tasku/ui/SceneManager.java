@@ -22,6 +22,10 @@ public class SceneManager {
     private String currentBoardName;
     private UUID currentListId;
 
+    private double xOffset = 0;
+    private double yOffset = 0;
+
+
     private SceneManager() {}
 
     public static SceneManager getInstance() {
@@ -69,14 +73,56 @@ public class SceneManager {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/" + fxmlName + ".fxml"));
             Parent root = loader.load();
+            
+            //para el movimiento de las ventanas
+            root.setOnMousePressed(event -> {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            });
+            root.setOnMouseDragged(event -> {
+                primaryStage.setX(event.getScreenX() - xOffset);
+                primaryStage.setY(event.getScreenY() - yOffset);
+            });
+
             Scene current = primaryStage.getScene();
             if (current != null) {
-                current.setRoot(root);
+                current.setRoot(root); 
             } else {
                 primaryStage.setScene(new Scene(root));
             }
         } catch (IOException e) {
             System.err.println("Error al cargar la vista " + fxmlName + ": " + e.getMessage());
+            e.printStackTrace(); 
+        }
+    }
+
+    //funcion para abrir la ventana principal con las cosas de windows y maximizada.
+    public void startMainApp() {
+        try {
+            // 1. Cargar la vista principal
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Principal.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+
+            // 2. Crear un Stage COMPLETAMENTE NUEVO
+            Stage tableroStage = new Stage();
+            tableroStage.setTitle("TaskU");
+            tableroStage.setScene(scene);
+            
+            tableroStage.initStyle(StageStyle.DECORATED);
+            tableroStage.setMaximized(true);
+            tableroStage.show();
+
+    
+            if (primaryStage != null) {
+                primaryStage.close();
+            }
+            //para no cambiar futuras referencias.
+            this.primaryStage = tableroStage;
+
+        } catch (IOException e) {
+            System.err.println("Error al abrir la aplicacion principal: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
