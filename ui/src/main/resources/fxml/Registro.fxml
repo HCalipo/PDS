@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: transparent;" stylesheets="@../../../../../../../../../../../fxml/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.InicioSesionController">
+<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: transparent;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.RegistroController">
 
    <BorderPane maxHeight="500.0" maxWidth="700.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15;">
       
@@ -65,7 +65,7 @@
             <padding>
                <Insets bottom="40.0" left="40.0" right="40.0" />
             </padding>
-            <HBox alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="360.0" VBox.vgrow="NEVER">
+            <HBox alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="360.0">
                <children>
                   <Label prefHeight="10.0" prefWidth="10.0">
                      <graphic>
@@ -87,11 +87,13 @@
                   </Label>
                </children>
                <VBox.margin>
-                  <Insets right="-40.0" top="-110.0" />
+                  <Insets right="-40.0" top="-105.0" />
                </VBox.margin>
             </HBox>
 
-            <Label text="Inicia Sesión" textFill="#2d3436">
+            <Label fx:id="lblMensajeError" textFill="#d63031" />
+
+            <Label text="Registrate" textFill="#2d3436">
                <font>
                   <Font name="System Bold" size="28.0" />
                </font>
@@ -112,7 +114,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" stylesheets="@../../../../../../../../../../../fxml/styles.css" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" stylesheets="@styles.css" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <style>
                         -fx-background-color: #fafbfc;
                         -fx-background-radius: 20;
@@ -124,7 +126,7 @@
                </children>
             </GridPane>
 
-            <Button fx:id="btnIniciarSesión" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleIniciarSesion" prefHeight="30.0" styleClass="btn-primary" text="Ingresar" textFill="WHITE">
+            <Button fx:id="btnRegistrar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegistroEInicioSesion" prefHeight="30.0" styleClass="btn-primary" text="Registrar e iniciar sesión" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -140,13 +142,11 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Button>
-            <Label fx:id="btnRegistrar" onMouseClicked="#handleAbrirPanelregistro" text="¿No tienes cuenta? Registrate">
+            <Label fx:id="btnInicioSesion" onMouseClicked="#handleAbrirPanelInicioSesion" text="¿Ya tienes cuenta? Inicia sesión">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-
-            <Label fx:id="lblMensajeError" textFill="#d63031" />
 
          </VBox>
       </center>
