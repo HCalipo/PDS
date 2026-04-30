@@ -91,8 +91,6 @@
                </VBox.margin>
             </HBox>
 
-            <Label fx:id="lblMensajeError" textFill="#d63031" />
-
             <Label text="Registrate" textFill="#2d3436">
                <font>
                   <Font name="System Bold" size="28.0" />
@@ -142,11 +140,13 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Button>
-            <Label fx:id="btnInicioSesion" onMouseClicked="#handleAbrirPanelInicioSesion" text="¿Ya tienes cuenta? Inicia sesión">
+            <Label fx:id="btnInicioSesion" onMouseClicked="#handleAbrirPanelInicioSesion" styleClass="textoBoton" stylesheets="@styles.css" text="¿Ya tienes cuenta? Inicia sesión">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
+
+            <Label fx:id="lblMensajeError" textFill="#d63031" />
 
          </VBox>
       </center>
