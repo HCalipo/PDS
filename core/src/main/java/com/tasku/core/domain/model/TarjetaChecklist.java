@@ -1,5 +1,7 @@
 package com.tasku.core.domain.model;
 
+import com.tasku.core.domain.board.exception.DomainValidationException;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +40,18 @@ public final class TarjetaChecklist extends Tarjeta {
     }
 
     public List<ElementoChecklist> items() {
+        return List.copyOf(items);
+    }
+
+    public void toggleItem(int index, boolean completed) {
+        if (index < 0 || index >= items.size()) {
+            throw new DomainValidationException("Índice de item de checklist fuera de rango: " + index);
+        }
+        items.set(index, items.get(index).withCompleted(completed));
+    }
+
+    @Override
+    public List<ElementoChecklist> checklistItems() {
         return List.copyOf(items);
     }
 }

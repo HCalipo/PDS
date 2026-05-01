@@ -3,6 +3,7 @@ package com.tasku.core.domain.model;
 import com.tasku.core.domain.board.exception.DomainValidationException;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -66,6 +67,10 @@ public abstract class Tarjeta {
 
     public Set<EtiquetaTarjeta> labels() {
         return Set.copyOf(labels);
+    }
+
+    public List<ElementoChecklist> checklistItems() {
+        return List.of();
     }
 
     public void addLabel(EtiquetaTarjeta label) {

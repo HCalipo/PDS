@@ -9,6 +9,10 @@ public record ElementoChecklist(String description, boolean completed) {
         }
         description = description.trim();
     }
+
+    public ElementoChecklist withCompleted(boolean completed) {
+        return new ElementoChecklist(this.description, completed);
+    }
 }
 
 

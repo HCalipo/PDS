@@ -4,6 +4,7 @@ import com.tasku.core.application.tablero.usecase.dto.AssignCardLabelRequest;
 import com.tasku.core.application.tablero.usecase.dto.CompleteCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.MoveCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.ToggleChecklistItemRequest;
 import com.tasku.core.domain.model.ElementoChecklist;
 import com.tasku.core.domain.model.Email;
 import com.tasku.core.domain.model.EtiquetaTarjeta;
@@ -15,6 +16,7 @@ import com.tasku.core.infrastructure.api.rest.request.ChecklistItemApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CompleteCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CreateCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.MoveCardApiRequest;
+import com.tasku.core.infrastructure.api.rest.request.ToggleChecklistItemApiRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashSet;
@@ -55,6 +57,14 @@ public class CardRequestMapper {
                 new TarjetaId(request.cardId()),
                 request.labelName(),
                 request.colorHex()
+        );
+    }
+
+    public ToggleChecklistItemRequest toToggleChecklistItemRequest(ToggleChecklistItemApiRequest request) {
+        return new ToggleChecklistItemRequest(
+                new TarjetaId(request.cardId()),
+                request.itemIndex(),
+                request.completed()
         );
     }
 

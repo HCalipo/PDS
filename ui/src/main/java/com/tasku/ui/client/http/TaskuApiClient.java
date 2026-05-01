@@ -11,6 +11,7 @@ import com.tasku.ui.client.dto.request.CreateListApiRequest;
 import com.tasku.ui.client.dto.request.LoginUserApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
 import com.tasku.ui.client.dto.request.RegisterUserApiRequest;
+import com.tasku.ui.client.dto.request.ToggleChecklistItemApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
 
@@ -215,6 +216,29 @@ public class TaskuApiClient {
             if (response.statusCode() != 200 && response.statusCode() != 204) {
                 throw new DesktopApiException(extractError(response), response.statusCode());
             }
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public CardApiResponse toggleChecklistItem(ToggleChecklistItemApiRequest payload) {
+        try {
+            String json = objectMapper.writeValueAsString(payload);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/cards/checklist/toggle"))
+                    .header("Content-Type", "application/json")
+                    .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), CardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
         } catch (DesktopApiException ex) {
             throw ex;
         } catch (IOException ex) {

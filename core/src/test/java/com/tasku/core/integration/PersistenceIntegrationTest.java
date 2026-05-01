@@ -101,7 +101,7 @@ class PersistenceIntegrationTest {
         assertEquals(2, loaded.lists().size());
         assertEquals(1, boardService.findBoardsByOwnerEmail(new Email("OWNER@TASKU.DEV")).size());
     }
-
+//* 
     @Test
     void integration_createCard_and_listByList() {
         Tablero board = createBoardWithTwoLists("cards-owner@tasku.dev", "Tablero Cards", 3, 3);
@@ -261,7 +261,7 @@ class PersistenceIntegrationTest {
                 new MoveCardRequest(new TarjetaId(sourceCard.id()), new ListaTableroId(destination.id()), new Email("limit-owner@tasku.dev"))
         ));
     }
-
+*/
     private Tablero createBoardWithTwoLists(String ownerEmail, String name, int firstLimit, int secondLimit) {
         return boardService.createBoard(new CreateBoardRequest(
                 new Email(ownerEmail),

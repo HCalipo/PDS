@@ -6,7 +6,6 @@ import com.tasku.core.domain.model.ListaTablero;
 import com.tasku.core.domain.model.Tablero;
 import com.tasku.core.domain.model.TableroCompartido;
 import com.tasku.core.domain.model.Tarjeta;
-import com.tasku.core.domain.model.TarjetaChecklist;
 import com.tasku.core.domain.model.TrazaActividad;
 import com.tasku.core.infrastructure.api.rest.response.BoardApiResponse;
 import com.tasku.core.infrastructure.api.rest.response.BoardListApiResponse;
@@ -49,12 +48,9 @@ public class ApiRestMapper {
                 .map(this::toCardLabelResponse)
                 .collect(java.util.stream.Collectors.toSet());
 
-        List<ChecklistItemApiResponse> checklistItems = List.of();
-        if (card instanceof TarjetaChecklist checklistCard) {
-            checklistItems = checklistCard.items().stream()
-                    .map(this::toChecklistItemResponse)
-                    .toList();
-        }
+        List<ChecklistItemApiResponse> checklistItems = card.checklistItems().stream()
+                .map(this::toChecklistItemResponse)
+                .toList();
 
         return new CardApiResponse(
                 card.id(),
