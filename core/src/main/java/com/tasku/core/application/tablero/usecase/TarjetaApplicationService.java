@@ -5,6 +5,7 @@ import com.tasku.core.application.tablero.usecase.dto.CompleteCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.MoveCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.ToggleChecklistItemRequest;
+import com.tasku.core.application.tablero.usecase.event.TarjetaCreadaEvent;
 import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
 import com.tasku.core.domain.board.exception.DomainConflictException;
 import com.tasku.core.domain.board.exception.DomainForbiddenException;
@@ -80,7 +81,19 @@ public class TarjetaApplicationService {
             );
         }
 
-        return cardStore.save(card);
+        Tarjeta saved = cardStore.save(card);
+
+        if (request.authorEmail() != null) {
+            eventPublisher.publishEvent(new TarjetaCreadaEvent(
+                    saved.cardIdValue(),
+                    list.listIdValue(),
+                    list.boardUrlValue(),
+                    request.authorEmail(),
+                    LocalDateTime.now()
+            ));
+        }
+
+        return saved;
     }
 
     @Transactional

@@ -146,13 +146,15 @@ public class CrearTarjetaController {
             }
         }
 
+        String authorEmail = SceneManager.getInstance().getCurrentUserEmail();
         CreateCardApiRequest request = new CreateCardApiRequest(
                 listId,
                 type,
                 title,
                 description,
                 labels,
-                checklistItems
+                checklistItems,
+                authorEmail
         );
 
         try {

@@ -1,5 +1,6 @@
 package com.tasku.core.application.tablero.usecase.dto;
 
+import com.tasku.core.domain.model.Email;
 import com.tasku.core.domain.model.EtiquetaTarjeta;
 import com.tasku.core.domain.model.TipoTarjeta;
 import com.tasku.core.domain.model.ElementoChecklist;
@@ -14,7 +15,8 @@ public record CreateCardRequest(
         String title,
         String description,
         Set<EtiquetaTarjeta> labels,
-        List<ElementoChecklist> checklistItems
+        List<ElementoChecklist> checklistItems,
+        Email authorEmail
 ) {
 }
 

@@ -2,19 +2,19 @@ package com.tasku.core.infrastructure.events;
 
 import com.tasku.core.application.tablero.usecase.TrazaActividadUseCaseService;
 import com.tasku.core.application.tablero.usecase.dto.RegisterTraceRequest;
-import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
+import com.tasku.core.application.tablero.usecase.event.TarjetaCreadaEvent;
 import com.tasku.core.domain.board.port.ListaTableroStore;
 import com.tasku.core.domain.board.port.TarjetaStore;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TarjetaMovidaTrazaListener {
+public class TarjetaCreadaTrazaListener {
     private final TrazaActividadUseCaseService trazaService;
     private final ListaTableroStore listStore;
     private final TarjetaStore cardStore;
 
-    public TarjetaMovidaTrazaListener(TrazaActividadUseCaseService trazaService,
+    public TarjetaCreadaTrazaListener(TrazaActividadUseCaseService trazaService,
                                       ListaTableroStore listStore,
                                       TarjetaStore cardStore) {
         this.trazaService = trazaService;
@@ -23,23 +23,20 @@ public class TarjetaMovidaTrazaListener {
     }
 
     @EventListener
-    public void onCardMoved(TarjetaMovidaEvent event) {
+    public void onCardCreated(TarjetaCreadaEvent event) {
         String cardTitle = cardStore.findById(event.cardId())
                 .map(c -> c.title())
                 .orElse("una tarjeta");
-        String srcName = listStore.findById(event.sourceListId())
-                .map(l -> l.name())
-                .orElse("lista desconocida");
-        String dstName = listStore.findById(event.destinationListId())
+        String listName = listStore.findById(event.listId())
                 .map(l -> l.name())
                 .orElse("lista desconocida");
 
-        String description = "Tarjeta '" + cardTitle + "' movida de '" + srcName + "' a '" + dstName + "'";
+        String description = "Tarjeta '" + cardTitle + "' creada en la lista '" + listName + "'";
         trazaService.registerTrace(new RegisterTraceRequest(
                 event.boardUrl(),
                 event.authorEmail(),
                 description,
-                event.movedAt()
+                event.createdAt()
         ));
     }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
 import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
@@ -15,6 +17,7 @@ import com.tasku.ui.client.dto.request.RegisterUserApiRequest;
 import com.tasku.ui.client.dto.request.ToggleChecklistItemApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
+import com.tasku.ui.client.dto.response.TraceApiResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -42,6 +45,8 @@ public class TaskuApiClient {
         this.baseUrl = baseUrl;
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
@@ -316,6 +321,28 @@ public class TaskuApiClient {
         return DEFAULT_BASE_URL;
     }
 
+
+    public List<TraceApiResponse> getTraces(String boardUrl) {
+        String encoded = URLEncoder.encode(boardUrl, StandardCharsets.UTF_8);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/api/traces?boardUrl=" + encoded))
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), new TypeReference<>() {});
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API.", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
 
     public void registerUser(RegisterUserApiRequest payload) {
         try {

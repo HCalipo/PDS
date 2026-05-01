@@ -15,7 +15,8 @@ public record CreateCardApiRequest(
         @NotBlank String title,
         @NotBlank String description,
         Set<@Valid CardLabelApiRequest> labels,
-        List<@Valid ChecklistItemApiRequest> checklistItems
+        List<@Valid ChecklistItemApiRequest> checklistItems,
+        String authorEmail
 ) {
 }
 

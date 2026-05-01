@@ -27,13 +27,17 @@ import java.util.Set;
 public class CardRequestMapper {
 
     public CreateCardRequest toCreateCardRequest(CreateCardApiRequest request) {
+        Email author = (request.authorEmail() != null && !request.authorEmail().isBlank())
+                ? new Email(request.authorEmail())
+                : null;
         return new CreateCardRequest(
                 new ListaTableroId(request.listId()),
                 request.type(),
                 request.title(),
                 request.description(),
                 toLabelSet(request.labels()),
-                toChecklistItems(request.checklistItems())
+                toChecklistItems(request.checklistItems()),
+                author
         );
     }
 
