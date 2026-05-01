@@ -27,13 +27,16 @@
 
     <!-- Selector de paleta -->
     <Label styleClass="label-section" text="Paleta de colores" />
-    <HBox spacing="16.0">
-        <ToggleButton fx:id="toggleNormal" onAction="#handleTogglePaleta" selected="true" styleClass="toggle-card-type" text="Normal">
+    <HBox spacing="8.0">
+        <ToggleButton onAction="#handleTogglePaleta" selected="true" styleClass="toggle-card-type" text="Normal">
             <toggleGroup>
                 <ToggleGroup fx:id="paletaGroup" />
             </toggleGroup>
         </ToggleButton>
-        <ToggleButton fx:id="togglePastel" onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Pastel" toggleGroup="$paletaGroup" />
+        <ToggleButton onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Pastel" toggleGroup="$paletaGroup" />
+        <ToggleButton onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Neón" toggleGroup="$paletaGroup" />
+        <ToggleButton onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Tierra" toggleGroup="$paletaGroup" />
+        <ToggleButton onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Oscuro" toggleGroup="$paletaGroup" />
     </HBox>
 
     <!-- Selector de color -->

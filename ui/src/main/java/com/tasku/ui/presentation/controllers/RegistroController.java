@@ -61,6 +61,7 @@ public class RegistroController {
             //si no da error significa que se ha registrado entonces puede inciar sesión 
             // y da paso a la vista principal con el email que acaba de registrar.
             SceneManager.getInstance().setCurrentUserEmail(emailStr);
+            SceneManager.getInstance().setNewUser(true);
             SceneManager.getInstance().startMainApp();
 
         } catch (DesktopApiException ex) {

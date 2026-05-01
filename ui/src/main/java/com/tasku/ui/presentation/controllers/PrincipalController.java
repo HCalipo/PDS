@@ -10,6 +10,7 @@ import com.tasku.ui.client.dto.response.BoardListApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -47,6 +48,9 @@ public class PrincipalController {
     @FXML
     private void initialize() {
         refreshBoards();
+        if (SceneManager.getInstance().consumeNewUser()) {
+            Platform.runLater(this::handleAñadirTablero);
+        }
     }
 
     @FXML
@@ -204,6 +208,7 @@ public class PrincipalController {
             controller.setTitulo(list.name());
             controller.setListId(list.id());
             controller.setOnCardDropped(this::handleCardDropped);
+            controller.setOnCreateCard(this::handleCrearTarea);
             listControllers.put(list.id(), controller);
             int indice = boardContainer.getChildren().size() - 1;
             boardContainer.getChildren().add(indice, nuevaColumna);

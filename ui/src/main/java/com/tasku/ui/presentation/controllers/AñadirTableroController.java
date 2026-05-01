@@ -120,19 +120,22 @@ public class AñadirTableroController {
 
     private List<InitialListApiRequest> selectedInitialLists() {
         if (template1.getStyleClass().contains(ACTIVE_CLASS)) {
+            // Kanban: flujo de trabajo con columna de bloqueo
             return List.of(
                     new InitialListApiRequest("Pendientes", 80),
                     new InitialListApiRequest("En progreso", 40),
-                    new InitialListApiRequest("Completado", 80)
+                    new InitialListApiRequest("Bloqueado", 80)
             );
         }
         if (template2.getStyleClass().contains(ACTIVE_CLASS)) {
+            // Scrum: backlog → sprint activo → revisión QA
             return List.of(
+                    new InitialListApiRequest("Backlog", 60),
                     new InitialListApiRequest("Sprint", 50),
-                    new InitialListApiRequest("QA", 50),
-                    new InitialListApiRequest("Done", 50)
+                    new InitialListApiRequest("QA", 50)
             );
         }
+        // En blanco
         return List.of(new InitialListApiRequest("General", 100));
     }
 

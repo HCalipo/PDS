@@ -11,19 +11,23 @@
    <children>
       <HBox alignment="CENTER_LEFT" styleClass="column-header">
          <children>
-            <Label fx:id="nombreLista" styleClass="column-title, text-done" text="NOMBRE" />
+            <Label fx:id="columnTitle" styleClass="column-title, text-done" text="NOMBRE" />
             <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="ContadorTareas" styleClass="task-counter" text="0" />
+            <Label fx:id="taskCounter" styleClass="task-counter" text="0" />
          </children>
       </HBox>
-      <VBox fx:id="listaTarjetasTarea" styleClass="task-list" VBox.vgrow="ALWAYS">
+      <VBox fx:id="tasksContainer" styleClass="task-list" VBox.vgrow="ALWAYS">
          <children>
-            <Button fx:id="nuevaTarea" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCrearTarea" text="Pulsa aquí para crear una nueva tarea &#10;O &#10;Arrastra para moverla" textAlignment="CENTER">
-               <styleClass>
-                  <String fx:value="empty-state" />
-                  <String fx:value="empty-subtitle" />
-               </styleClass>
-            </Button>
+            <VBox fx:id="emptyState">
+               <children>
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCrearTarea" text="Pulsa aquí para crear una nueva tarea &#10;O &#10;Arrastra para moverla" textAlignment="CENTER">
+                     <styleClass>
+                        <String fx:value="empty-state" />
+                        <String fx:value="empty-subtitle" />
+                     </styleClass>
+                  </Button>
+               </children>
+            </VBox>
          </children>
       </VBox>
    </children>

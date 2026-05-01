@@ -1,10 +1,18 @@
 package com.tasku.ui.presentation.controllers;
 
+import com.tasku.ui.SceneManager;
+import com.tasku.ui.client.dto.TipoTarjeta;
+import com.tasku.ui.client.dto.request.ToggleChecklistItemApiRequest;
 import com.tasku.ui.client.dto.response.CardApiResponse;
 import com.tasku.ui.client.dto.response.CardLabelApiResponse;
+import com.tasku.ui.client.dto.response.ChecklistItemApiResponse;
+import com.tasku.ui.client.http.DesktopApiException;
+import com.tasku.ui.client.http.TaskuApiClient;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -34,6 +42,8 @@ public class ListaTareasController {
     private UUID listId;
     private final Map<UUID, CardApiResponse> cardsById = new LinkedHashMap<>();
     private CardDropHandler onCardDropped;
+    private Runnable onCreateCard;
+    private final TaskuApiClient apiClient = new TaskuApiClient();
 
     public void setTitulo(String nombre) {
         if (columnTitle != null) {
@@ -52,6 +62,20 @@ public class ListaTareasController {
 
     public void setOnCardDropped(CardDropHandler onCardDropped) {
         this.onCardDropped = onCardDropped;
+    }
+
+    public void setOnCreateCard(Runnable onCreateCard) {
+        this.onCreateCard = onCreateCard;
+    }
+
+    @FXML
+    private void handleCrearTarea() {
+        if (listId != null) {
+            SceneManager.getInstance().setCurrentListId(listId);
+        }
+        if (onCreateCard != null) {
+            onCreateCard.run();
+        }
     }
 
     public void updateCards(List<CardApiResponse> cards) {
@@ -117,31 +141,33 @@ public class ListaTareasController {
         cardBox.getStyleClass().add("task-card");
         cardBox.setUserData(card.id());
 
-        Label title = new Label(safe(card.title()));
-        title.getStyleClass().add("task-card-title");
-        cardBox.getChildren().add(title);
-
-        String descriptionValue = safe(card.description());
-        if (!descriptionValue.isBlank()) {
-            Label description = new Label(descriptionValue);
-            description.setWrapText(true);
-            description.getStyleClass().add("task-card-description");
-            cardBox.getChildren().add(description);
+        String accentColor = firstLabelColor(card);
+        if (!accentColor.isBlank()) {
+            cardBox.setStyle("-fx-border-color: " + accentColor + "; -fx-border-width: 2;");
         }
 
+        // 1. Título
+        Label title = new Label(safe(card.title()));
+        title.getStyleClass().add("task-card-title");
+        title.setMaxWidth(Double.MAX_VALUE);
+        title.setAlignment(javafx.geometry.Pos.CENTER);
+        title.setWrapText(true);
+        title.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        cardBox.getChildren().add(title);
+
+        // 2. Nombre de etiqueta(s)
         if (card.labels() != null && !card.labels().isEmpty()) {
             HBox labelsBox = new HBox();
+            labelsBox.setAlignment(javafx.geometry.Pos.CENTER);
             labelsBox.getStyleClass().add("task-card-labels");
             for (CardLabelApiResponse label : card.labels()) {
                 String labelName = safe(label.name());
-                if (labelName.isBlank()) {
-                    continue;
-                }
+                if (labelName.isBlank()) continue;
                 Label chip = new Label(labelName);
                 chip.getStyleClass().add("task-card-label");
                 String color = safe(label.colorHex());
                 if (!color.isBlank()) {
-                    chip.setStyle("-fx-background-color: " + color + ";");
+                    chip.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white;");
                 }
                 labelsBox.getChildren().add(chip);
             }
@@ -150,7 +176,79 @@ public class ListaTareasController {
             }
         }
 
+        // 3. Checklist items
+        if (card.type() == TipoTarjeta.CHECKLIST
+                && card.checklistItems() != null
+                && !card.checklistItems().isEmpty()) {
+
+            long done = card.checklistItems().stream()
+                    .filter(ChecklistItemApiResponse::completed).count();
+            int total = card.checklistItems().size();
+
+            Label progress = new Label(done + " / " + total);
+            progress.getStyleClass().add("checklist-progress");
+            cardBox.getChildren().add(progress);
+
+            ProgressBar progressBar = new ProgressBar(total > 0 ? (double) done / total : 0);
+            progressBar.setMaxWidth(Double.MAX_VALUE);
+            progressBar.getStyleClass().add("progress-bar-mini");
+            cardBox.getChildren().add(progressBar);
+
+            VBox checklistBox = new VBox(4);
+            checklistBox.getStyleClass().add("checklist-items");
+            List<ChecklistItemApiResponse> items = card.checklistItems();
+            for (int i = 0; i < items.size(); i++) {
+                final int idx = i;
+                CheckBox cb = new CheckBox(safe(items.get(i).description()));
+                cb.setSelected(items.get(i).completed());
+                cb.setOnAction(e -> {
+                    cb.setDisable(true);
+                    try {
+                        CardApiResponse updated = apiClient.toggleChecklistItem(
+                                new ToggleChecklistItemApiRequest(card.id(), idx, cb.isSelected()));
+                        refreshCardNode(updated);
+                    } catch (DesktopApiException ex) {
+                        cb.setSelected(!cb.isSelected());
+                        cb.setDisable(false);
+                    }
+                });
+                checklistBox.getChildren().add(cb);
+            }
+            cardBox.getChildren().add(checklistBox);
+        }
+
+        // 4. Descripción
+        String descriptionValue = safe(card.description());
+        if (!descriptionValue.isBlank()) {
+            Label description = new Label(descriptionValue);
+            description.setWrapText(true);
+            description.getStyleClass().add("task-card-description");
+            cardBox.getChildren().add(description);
+        }
+
         return cardBox;
+    }
+
+    private void refreshCardNode(CardApiResponse updatedCard) {
+        cardsById.put(updatedCard.id(), updatedCard);
+        for (int i = 0; i < tasksContainer.getChildren().size(); i++) {
+            Node child = tasksContainer.getChildren().get(i);
+            if (updatedCard.id().equals(child.getUserData())) {
+                Node newNode = buildCardNode(updatedCard);
+                setupCardDrag(newNode, updatedCard);
+                tasksContainer.getChildren().set(i, newNode);
+                return;
+            }
+        }
+    }
+
+    private String firstLabelColor(CardApiResponse card) {
+        if (card.labels() == null) return "";
+        for (CardLabelApiResponse label : card.labels()) {
+            String color = safe(label.colorHex());
+            if (!color.isBlank()) return color;
+        }
+        return "";
     }
 
     private void setupDropTargets() {

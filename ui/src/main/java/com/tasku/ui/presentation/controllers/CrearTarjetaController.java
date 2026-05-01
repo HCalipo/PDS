@@ -2,6 +2,7 @@ package com.tasku.ui.presentation.controllers;
 
 import com.tasku.ui.client.dto.TipoTarjeta;
 import com.tasku.ui.client.dto.request.CardLabelApiRequest;
+import com.tasku.ui.client.dto.request.ChecklistItemApiRequest;
 import com.tasku.ui.client.dto.request.CreateCardApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.BoardListApiResponse;
@@ -11,19 +12,26 @@ import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -51,17 +59,26 @@ public class CrearTarjetaController {
     private Label lblCardResult;
 
     @FXML
-    private VBox checklistPanel;
+    private VBox tareasPanel;
 
     @FXML
-    private VBox checklistItemsContainer;
+    private VBox taskListContainer;
+
+    @FXML
+    private TextField taskInputField;
 
     private final TaskuApiClient apiClient = new TaskuApiClient();
     private Consumer<UUID> onCardCreated;
+    private final Map<String, String> labelColors = new LinkedHashMap<>();
+    private final List<String> tasks = new ArrayList<>();
 
     @FXML
     private void initialize() {
-        choiceEtiqueta.setItems(FXCollections.observableArrayList("General", "Urgente", "Bloqueada", "Bug"));
+        labelColors.put("General",  "#0ea5e9");
+        labelColors.put("Urgente",  "#dc2626");
+        labelColors.put("Bloqueada","#f97316");
+        labelColors.put("Bug",      "#9333ea");
+        choiceEtiqueta.setItems(FXCollections.observableArrayList(labelColors.keySet()));
         choiceEtiqueta.getSelectionModel().selectFirst();
 
         listChoiceBox.setConverter(new StringConverter<>() {
@@ -82,13 +99,18 @@ public class CrearTarjetaController {
             }
         });
 
+        tipoCardGroup.selectedToggleProperty().addListener((obs, old, newVal) -> {
+            boolean isChecklist = newVal != null && newVal != toggleTipo;
+            tareasPanel.setVisible(isChecklist);
+            tareasPanel.setManaged(isChecklist);
+        });
+
         preloadListsFromContext();
     }
 
     @FXML
     private void handleCancel() {
-        clearForm();
-        lblCardResult.setText("");
+        closeDialog();
     }
 
     @FXML
@@ -114,7 +136,14 @@ public class CrearTarjetaController {
 
         Set<CardLabelApiRequest> labels = new LinkedHashSet<>();
         if (selectedLabel != null && !selectedLabel.isBlank()) {
-            labels.add(new CardLabelApiRequest(selectedLabel, mapColorForLabel(selectedLabel)));
+            labels.add(new CardLabelApiRequest(selectedLabel, labelColors.getOrDefault(selectedLabel, "#0ea5e9")));
+        }
+
+        List<ChecklistItemApiRequest> checklistItems = new ArrayList<>();
+        if (type == TipoTarjeta.CHECKLIST) {
+            for (String task : tasks) {
+                checklistItems.add(new ChecklistItemApiRequest(task, false));
+            }
         }
 
         CreateCardApiRequest request = new CreateCardApiRequest(
@@ -123,48 +152,71 @@ public class CrearTarjetaController {
                 title,
                 description,
                 labels,
-                List.of()
+                checklistItems
         );
 
         try {
             CardApiResponse response = apiClient.createCard(request);
             SceneManager.getInstance().setCurrentListId(response.listId());
-            showSuccess("Tarjeta creada correctamente: " + response.id());
-            clearForm();
-            selectListById(response.listId());
             if (onCardCreated != null) {
                 onCardCreated.accept(response.listId());
             }
+            closeDialog();
         } catch (DesktopApiException ex) {
             showError("No se pudo crear la tarjeta: " + ex.getMessage());
         }
     }
 
     @FXML
-    private void handleAddChecklistItem() {
-        showInfo("El alta de items de checklist se hace por API en un paso posterior.");
+    private void handleAddTask() {
+        String task = taskInputField.getText().trim();
+        if (task.isBlank()) return;
+        tasks.add(task);
+        taskInputField.clear();
+        refreshTaskList();
+    }
+
+    private void refreshTaskList() {
+        taskListContainer.getChildren().clear();
+        for (String task : new ArrayList<>(tasks)) {
+            HBox row = new HBox(8);
+            row.setAlignment(Pos.CENTER_LEFT);
+            Label lbl = new Label(task);
+            lbl.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(lbl, Priority.ALWAYS);
+            Button btnRemove = new Button("×");
+            btnRemove.getStyleClass().add("btn-add-small");
+            btnRemove.setOnAction(e -> {
+                tasks.remove(task);
+                refreshTaskList();
+            });
+            row.getChildren().addAll(lbl, btnRemove);
+            taskListContainer.getChildren().add(row);
+        }
     }
 
     @FXML
     private void handleNuevaEtiqueta() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Nueva etiqueta");
-        dialog.setHeaderText("Crear etiqueta local para esta tarjeta");
-        dialog.setContentText("Nombre:");
-        dialog.showAndWait().ifPresent(value -> {
-            String normalized = normalize(value);
-            if (!normalized.isBlank()) {
-                if (!choiceEtiqueta.getItems().contains(normalized)) {
-                    choiceEtiqueta.getItems().add(normalized);
-                }
-                choiceEtiqueta.setValue(normalized);
-            }
-        });
+        CreateTagController tagController = SceneManager.getInstance()
+                .openDialogAndGetController("CreateTag", null);
+        if (tagController == null || tagController.getResultName() == null) {
+            return;
+        }
+        String name  = tagController.getResultName();
+        String color = tagController.getResultColor();
+        labelColors.put(name, color);
+        if (!choiceEtiqueta.getItems().contains(name)) {
+            choiceEtiqueta.getItems().add(name);
+        }
+        choiceEtiqueta.setValue(name);
     }
 
     private void clearForm() {
         titleField.clear();
         descriptionArea.clear();
+        tasks.clear();
+        taskListContainer.getChildren().clear();
+        if (taskInputField != null) taskInputField.clear();
         if (!choiceEtiqueta.getItems().isEmpty()) {
             choiceEtiqueta.getSelectionModel().selectFirst();
         }
@@ -222,16 +274,6 @@ public class CrearTarjetaController {
         }
     }
 
-    private String mapColorForLabel(String label) {
-        String lower = label.toLowerCase();
-        return switch (lower) {
-            case "urgente" -> "#dc2626";
-            case "bloqueada" -> "#f97316";
-            case "bug" -> "#9333ea";
-            default -> "#0ea5e9";
-        };
-    }
-
     private void showError(String message) {
         lblCardResult.setStyle("-fx-text-fill: #d63031;");
         lblCardResult.setText(message);
@@ -248,6 +290,11 @@ public class CrearTarjetaController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void closeDialog() {
+        Stage stage = (Stage) titleField.getScene().getWindow();
+        stage.close();
     }
 }
 

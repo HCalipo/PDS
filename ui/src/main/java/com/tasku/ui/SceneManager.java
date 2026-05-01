@@ -22,6 +22,8 @@ public class SceneManager {
     private String currentBoardName;
     private UUID currentListId;
 
+    private boolean newUser = false;
+
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -59,6 +61,16 @@ public class SceneManager {
 
     public String getCurrentBoardName() {
         return currentBoardName;
+    }
+
+    public void setNewUser(boolean newUser) {
+        this.newUser = newUser;
+    }
+
+    public boolean consumeNewUser() {
+        boolean val = newUser;
+        newUser = false;
+        return val;
     }
 
     public void setCurrentListId(UUID listId) {
