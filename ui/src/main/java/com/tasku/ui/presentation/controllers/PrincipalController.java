@@ -10,13 +10,17 @@ import com.tasku.ui.client.dto.response.BoardListApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,25 +29,56 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+
+
 public class PrincipalController {
 
-    @FXML private Button ButtonTableroBlock;
-    @FXML private SVGPath CandadoImage;
-    @FXML private MenuButton boardMenuButton;
-    @FXML private HBox boardContainer;
+    @FXML
+    private Button BottonAñadirColumna;
 
-    private final TaskuApiClient apiClient = new TaskuApiClient();
-    private boolean estaBloqueado = false;
+    @FXML
+    private Button ButtonTableroBlock;
+
+    @FXML
+    private SVGPath CandadoImage;
+
+    @FXML
+    private Label ContadorTareasCompletadas;
+
+    @FXML
+    private HBox boardContainer;
+
+    @FXML
+    private MenuButton boardMenuButton;
+
+    @FXML
+    private Button btnCreateTask;
+
+    @FXML
+    private VBox doneColumn;
+
+    @FXML
+    private Label labelURL;
+
+    @FXML
+    private SVGPath svgCpURL;
+
+    @FXML
+    private SVGPath svgURLCopied;
+
     private final ToggleGroup boardToggleGroup = new ToggleGroup();
     private final List<RadioMenuItem> boardMenuItems = new ArrayList<>();
     private List<BoardApiResponse> boards = List.of();
-    private BoardApiResponse currentBoard;
     private List<BoardListApiResponse> currentBoardLists = List.of();
     private final Map<UUID, ListaTareasController> listControllers = new LinkedHashMap<>();
     private SeparatorMenuItem boardMenuSeparator;
     private MenuItem addBoardMenuItem;
     private MenuItem joinBoardMenuItem;
     private final Map<String, RadioMenuItem> boardMenuByUrl = new LinkedHashMap<>();
+    
+    private boolean estaBloqueado = false;
+    private BoardApiResponse currentBoard;
+    private final TaskuApiClient apiClient = new TaskuApiClient();
 
     @FXML
     private void initialize() {
@@ -51,6 +86,7 @@ public class PrincipalController {
         if (SceneManager.getInstance().consumeNewUser()) {
             Platform.runLater(this::handleAñadirTablero);
         }
+        svgURLCopied.setVisible(false);
     }
 
     @FXML
@@ -231,11 +267,11 @@ public class PrincipalController {
     private void clearDynamicColumns() {
         int total = boardContainer.getChildren().size();
             if (total <= 2) {
-                // preserve static first and last children (e.g., doneColumn and addButton)
+                
                 listControllers.clear();
                 return;
             }
-            // remove children between first (index 0) and last (index total-1)
+            
             boardContainer.getChildren().remove(1, total - 1);
             listControllers.clear();
     }
@@ -263,11 +299,13 @@ public class PrincipalController {
     @FXML
     private void handleUnirseTablero() {
         SceneManager.getInstance().openDialog("UnirTablero");
+        //TODO: implementar dtos y lógica para unirse a tablero existente mediante la url
     }
 
     @FXML
     private void handleVerHistorial() {
         SceneManager.getInstance().openDialog("Historial");
+        //TODO: implementar historial (Creo que está ya)
     }
 
     @FXML
@@ -314,6 +352,41 @@ public class PrincipalController {
                 controller.setOnCardCreated(this::refreshCardsForList);
             }
         );
+    }
+
+    @FXML
+    void handleCopyURL(MouseEvent event) {
+        
+        try{
+            String boardURL = SceneManager.getInstance().getCurrentBoardUrl();
+            if (boardURL == null || boardURL.isBlank()) {
+                showAlert("No hay URL para copiar.", Alert.AlertType.INFORMATION);
+                return;
+            }
+
+            ClipboardContent content = new ClipboardContent();
+            content.putString(boardURL);
+            Clipboard.getSystemClipboard().setContent(content);
+
+            svgCpURL.setVisible(false);
+            svgURLCopied.setVisible(true);
+                // Volver a mostrar el ícono original después de 2 segundos
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    // Ignorar interrupciones
+                }
+                Platform.runLater(() -> {
+                    svgCpURL.setVisible(true);
+                    svgURLCopied.setVisible(false);
+                });
+            }).start();
+
+        } catch (Exception ex) {
+            showAlert("Error al copiar URL: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
+
     }
 
     private void refreshCardsForBoard() {
@@ -526,4 +599,7 @@ public class PrincipalController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
+
 }
