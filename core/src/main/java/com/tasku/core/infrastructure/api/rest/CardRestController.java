@@ -13,6 +13,7 @@ import com.tasku.core.infrastructure.api.rest.request.MoveCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.ToggleChecklistItemApiRequest;
 import com.tasku.core.infrastructure.api.rest.response.CardApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +84,13 @@ public class CardRestController {
     @GetMapping
     public List<CardApiResponse> findCardsByList(@RequestParam("listId") @NotNull UUID listId) {
         return cardService.findCardsByListId(new ListaTableroId(listId)).stream()
+                .map(mapper::toCardResponse)
+                .toList();
+    }
+
+    @GetMapping("/completed")
+    public List<CardApiResponse> getCompletedCards(@RequestParam("boardUrl") @NotBlank String boardUrl) {
+        return cardService.getCompletedCardsForBoard(boardUrl).stream()
                 .map(mapper::toCardResponse)
                 .toList();
     }

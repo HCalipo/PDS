@@ -15,6 +15,8 @@ public interface TarjetaStore {
     long countByListId(ListaTableroId listId);
 
     List<Tarjeta> findByListId(ListaTableroId listId);
+
+    List<Tarjeta> findCompletedByBoardUrl(String boardUrl);
 }
 
 

@@ -49,6 +49,11 @@ public class JpaTarjetaStoreAdapter implements TarjetaStore {
     public List<Tarjeta> findByListId(ListaTableroId listId) {
         return repository.findByListId(listId.id()).stream().map(mapper::toDomain).toList();
     }
+
+    @Override
+    public List<Tarjeta> findCompletedByBoardUrl(String boardUrl) {
+        return repository.findCompletedByBoardUrl(boardUrl).stream().map(mapper::toDomain).toList();
+    }
 }
 
 

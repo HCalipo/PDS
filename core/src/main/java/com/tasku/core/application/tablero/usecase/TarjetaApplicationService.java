@@ -178,6 +178,14 @@ public class TarjetaApplicationService {
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
     }
 
+    @Transactional(readOnly = true)
+    public List<Tarjeta> getCompletedCardsForBoard(String boardUrl) {
+        if (boardUrl == null || boardUrl.isBlank()) {
+            throw new DomainValidationException("La URL del tablero es obligatoria");
+        }
+        return cardStore.findCompletedByBoardUrl(boardUrl);
+    }
+
     @Transactional
     public Tarjeta toggleChecklistItem(ToggleChecklistItemRequest request) {
         Objects.requireNonNull(request, "La solicitud no puede ser nula");

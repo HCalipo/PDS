@@ -3,13 +3,17 @@ package com.tasku.ui.presentation.controllers;
 import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.dto.EstadoTablero;
 import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
+import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateListApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.BoardListApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
+import com.tasku.ui.client.dto.response.CardLabelApiResponse;
+import com.tasku.ui.client.dto.response.ChecklistItemApiResponse;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
+import com.tasku.ui.client.dto.TipoTarjeta;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -75,13 +79,18 @@ public class PrincipalController {
     private MenuItem addBoardMenuItem;
     private MenuItem joinBoardMenuItem;
     private final Map<String, RadioMenuItem> boardMenuByUrl = new LinkedHashMap<>();
-    
+
     private boolean estaBloqueado = false;
     private BoardApiResponse currentBoard;
     private final TaskuApiClient apiClient = new TaskuApiClient();
+    private final Map<UUID, CardApiResponse> completedCards = new LinkedHashMap<>();
+    private javafx.scene.Node doneEmptyState;
 
     @FXML
     private void initialize() {
+        if (doneColumn != null && !doneColumn.getChildren().isEmpty()) {
+            doneEmptyState = doneColumn.getChildren().get(0);
+        }
         refreshBoards();
         if (SceneManager.getInstance().consumeNewUser()) {
             Platform.runLater(this::handleAñadirTablero);
@@ -233,7 +242,9 @@ public class PrincipalController {
 
         estaBloqueado = board.status() == EstadoTablero.BLOCKED;
         actualizarIconoBloqueo();
+        clearDoneColumn();
         renderBoardLists(currentBoardLists);
+        loadCompletedCards(board.url());
     }
 
     private void agregarColumna(BoardListApiResponse list) {
@@ -244,6 +255,7 @@ public class PrincipalController {
             controller.setTitulo(list.name());
             controller.setListId(list.id());
             controller.setOnCardDropped(this::handleCardDropped);
+            controller.setOnCardCompleted(this::handleCardCompleted);
             controller.setOnCreateCard(this::handleCrearTarea);
             listControllers.put(list.id(), controller);
             int indice = boardContainer.getChildren().size() - 1;
@@ -424,7 +436,9 @@ public class PrincipalController {
     private void updateColumnCards(UUID listId, List<CardApiResponse> cards) {
         ListaTareasController controller = listControllers.get(listId);
         if (controller != null) {
-            controller.updateCards(cards);
+            List<CardApiResponse> active = cards == null ? List.of()
+                    : cards.stream().filter(c -> !c.archived()).toList();
+            controller.updateCards(active);
         }
     }
 
@@ -590,6 +604,160 @@ public class PrincipalController {
             }
         }
         return newLists;
+    }
+
+    private void handleCardCompleted(UUID cardId, UUID sourceListId) {
+        if (cardId == null || sourceListId == null) {
+            return;
+        }
+        String authorEmail = SceneManager.getInstance().getCurrentUserEmail();
+        if (authorEmail == null || authorEmail.isBlank()) {
+            showAlert("Debes iniciar sesión para completar tarjetas.", Alert.AlertType.WARNING);
+            return;
+        }
+        ListaTareasController source = listControllers.get(sourceListId);
+        try {
+            CardApiResponse completed = apiClient.completeCard(new CompleteCardApiRequest(cardId, authorEmail));
+            if (source != null) {
+                source.removeCard(cardId);
+            }
+            addCardToDoneColumn(completed);
+        } catch (DesktopApiException ex) {
+            showAlert("No se pudo completar la tarjeta: " + ex.getMessage(), Alert.AlertType.ERROR);
+            if (source != null) {
+                refreshCardsForList(sourceListId);
+            }
+        }
+    }
+
+    private void loadCompletedCards(String boardUrl) {
+        if (boardUrl == null || boardUrl.isBlank()) {
+            return;
+        }
+        try {
+            List<CardApiResponse> cards = apiClient.getCompletedCards(boardUrl);
+            populateDoneColumn(cards);
+        } catch (DesktopApiException ex) {
+            showAlert("Error al cargar tarjetas completadas: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void populateDoneColumn(List<CardApiResponse> cards) {
+        clearDoneColumn();
+        if (cards == null) {
+            return;
+        }
+        for (CardApiResponse card : cards) {
+            if (card != null && card.id() != null) {
+                completedCards.put(card.id(), card);
+            }
+        }
+        if (completedCards.isEmpty()) {
+            showDoneEmptyState();
+        } else {
+            hideDoneEmptyState();
+            for (CardApiResponse card : completedCards.values()) {
+                doneColumn.getChildren().add(buildCompletedCardNode(card));
+            }
+        }
+        updateDoneCounter();
+    }
+
+    private void addCardToDoneColumn(CardApiResponse card) {
+        if (card == null || card.id() == null || doneColumn == null) {
+            return;
+        }
+        completedCards.put(card.id(), card);
+        hideDoneEmptyState();
+        doneColumn.getChildren().add(buildCompletedCardNode(card));
+        updateDoneCounter();
+    }
+
+    private void clearDoneColumn() {
+        completedCards.clear();
+        if (doneColumn != null) {
+            doneColumn.getChildren().clear();
+        }
+        showDoneEmptyState();
+        updateDoneCounter();
+    }
+
+    private void showDoneEmptyState() {
+        if (doneEmptyState != null && doneColumn != null
+                && !doneColumn.getChildren().contains(doneEmptyState)) {
+            doneColumn.getChildren().add(0, doneEmptyState);
+        }
+    }
+
+    private void hideDoneEmptyState() {
+        if (doneEmptyState != null && doneColumn != null) {
+            doneColumn.getChildren().remove(doneEmptyState);
+        }
+    }
+
+    private void updateDoneCounter() {
+        if (ContadorTareasCompletadas != null) {
+            ContadorTareasCompletadas.setText(String.valueOf(completedCards.size()));
+        }
+    }
+
+    private javafx.scene.Node buildCompletedCardNode(CardApiResponse card) {
+        VBox cardBox = new VBox();
+        cardBox.getStyleClass().addAll("task-card", "task-card-done");
+        cardBox.setUserData(card.id());
+
+        Label title = new Label(safe(card.title()));
+        title.getStyleClass().add("task-card-title");
+        title.setMaxWidth(Double.MAX_VALUE);
+        title.setAlignment(javafx.geometry.Pos.CENTER);
+        title.setWrapText(true);
+        title.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-strikethrough: true;");
+        cardBox.getChildren().add(title);
+
+        if (card.labels() != null && !card.labels().isEmpty()) {
+            javafx.scene.layout.HBox labelsBox = new javafx.scene.layout.HBox();
+            labelsBox.setAlignment(javafx.geometry.Pos.CENTER);
+            labelsBox.getStyleClass().add("task-card-labels");
+            for (CardLabelApiResponse label : card.labels()) {
+                String labelName = safe(label.name());
+                if (labelName.isBlank()) continue;
+                Label chip = new Label(labelName);
+                chip.getStyleClass().add("task-card-label");
+                String color = safe(label.colorHex());
+                if (!color.isBlank()) {
+                    chip.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white;");
+                }
+                labelsBox.getChildren().add(chip);
+            }
+            if (!labelsBox.getChildren().isEmpty()) {
+                cardBox.getChildren().add(labelsBox);
+            }
+        }
+
+        if (card.type() == TipoTarjeta.CHECKLIST
+                && card.checklistItems() != null
+                && !card.checklistItems().isEmpty()) {
+            long done = card.checklistItems().stream()
+                    .filter(ChecklistItemApiResponse::completed).count();
+            int total = card.checklistItems().size();
+            Label progress = new Label(done + " / " + total);
+            progress.getStyleClass().add("checklist-progress");
+            cardBox.getChildren().add(progress);
+        }
+
+        String desc = safe(card.description());
+        if (!desc.isBlank()) {
+            Label description = new Label(desc);
+            description.setWrapText(true);
+            description.getStyleClass().add("task-card-description");
+            cardBox.getChildren().add(description);
+        }
+
+        return cardBox;
+    }
+
+    private static String safe(String value) {
+        return value == null ? "" : value.trim();
     }
 
     private void showAlert(String message, Alert.AlertType type) {

@@ -21,4 +21,8 @@ public interface SpringDataTarjetaRepository extends JpaRepository<TarjetaJpaEnt
     @Override
     @EntityGraph(attributePaths = {"labels"})
     Optional<TarjetaJpaEntity> findById(UUID cardId);
+
+    @EntityGraph(attributePaths = {"labels"})
+    @Query("select t from TarjetaJpaEntity t where t.list.board.url = :boardUrl and t.archived = true")
+    List<TarjetaJpaEntity> findCompletedByBoardUrl(@Param("boardUrl") String boardUrl);
 }

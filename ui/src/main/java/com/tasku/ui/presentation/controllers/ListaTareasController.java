@@ -31,6 +31,10 @@ public class ListaTareasController {
         void handle(UUID cardId, UUID sourceListId, UUID targetListId);
     }
 
+    public interface CardCompletedHandler {
+        void handle(UUID cardId, UUID sourceListId);
+    }
+
     private static final DataFormat CARD_ID_FORMAT = new DataFormat("application/x-tasku-card-id");
     private static final DataFormat LIST_ID_FORMAT = new DataFormat("application/x-tasku-list-id");
 
@@ -42,6 +46,7 @@ public class ListaTareasController {
     private UUID listId;
     private final Map<UUID, CardApiResponse> cardsById = new LinkedHashMap<>();
     private CardDropHandler onCardDropped;
+    private CardCompletedHandler onCardCompleted;
     private Runnable onCreateCard;
     private final TaskuApiClient apiClient = new TaskuApiClient();
 
@@ -62,6 +67,10 @@ public class ListaTareasController {
 
     public void setOnCardDropped(CardDropHandler onCardDropped) {
         this.onCardDropped = onCardDropped;
+    }
+
+    public void setOnCardCompleted(CardCompletedHandler onCardCompleted) {
+        this.onCardCompleted = onCardCompleted;
     }
 
     public void setOnCreateCard(Runnable onCreateCard) {
@@ -225,6 +234,18 @@ public class ListaTareasController {
             description.getStyleClass().add("task-card-description");
             cardBox.getChildren().add(description);
         }
+
+        // 5. Botón completar
+        javafx.scene.control.Button completeBtn = new javafx.scene.control.Button("✓ Completar");
+        completeBtn.getStyleClass().add("btn-complete-card");
+        completeBtn.setMaxWidth(Double.MAX_VALUE);
+        completeBtn.setOnAction(e -> {
+            if (listId != null && onCardCompleted != null) {
+                completeBtn.setDisable(true);
+                onCardCompleted.handle(card.id(), listId);
+            }
+        });
+        cardBox.getChildren().add(completeBtn);
 
         return cardBox;
     }

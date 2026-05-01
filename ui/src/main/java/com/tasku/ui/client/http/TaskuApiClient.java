@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
+import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
 import com.tasku.ui.client.dto.request.CreateCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateListApiRequest;
@@ -192,6 +193,51 @@ public class TaskuApiClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200 || response.statusCode() == 201) {
                 return objectMapper.readValue(response.body(), BoardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public CardApiResponse completeCard(CompleteCardApiRequest payload) {
+        try {
+            String json = objectMapper.writeValueAsString(payload);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/cards/complete"))
+                    .header("Content-Type", "application/json")
+                    .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), CardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public List<CardApiResponse> getCompletedCards(String boardUrl) {
+        String encoded = URLEncoder.encode(boardUrl, StandardCharsets.UTF_8);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/api/cards/completed?boardUrl=" + encoded))
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), new TypeReference<>() {});
             }
             throw new DesktopApiException(extractError(response), response.statusCode());
         } catch (DesktopApiException ex) {
