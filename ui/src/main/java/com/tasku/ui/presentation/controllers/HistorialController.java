@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,6 +85,12 @@ public class HistorialController {
         } catch (DesktopApiException ignored) {
         }
         return names;
+    }
+
+    @FXML
+    private void handleCloseHistory() {
+        Stage stage = (Stage) listHistorial.getScene().getWindow();
+        stage.close();
     }
 
     private void showAlert(String msg, Alert.AlertType type) {

@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -328,20 +327,15 @@ public class PrincipalController {
             return;
         }
 
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Nueva lista");
-        dialog.setHeaderText(null);
-        dialog.setContentText("Nombre de la lista:");
-
-        Optional<String> resultado = dialog.showAndWait();
-        resultado.filter(nombre -> !nombre.isBlank()).ifPresent(nombre -> {
-            try {
-                BoardApiResponse updatedBoard = apiClient.createList(new CreateListApiRequest(boardUrl, nombre, 100));
-                handleListCreated(updatedBoard);
-            } catch (DesktopApiException ex) {
-                showAlert("Error al crear lista: " + ex.getMessage(), Alert.AlertType.ERROR);
-            }
-        });
+        SceneManager.getInstance().openDialogAndGetController(
+                "AñadirLista",
+                (AñadirListaController controller) -> {
+                    controller.setBoardUrl(boardUrl);
+                    controller.setOnListCreated(updatedBoard -> {
+                        handleListCreated(updatedBoard);
+                    });
+                }
+        );
     }
 
     @FXML
