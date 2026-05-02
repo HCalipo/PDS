@@ -96,7 +96,7 @@
             }
 
             Tablero board = getBoardByUrl(request.boardUrl());
-            Tablero updatedBoard = board.withAddedList(request.name(), request.cardLimit());
+            Tablero updatedBoard = board.withAddedList(request.name(), request.cardLimit(), request.colorHex());
             return boardStore.save(updatedBoard);
         }
 

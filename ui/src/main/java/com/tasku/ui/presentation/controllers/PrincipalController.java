@@ -322,16 +322,8 @@ public class PrincipalController {
             "UnirTablero", 
             (UnirTableroController controller) -> {
                 controller.setOnJoinedAvisar((String nuevaUrl) -> {
-
+                    SceneManager.getInstance().setCurrentBoard(nuevaUrl, "");
                     refreshBoards();
-                    BoardApiResponse tableroUnido = findBoardByUrl(nuevaUrl);
-                    
-                    if (tableroUnido != null) {
-                        RadioMenuItem itemDelMenu = boardMenuByUrl.get(nuevaUrl);
-                        seleccionarTablero(tableroUnido, itemDelMenu);
-                    } else {
-                        System.err.println("No se ha encontrado el tablero en la lista tras actualizar.");
-                    }
                 });
             }
         );

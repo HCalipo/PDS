@@ -34,7 +34,9 @@ public class UnirTableroController {
             return;
         }
 
-        String boardUrl = input.substring(input.lastIndexOf('/') + 1).trim();
+        String token = input.trim();
+        String uuid = token.substring(token.lastIndexOf('/') + 1).trim();
+        String fullBoardUrl = "tasku://tablero/" + uuid;
         String currentUserEmail = SceneManager.getInstance().getCurrentUserEmail();
 
         if (currentUserEmail == null || currentUserEmail.isBlank()) {
@@ -43,11 +45,10 @@ public class UnirTableroController {
         }
 
         try {
-            
             JoinBoardApiRequest request = new JoinBoardApiRequest(currentUserEmail);
-            apiClient.joinBoard(boardUrl, request);
+            apiClient.joinBoard(uuid, request);
             if (onJoinedAvisar != null) {
-                onJoinedAvisar.accept(boardUrl);
+                onJoinedAvisar.accept(fullBoardUrl);
             }
 
             txtUrl.clear();
