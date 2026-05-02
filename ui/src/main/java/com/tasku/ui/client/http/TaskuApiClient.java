@@ -11,6 +11,7 @@ import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
 import com.tasku.ui.client.dto.request.CreateCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateListApiRequest;
+import com.tasku.ui.client.dto.request.JoinBoardApiRequest;
 import com.tasku.ui.client.dto.request.LoginUserApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
 import com.tasku.ui.client.dto.request.RegisterUserApiRequest;
@@ -307,17 +308,32 @@ public class TaskuApiClient {
         }
         try {
             JsonNode root = objectMapper.readTree(body);
-            if (root.hasNonNull("message")) return root.get("message").asText();
-            if (root.hasNonNull("error")) return root.get("error").asText();
+
+            if (root.hasNonNull("message")){
+                return root.get("message").asText();
+            } 
+
+            if (root.hasNonNull("error")) {
+                return root.get("error").asText();
+            }
+
         } catch (Exception ignored) {}
         return "Error API (" + response.statusCode() + "): " + body;
     }
 
     private static String resolveBaseUrl() {
         String envValue = System.getenv("TASKU_API_BASE_URL");
-        if (envValue != null && !envValue.isBlank()) return envValue.strip();
+
+        if (envValue != null && !envValue.isBlank()){
+            return envValue.strip();
+        } 
+
         String systemValue = System.getProperty("tasku.api.base-url");
-        if (systemValue != null && !systemValue.isBlank()) return systemValue.strip();
+
+        if (systemValue != null && !systemValue.isBlank()){
+            return systemValue.strip();
+        }
+
         return DEFAULT_BASE_URL;
     }
 
@@ -392,5 +408,48 @@ public class TaskuApiClient {
             throw new DesktopApiException("Solicitud de inicio de sesión interrumpida.", ex);
         }
     }
-    
+
+    public void joinBoard(String boardUrl, JoinBoardApiRequest payload) {
+        try {
+            String json = objectMapper.writeValueAsString(payload);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/boards/" + boardUrl + "/join"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200 && response.statusCode() != 201) {
+                throw new DesktopApiException(extractError(response), response.statusCode());
+            }
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new DesktopApiException("Error de conexión al unirse al tablero.", ex);
+        }
+    }
+
+
+    public List<BoardApiResponse> getSharedBoards(String email) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    // Fíjate que llamamos a la ruta /shared que creamos arriba
+                    .uri(URI.create(baseUrl + "/api/boards/shared?email=" + email))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                // Mapeamos el JSON a tu lista de objetos
+                return objectMapper.readValue(response.body(), new TypeReference<List<BoardApiResponse>>() {});
+            } else {
+                throw new DesktopApiException(extractError(response), response.statusCode());
+            }
+        } catch (Exception ex) {
+            System.err.println("Error al cargar tableros compartidos: " + ex.getMessage());
+            return List.of(); // Devolvemos lista vacía para no romper la UI
+        }
+    }
 }

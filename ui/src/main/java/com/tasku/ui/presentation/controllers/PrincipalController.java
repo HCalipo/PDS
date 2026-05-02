@@ -68,6 +68,8 @@ public class PrincipalController {
     private final ToggleGroup boardToggleGroup = new ToggleGroup();
     private final List<RadioMenuItem> boardMenuItems = new ArrayList<>();
     private List<BoardApiResponse> boards = List.of();
+    private List<BoardApiResponse> sharedBoards = List.of();
+    private List<BoardApiResponse> allBoards = new ArrayList<>();
     private List<BoardListApiResponse> currentBoardLists = List.of();
     private final Map<UUID, ListaTareasController> listControllers = new LinkedHashMap<>();
     private final Map<UUID, VBox> columnNodes = new LinkedHashMap<>();
@@ -187,17 +189,24 @@ public class PrincipalController {
 
         try {
             boards = apiClient.findBoardsByOwner(email);
+            sharedBoards = apiClient.getSharedBoards(email);
+            
+            allBoards.clear();
+            allBoards.addAll(boards);
+            allBoards.addAll(sharedBoards);
+
         } catch (DesktopApiException ex) {
             boards = List.of();
+            sharedBoards = List.of();
             showAlert("No se pudieron cargar los tableros: " + ex.getMessage(), Alert.AlertType.ERROR);
         }
 
-        buildBoardMenu(boards);
+        buildBoardMenu(allBoards);
         seleccionarTableroDesdeContexto();
     }
 
     private void seleccionarTableroDesdeContexto() {
-        if (boards.isEmpty()) {
+        if (allBoards.isEmpty()) {
             boardMenuButton.setText("Sin tableros");
             currentBoard = null;
             currentBoardLists = List.of();
@@ -208,8 +217,8 @@ public class PrincipalController {
         }
 
         String currentBoardUrl = SceneManager.getInstance().getCurrentBoardUrl();
-        for (int i = 0; i < boards.size(); i++) {
-            BoardApiResponse board = boards.get(i);
+        for (int i = 0; i < allBoards.size(); i++) {
+            BoardApiResponse board = allBoards.get(i);
             if (board.url() != null && board.url().equals(currentBoardUrl)) {
                 RadioMenuItem item = boardMenuItems.get(i);
                 item.setSelected(true);
@@ -220,7 +229,7 @@ public class PrincipalController {
 
         RadioMenuItem item = boardMenuItems.get(0);
         item.setSelected(true);
-        seleccionarTablero(boards.get(0), item);
+        seleccionarTablero(allBoards.get(0), item);
     }
 
     private void seleccionarTablero(BoardApiResponse board, RadioMenuItem itemSeleccionado) {
@@ -309,14 +318,31 @@ public class PrincipalController {
 
     @FXML
     private void handleUnirseTablero() {
-        SceneManager.getInstance().openDialog("UnirTablero");
-        //TODO: implementar dtos y lógica para unirse a tablero existente mediante la url
+        SceneManager.getInstance().openDialogAndGetController(
+            "UnirTablero", 
+            (UnirTableroController controller) -> {
+                controller.setOnJoinedAvisar((String nuevaUrl) -> {
+
+                    refreshBoards();
+                    BoardApiResponse tableroUnido = findBoardByUrl(nuevaUrl);
+                    
+                    if (tableroUnido != null) {
+                        RadioMenuItem itemDelMenu = boardMenuByUrl.get(nuevaUrl);
+                        seleccionarTablero(tableroUnido, itemDelMenu);
+                    } else {
+                        System.err.println("No se ha encontrado el tablero en la lista tras actualizar.");
+                    }
+                });
+            }
+        );
     }
+
+
+
 
     @FXML
     private void handleVerHistorial() {
         SceneManager.getInstance().openDialog("Historial");
-        //TODO: implementar historial (Creo que está ya)
     }
 
     @FXML
@@ -584,8 +610,9 @@ public class PrincipalController {
         if (boardUrl == null) {
             return null;
         }
-        for (BoardApiResponse board : boards) {
-            if (boardUrl.equals(board.url())) {
+
+        for (BoardApiResponse board : allBoards) {
+            if (boardUrl.endsWith(board.url())) {
                 return board;
             }
         }

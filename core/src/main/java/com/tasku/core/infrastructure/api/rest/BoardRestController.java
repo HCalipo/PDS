@@ -6,6 +6,7 @@ import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
 import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
 import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
+import com.tasku.core.application.tablero.usecase.dto.JoinBoardApiRequest;
 import com.tasku.core.domain.model.DefinicionListaInicial;
 import com.tasku.core.domain.model.Email;
 import com.tasku.core.domain.model.ListaTableroId;
@@ -41,12 +42,14 @@ import java.util.UUID;
 @Validated
 @RequestMapping("/api/boards")
 public class BoardRestController {
+    private final TableroUseCaseService tableroUseCaseService;
     private final TableroUseCaseService boardService;
     private final ApiRestMapper mapper;
 
     public BoardRestController(TableroUseCaseService boardService, ApiRestMapper mapper) {
         this.boardService = boardService;
         this.mapper = mapper;
+        this.tableroUseCaseService = boardService;
     }
 
     @PostMapping
@@ -125,6 +128,15 @@ public class BoardRestController {
                 request.status()
         ));
         return mapper.toBoardResponse(board);
+    }
+
+    @PostMapping("/{boardUrl}/join")
+    public ResponseEntity<Void> joinBoard(
+            @PathVariable String boardUrl,
+            @RequestBody JoinBoardApiRequest request) {
+
+        tableroUseCaseService.joinBoard(boardUrl, request.email());
+        return ResponseEntity.ok().build(); 
     }
 
     private DefinicionListaInicial toInitialListDefinition(InitialListApiRequest request) {
