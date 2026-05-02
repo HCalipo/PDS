@@ -96,6 +96,18 @@
                <effect>
                   <DropShadow height="1.0" offsetX="3.0" offsetY="3.0" radius="0.0" width="0.0" />
                </effect></Button>
+
+                <Button minHeight="39.0" onAction="#handleAñadirLista" prefHeight="39.0" prefWidth="118.0" styleClass="btn-primary-inverted" text="Añadir lista">
+               <graphic>
+                  <Group styleClass="empty-state">
+                     <children>
+                        <SVGPath content="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z" scaleX="0.02" scaleY="0.02" />
+                     </children>
+                  </Group>
+               </graphic>
+               <effect>
+                  <DropShadow height="1.0" offsetX="3.0" offsetY="3.0" radius="0.0" width="0.0" />
+               </effect></Button>
             </HBox>
         </HBox>
     </top>
@@ -121,15 +133,6 @@
                             </VBox>
                         </VBox>
                     </VBox>
-
-                    <Button fx:id="BottonAñadirColumna" onAction="#handleAñadirLista" styleClass="btn-add-column" text="Añadir columna">
-                  <graphic>
-                     <Group>
-                        <children>
-                           <SVGPath content="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z" scaleX="0.02" scaleY="0.02" />
-                        </children>
-                     </Group>
-                  </graphic></Button>
 
                 </HBox>
             </content>

@@ -96,7 +96,7 @@ public final class Tablero {
         return Set.copyOf(sharedWith);
     }
 
-    public Tablero withAddedList(String listName, int cardLimit) {
+    public Tablero withAddedList(String listName, int cardLimit, String colorHex) {
         String normalizedName = validateText(listName, "El nombre de la lista no puede ser nulo ni vacio");
         if (cardLimit <= 0) {
             throw new DomainValidationException("El limite de tarjetas de la lista debe ser mayor que cero");
@@ -106,8 +106,12 @@ public final class Tablero {
         }
 
         List<ListaTablero> updatedLists = new ArrayList<>(lists);
-        updatedLists.add(ListaTablero.createNew(url, normalizedName, cardLimit));
+        updatedLists.add(ListaTablero.createNew(url, normalizedName, cardLimit, colorHex));
         return new Tablero(url, name, ownerEmail, color, description, status, updatedLists, sharedWith);
+    }
+
+    public Tablero withAddedList(String listName, int cardLimit) {
+        return withAddedList(listName, cardLimit, null);
     }
 
     public Tablero withRenamedList(ListaTableroId listId, String newName) {

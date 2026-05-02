@@ -35,9 +35,15 @@ public class ListaTareasController {
         void handle(UUID cardId, UUID sourceListId);
     }
 
-    private static final DataFormat CARD_ID_FORMAT = new DataFormat("application/x-tasku-card-id");
-    private static final DataFormat LIST_ID_FORMAT = new DataFormat("application/x-tasku-list-id");
+    public interface ColumnReorderHandler {
+        void handle(UUID draggedListId, UUID targetListId);
+    }
 
+    private static final DataFormat CARD_ID_FORMAT   = new DataFormat("application/x-tasku-card-id");
+    private static final DataFormat LIST_ID_FORMAT   = new DataFormat("application/x-tasku-list-id");
+    private static final DataFormat COLUMN_ID_FORMAT = new DataFormat("application/x-tasku-column-list-id");
+
+    @FXML private HBox columnHeader;
     @FXML private Label columnTitle;
     @FXML private Label taskCounter;
     @FXML private VBox tasksContainer;
@@ -47,18 +53,64 @@ public class ListaTareasController {
     private final Map<UUID, CardApiResponse> cardsById = new LinkedHashMap<>();
     private CardDropHandler onCardDropped;
     private CardCompletedHandler onCardCompleted;
+    private ColumnReorderHandler onColumnReorder;
     private Runnable onCreateCard;
+    private String savedHeaderStyle = "";
+    private boolean headerDropActive = false;
     private final TaskuApiClient apiClient = new TaskuApiClient();
 
     public void setTitulo(String nombre) {
         if (columnTitle != null) {
-            columnTitle.setText(nombre);
+            columnTitle.setText(nombre != null ? nombre.toUpperCase() : "");
+        }
+    }
+
+    public void setHeaderColor(String colorHex) {
+        if (columnHeader == null || colorHex == null || colorHex.isBlank()) return;
+
+        columnHeader.setStyle(
+                "-fx-background-color: " + colorHex + ";" +
+                "-fx-background-radius: 12 12 0 0;");
+
+        boolean light = isLightColor(colorHex);
+        String textColor   = light ? "#1e293b" : "#ffffff";
+        String badgeBg     = light ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.22)";
+        String badgeBorder = light ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.18)";
+
+        columnTitle.setStyle(
+                "-fx-text-fill: " + textColor + ";" +
+                "-fx-font-weight: 800;" +
+                "-fx-effect: dropshadow(three-pass-box, " +
+                (light ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.25)") +
+                ", 0, 0, 0, 1);");
+
+        taskCounter.setStyle(
+                "-fx-background-color: " + badgeBg + ";" +
+                "-fx-text-fill: " + textColor + ";" +
+                "-fx-border-color: " + badgeBorder + ";");
+    }
+
+    private boolean isLightColor(String hex) {
+        if (hex == null || !hex.startsWith("#") || hex.length() != 7) return true;
+        try {
+            double r = Integer.parseInt(hex.substring(1, 3), 16) / 255.0;
+            double g = Integer.parseInt(hex.substring(3, 5), 16) / 255.0;
+            double b = Integer.parseInt(hex.substring(5, 7), 16) / 255.0;
+            double[] ch = {r, g, b};
+            for (int i = 0; i < 3; i++) {
+                ch[i] = ch[i] <= 0.04045 ? ch[i] / 12.92 : Math.pow((ch[i] + 0.055) / 1.055, 2.4);
+            }
+            double luminance = 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+            return luminance > 0.179;
+        } catch (NumberFormatException e) {
+            return true;
         }
     }
 
     public void setListId(UUID listId) {
         this.listId = listId;
         setupDropTargets();
+        setupColumnHeaderDrag();
     }
 
     public UUID getListId() {
@@ -71,6 +123,10 @@ public class ListaTareasController {
 
     public void setOnCardCompleted(CardCompletedHandler onCardCompleted) {
         this.onCardCompleted = onCardCompleted;
+    }
+
+    public void setOnColumnReorder(ColumnReorderHandler handler) {
+        this.onColumnReorder = handler;
     }
 
     public void setOnCreateCard(Runnable onCreateCard) {
@@ -270,6 +326,72 @@ public class ListaTareasController {
             if (!color.isBlank()) return color;
         }
         return "";
+    }
+
+    private void setupColumnHeaderDrag() {
+        if (columnHeader == null || listId == null) return;
+
+        columnHeader.setCursor(javafx.scene.Cursor.OPEN_HAND);
+
+        columnHeader.setOnDragDetected(event -> {
+            Dragboard db = columnHeader.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.put(COLUMN_ID_FORMAT, listId.toString());
+            db.setContent(content);
+            db.setDragView(columnHeader.snapshot(null, null));
+            event.consume();
+        });
+
+        columnHeader.setOnDragOver(event -> {
+            if (event.getGestureSource() != columnHeader && isColumnDrag(event.getDragboard())) {
+                event.acceptTransferModes(TransferMode.MOVE);
+                addHeaderDropStyle();
+            }
+            event.consume();
+        });
+
+        columnHeader.setOnDragExited(event -> {
+            removeHeaderDropStyle();
+            event.consume();
+        });
+
+        columnHeader.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (isColumnDrag(db)) {
+                UUID draggedId = parseUuid((String) db.getContent(COLUMN_ID_FORMAT));
+                if (draggedId != null && !draggedId.equals(listId) && onColumnReorder != null) {
+                    onColumnReorder.handle(draggedId, listId);
+                    success = true;
+                }
+            }
+            event.setDropCompleted(success);
+            removeHeaderDropStyle();
+            event.consume();
+        });
+
+        columnHeader.setOnDragDone(event -> {
+            columnHeader.setCursor(javafx.scene.Cursor.OPEN_HAND);
+            event.consume();
+        });
+    }
+
+    private boolean isColumnDrag(Dragboard db) {
+        return db != null && db.hasContent(COLUMN_ID_FORMAT);
+    }
+
+    private void addHeaderDropStyle() {
+        if (columnHeader == null || headerDropActive) return;
+        savedHeaderStyle = columnHeader.getStyle() != null ? columnHeader.getStyle() : "";
+        headerDropActive = true;
+        columnHeader.setStyle(savedHeaderStyle +
+                "; -fx-border-color: #0ba360; -fx-border-width: 0 0 0 4;");
+    }
+
+    private void removeHeaderDropStyle() {
+        if (columnHeader == null || !headerDropActive) return;
+        columnHeader.setStyle(savedHeaderStyle);
+        headerDropActive = false;
     }
 
     private void setupDropTargets() {

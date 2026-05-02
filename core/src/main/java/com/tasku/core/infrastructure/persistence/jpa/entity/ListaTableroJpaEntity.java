@@ -27,14 +27,18 @@ public class ListaTableroJpaEntity {
     @Column(name = "limite_tarjetas", nullable = false)
     private int cardLimit;
 
+    @Column(name = "color_hex", length = 20)
+    private String colorHex;
+
     public ListaTableroJpaEntity() {
     }
 
-    public ListaTableroJpaEntity(UUID id, TableroJpaEntity board, String name, int cardLimit) {
+    public ListaTableroJpaEntity(UUID id, TableroJpaEntity board, String name, int cardLimit, String colorHex) {
         this.id = id;
         this.board = board;
         this.name = name;
         this.cardLimit = cardLimit;
+        this.colorHex = colorHex;
     }
 
     public UUID getId() {
@@ -67,5 +71,13 @@ public class ListaTableroJpaEntity {
 
     protected void setCardLimit(int cardLimit) {
         this.cardLimit = cardLimit;
+    }
+
+    public String getColorHex() {
+        return colorHex;
+    }
+
+    protected void setColorHex(String colorHex) {
+        this.colorHex = colorHex;
     }
 }
