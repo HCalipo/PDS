@@ -326,13 +326,21 @@ public class PrincipalController {
             showAlert("Selecciona un tablero antes de crear una lista.", Alert.AlertType.WARNING);
             return;
         }
-        SceneManager.getInstance().openDialogAndGetController(
-                "AñadirLista",
-                (AñadirListaController controller) -> {
-                    controller.setBoardUrl(boardUrl);
-                    controller.setOnListCreated(this::handleListCreated);
-                }
-        );
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nueva lista");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Nombre de la lista:");
+
+        Optional<String> resultado = dialog.showAndWait();
+        resultado.filter(nombre -> !nombre.isBlank()).ifPresent(nombre -> {
+            try {
+                BoardApiResponse updatedBoard = apiClient.createList(new CreateListApiRequest(boardUrl, nombre, 100));
+                handleListCreated(updatedBoard);
+            } catch (DesktopApiException ex) {
+                showAlert("Error al crear lista: " + ex.getMessage(), Alert.AlertType.ERROR);
+            }
+        });
     }
 
     @FXML
