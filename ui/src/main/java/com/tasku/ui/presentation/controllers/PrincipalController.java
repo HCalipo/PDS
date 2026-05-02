@@ -65,6 +65,9 @@ public class PrincipalController {
     @FXML
     private SVGPath svgURLCopied;
 
+    @FXML
+    private TextField searchField;
+
     private final ToggleGroup boardToggleGroup = new ToggleGroup();
     private final List<RadioMenuItem> boardMenuItems = new ArrayList<>();
     private List<BoardApiResponse> boards = List.of();
@@ -94,6 +97,35 @@ public class PrincipalController {
             Platform.runLater(this::handleAñadirTablero);
         }
         svgURLCopied.setVisible(false);
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldVal, newVal) -> applySearchFilter(newVal));
+        }
+    }
+
+    private void applySearchFilter(String query) {
+        boolean showAll = query == null || query.isBlank();
+        String lowerQuery = showAll ? "" : query.trim().toLowerCase();
+
+        for (ListaTareasController ctrl : listControllers.values()) {
+            ctrl.filterCards(query);
+        }
+
+        int visibleDone = 0;
+        for (javafx.scene.Node node : doneColumn.getChildren()) {
+            if (node == doneEmptyState) continue;
+            UUID cardId = node.getUserData() instanceof UUID u ? u : null;
+            if (cardId == null) continue;
+            CardApiResponse card = completedCards.get(cardId);
+            boolean matches = showAll || (card != null && card.title() != null
+                    && card.title().toLowerCase().contains(lowerQuery));
+            node.setVisible(matches);
+            node.setManaged(matches);
+            if (matches) visibleDone++;
+        }
+        if (ContadorTareasCompletadas != null) {
+            ContadorTareasCompletadas.setText(
+                showAll ? String.valueOf(completedCards.size()) : String.valueOf(visibleDone));
+        }
     }
 
     @FXML
@@ -235,6 +267,10 @@ public class PrincipalController {
     private void seleccionarTablero(BoardApiResponse board, RadioMenuItem itemSeleccionado) {
         if (itemSeleccionado != null) {
             itemSeleccionado.setSelected(true);
+        }
+
+        if (searchField != null) {
+            searchField.clear();
         }
 
         currentBoard = board;

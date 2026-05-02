@@ -531,6 +531,26 @@ public class ListaTareasController {
         }
     }
 
+    public void filterCards(String query) {
+        boolean showAll = query == null || query.isBlank();
+        String lowerQuery = showAll ? "" : query.trim().toLowerCase();
+        int visible = 0;
+        for (Node node : tasksContainer.getChildren()) {
+            if (node == emptyState) continue;
+            UUID id = node.getUserData() instanceof UUID u ? u : null;
+            if (id == null) continue;
+            CardApiResponse card = cardsById.get(id);
+            boolean matches = showAll || (card != null && card.title() != null
+                    && card.title().toLowerCase().contains(lowerQuery));
+            node.setVisible(matches);
+            node.setManaged(matches);
+            if (matches) visible++;
+        }
+        if (taskCounter != null) {
+            taskCounter.setText(showAll ? String.valueOf(cardsById.size()) : String.valueOf(visible));
+        }
+    }
+
     private static String safe(String value) {
         return value == null ? "" : value.trim();
     }
