@@ -27,7 +27,7 @@
 
 /* ================= CABECERA ================= */
 .board-header {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #e0e0e0;
     -fx-border-color: #e2e8f0;
     -fx-border-width: 0 0 1 0;
 }
@@ -177,6 +177,23 @@
     -fx-padding: 10 16;
     -fx-cursor: hand;
 }
+
+.btn-primary-inverted {
+    -fx-background-color: white;
+    -fx-text-fill: #0ba360;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 16;
+    -fx-cursor: hand;
+}
+
+.btn-primary-inverted:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-translate-y: -1;
+}
+
+
 .btn-primary:hover {
     /* -fx-background-color: #05f5a9; */
     -fx-scale-x: 1.02;
@@ -296,6 +313,19 @@
     -fx-spacing: 8;
     -fx-min-height: 110px;
 }
+
+.empty-state-green {
+    -fx-border-color: #0ba360;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-border-radius: 8;
+    -fx-background-color: #79e2b5;
+    -fx-padding: 30;
+    -fx-spacing: 8;
+    -fx-min-height: 110px;
+}
+
+
 .empty-title {
     -fx-text-fill: #94a3b8;
     -fx-font-size: 14px;
