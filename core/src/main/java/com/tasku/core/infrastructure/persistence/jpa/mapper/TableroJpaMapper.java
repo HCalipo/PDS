@@ -36,7 +36,8 @@ public class TableroJpaMapper {
                     list.id(),
                     entity,
                     list.name(),
-                    list.cardLimit()
+                    list.cardLimit(),
+                    list.colorHex()
             );
             listEntities.add(listEntity);
         }
@@ -64,7 +65,8 @@ public class TableroJpaMapper {
                     new ListaTableroId(listEntity.getId()),
                     new TableroUrl(listEntity.getBoard().getUrl()),
                     listEntity.getName(),
-                    listEntity.getCardLimit()
+                    listEntity.getCardLimit(),
+                    listEntity.getColorHex()
             ));
         }
 
@@ -95,7 +97,8 @@ public class TableroJpaMapper {
                 new ListaTableroId(entity.getId()),
                 new TableroUrl(entity.getBoard().getUrl()),
                 entity.getName(),
-                entity.getCardLimit()
+                entity.getCardLimit(),
+                entity.getColorHex()
         );
     }
 }

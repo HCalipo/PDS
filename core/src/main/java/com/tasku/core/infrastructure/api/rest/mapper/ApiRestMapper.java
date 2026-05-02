@@ -79,7 +79,8 @@ public class ApiRestMapper {
                 list.id(),
                 list.boardUrl(),
                 list.name(),
-                list.cardLimit()
+                list.cardLimit(),
+                list.colorHex()
         );
     }
 

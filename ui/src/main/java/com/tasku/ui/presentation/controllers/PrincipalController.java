@@ -4,7 +4,6 @@ import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.dto.EstadoTablero;
 import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
 import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
-import com.tasku.ui.client.dto.request.CreateListApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.BoardListApiResponse;
@@ -30,15 +29,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 
 
 public class PrincipalController {
-
-    @FXML
-    private Button BottonAñadirColumna;
 
     @FXML
     private Button ButtonTableroBlock;
@@ -75,6 +70,7 @@ public class PrincipalController {
     private List<BoardApiResponse> boards = List.of();
     private List<BoardListApiResponse> currentBoardLists = List.of();
     private final Map<UUID, ListaTareasController> listControllers = new LinkedHashMap<>();
+    private final Map<UUID, VBox> columnNodes = new LinkedHashMap<>();
     private SeparatorMenuItem boardMenuSeparator;
     private MenuItem addBoardMenuItem;
     private MenuItem joinBoardMenuItem;
@@ -254,10 +250,13 @@ public class PrincipalController {
             ListaTareasController controller = loader.getController();
             controller.setTitulo(list.name());
             controller.setListId(list.id());
+            controller.setHeaderColor(list.colorHex());
             controller.setOnCardDropped(this::handleCardDropped);
             controller.setOnCardCompleted(this::handleCardCompleted);
             controller.setOnCreateCard(this::handleCrearTarea);
+            controller.setOnColumnReorder(this::handleColumnReorder);
             listControllers.put(list.id(), controller);
+            columnNodes.put(list.id(), nuevaColumna);
             int indice = boardContainer.getChildren().size() - 1;
             boardContainer.getChildren().add(indice, nuevaColumna);
         } catch (Exception e) {
@@ -278,14 +277,14 @@ public class PrincipalController {
 
     private void clearDynamicColumns() {
         int total = boardContainer.getChildren().size();
-            if (total <= 2) {
-                
-                listControllers.clear();
-                return;
-            }
-            
-            boardContainer.getChildren().remove(1, total - 1);
+        if (total <= 1) {
             listControllers.clear();
+            columnNodes.clear();
+            return;
+        }
+        boardContainer.getChildren().remove(0, total - 1);
+        listControllers.clear();
+        columnNodes.clear();
     }
 
     private UUID resolveCurrentListId(List<BoardListApiResponse> lists) {
@@ -327,21 +326,13 @@ public class PrincipalController {
             showAlert("Selecciona un tablero antes de crear una lista.", Alert.AlertType.WARNING);
             return;
         }
-
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Nueva lista");
-        dialog.setHeaderText(null);
-        dialog.setContentText("Nombre de la lista:");
-
-        Optional<String> resultado = dialog.showAndWait();
-        resultado.filter(nombre -> !nombre.isBlank()).ifPresent(nombre -> {
-            try {
-                BoardApiResponse updatedBoard = apiClient.createList(new CreateListApiRequest(boardUrl, nombre, 100));
-                handleListCreated(updatedBoard);
-            } catch (DesktopApiException ex) {
-                showAlert("Error al crear lista: " + ex.getMessage(), Alert.AlertType.ERROR);
-            }
-        });
+        SceneManager.getInstance().openDialogAndGetController(
+                "AñadirLista",
+                (AñadirListaController controller) -> {
+                    controller.setBoardUrl(boardUrl);
+                    controller.setOnListCreated(this::handleListCreated);
+                }
+        );
     }
 
     @FXML
@@ -474,6 +465,20 @@ public class PrincipalController {
             updateColumnCards(list.id(), List.of());
         }
         SceneManager.getInstance().setCurrentListId(newLists.get(newLists.size() - 1).id());
+    }
+
+    private void handleColumnReorder(UUID draggedListId, UUID targetListId) {
+        VBox draggedNode = columnNodes.get(draggedListId);
+        VBox targetNode  = columnNodes.get(targetListId);
+        if (draggedNode == null || targetNode == null) return;
+
+        int draggedIndex = boardContainer.getChildren().indexOf(draggedNode);
+        int targetIndex  = boardContainer.getChildren().indexOf(targetNode);
+        if (draggedIndex < 0 || targetIndex < 0 || draggedIndex == targetIndex) return;
+
+        boardContainer.getChildren().remove(draggedIndex);
+        int insertAt = boardContainer.getChildren().indexOf(targetNode);
+        boardContainer.getChildren().add(insertAt, draggedNode);
     }
 
     private void mergeBoard(BoardApiResponse updatedBoard) {

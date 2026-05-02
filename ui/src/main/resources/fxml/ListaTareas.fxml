@@ -9,7 +9,7 @@
 
 <VBox fx:id="listaTareas" maxWidth="Infinity" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.ListaTareasController">
    <children>
-      <HBox alignment="CENTER_LEFT" styleClass="column-header">
+      <HBox fx:id="columnHeader" alignment="CENTER_LEFT" styleClass="column-header">
          <children>
             <Label fx:id="columnTitle" styleClass="column-title, text-done" text="NOMBRE" />
             <Region HBox.hgrow="ALWAYS" />

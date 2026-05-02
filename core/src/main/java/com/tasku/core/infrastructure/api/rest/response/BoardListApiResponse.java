@@ -6,6 +6,7 @@ public record BoardListApiResponse(
         UUID id,
         String boardUrl,
         String name,
-        int cardLimit
+        int cardLimit,
+        String colorHex
 ) {
 }

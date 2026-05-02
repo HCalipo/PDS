@@ -5,6 +5,7 @@ import com.tasku.core.domain.model.TableroUrl;
 public record CreateListRequest(
         TableroUrl boardUrl,
         String name,
-        int cardLimit
+        int cardLimit,
+        String colorHex
 ) {
 }

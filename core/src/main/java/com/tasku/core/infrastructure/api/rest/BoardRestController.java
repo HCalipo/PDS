@@ -102,7 +102,8 @@ public class BoardRestController {
         Tablero board = boardService.createList(new CreateListRequest(
                 new TableroUrl(request.boardUrl()),
                 request.name(),
-                request.cardLimit()
+                request.cardLimit(),
+                request.colorHex()
         ));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toBoardResponse(board));
     }
