@@ -161,7 +161,28 @@ public class SceneManager {
             scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             dialog.setScene(scene);
 
-            syncBoundsWithOwner(dialog);
+            // TODO: hacer que se mueva la ventana.
+            
+            
+            root.applyCss();
+            root.layout();
+            double prefWidth = root.prefWidth(-1);
+            double prefHeight = root.prefHeight(-1);
+            double minWidth = root.minWidth(-1);
+            double minHeight = root.minHeight(-1);
+
+            //aplicar tamaño mínimo para los popUps
+            dialog.setMinWidth(minWidth > 0 ? minWidth : prefWidth);
+            dialog.setMinHeight(minHeight > 0 ? minHeight : prefHeight);
+
+            //centrarar el popUP
+            if (primaryStage != null) {
+                dialog.setX(primaryStage.getX() + (primaryStage.getWidth() / 2) - (prefWidth / 2));
+                dialog.setY(primaryStage.getY() + (primaryStage.getHeight() / 2) - (prefHeight / 2));
+            }
+
+
+
             dialog.showAndWait();
             return controller;
         } catch (IOException e) {
