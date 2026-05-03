@@ -59,7 +59,6 @@
 }
 
 
-```css
 /* ================= MENÚ DESPLEGABLE CABECERA ================= */
 
 /* Quita el fondo de botón y lo deja como texto limpio */
@@ -1008,18 +1007,64 @@
     -fx-background-radius: 4;
 }
 
-/* Checklist items container */
+/* ================= BOTÓN COMPLETAR TARJETA ================= */
+.btn-complete-card {
+    -fx-background-color: rgba(11, 163, 96, 0.08);
+    -fx-text-fill: #0ba360;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(11, 163, 96, 0.35);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+.btn-complete-card:hover {
+    -fx-background-color: #0ba360;
+    -fx-text-fill: white;
+    -fx-border-color: #0ba360;
+}
+.btn-complete-card:disabled {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}
+
+/* ================= CHECKLIST ITEMS EN TARJETAS ================= */
 .checklist-items {
-    -fx-spacing: 4;
+    -fx-spacing: 5;
+    -fx-padding: 2 0 4 0;
 }
 
 .checklist-items .check-box {
-    -fx-padding: 4 0;
+    -fx-padding: 2 0;
+}
+
+.checklist-items .check-box > .box {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-min-width: 14px;
+    -fx-min-height: 14px;
+}
+
+.checklist-items .check-box:hover > .box {
+    -fx-border-color: #0ba360;
+}
+
+.checklist-items .check-box:selected > .box {
+    -fx-background-color: #0ba360;
+    -fx-border-color: #0ba360;
+}
+
+.checklist-items .check-box:selected > .box > .mark {
+    -fx-background-color: white;
 }
 
 .checklist-items .check-box .text {
-    -fx-font-size: 13px;
-    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+    -fx-text-fill: #475569;
 }
 
 .checklist-items .check-box:selected .text {

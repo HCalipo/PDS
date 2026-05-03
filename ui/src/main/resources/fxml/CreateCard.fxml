@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
@@ -21,54 +22,64 @@
 
     <Label styleClass="label-title" text="Crear Tarjeta" />
 
-    <HBox spacing="20.0">
-        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
-            <Label styleClass="label-section" text="Tipo de tarjeta" />
-            <HBox spacing="10.0">
-                <ToggleButton fx:id="toggleTipo" prefHeight="35.0" selected="true" styleClass="toggle-card-type" text="Texto">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="tipoCardGroup" />
-                    </toggleGroup>
-                </ToggleButton>
-                <ToggleButton prefHeight="35.0" styleClass="toggle-card-type" text="Checklist" toggleGroup="$tipoCardGroup" />
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="480.0"
+                style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 0;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="16.0">
+            <padding>
+                <Insets right="6.0" />
+            </padding>
+
+            <HBox spacing="20.0">
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                    <Label styleClass="label-section" text="Tipo de tarjeta" />
+                    <HBox spacing="10.0">
+                        <ToggleButton fx:id="toggleTipo" prefHeight="35.0" selected="true" styleClass="toggle-card-type" text="Texto">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="tipoCardGroup" />
+                            </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton prefHeight="35.0" styleClass="toggle-card-type" text="Checklist" toggleGroup="$tipoCardGroup" />
+                    </HBox>
+                </VBox>
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                    <Label styleClass="label-section" text="Etiqueta" />
+                    <HBox spacing="10.0">
+                        <ChoiceBox fx:id="choiceEtiqueta" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnNuevaEtiqueta" onAction="#handleNuevaEtiqueta" prefHeight="35.0" prefWidth="35.0" styleClass="btn-add-small" text="+" />
+                    </HBox>
+                </VBox>
             </HBox>
+
+            <Label styleClass="label-section" text="Lista destino">
+                <font><Font size="12.0" /></font>
+            </Label>
+            <ChoiceBox fx:id="listChoiceBox" maxWidth="Infinity" styleClass="join-input" />
+
+            <Label styleClass="label-section" text="Título">
+                <font><Font size="12.0" /></font>
+            </Label>
+            <TextField fx:id="titleField" promptText="Introduce el título de la tarjeta" styleClass="join-input" />
+
+            <VBox fx:id="tareasPanel" managed="false" spacing="8.0" visible="false">
+                <Label styleClass="label-section" text="Tareas">
+                    <font><Font size="12.0" /></font>
+                </Label>
+                <HBox spacing="8.0">
+                    <TextField fx:id="taskInputField" onAction="#handleAddTask" promptText="Escribe una tarea y pulsa +" styleClass="join-input" HBox.hgrow="ALWAYS" />
+                    <Button onAction="#handleAddTask" prefHeight="35.0" prefWidth="35.0" styleClass="btn-add-small" text="+" />
+                </HBox>
+                <VBox fx:id="taskListContainer" spacing="4.0" />
+            </VBox>
+
+            <Label styleClass="label-section" text="Descripción">
+                <font><Font size="12.0" /></font>
+            </Label>
+            <TextArea fx:id="descriptionArea" prefRowCount="3" promptText="Descripción opcional" styleClass="join-input" />
+
+            <Label fx:id="lblCardResult" wrapText="true" />
         </VBox>
-        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
-            <Label styleClass="label-section" text="Etiqueta" />
-            <HBox spacing="10.0">
-                <ChoiceBox fx:id="choiceEtiqueta" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnNuevaEtiqueta" onAction="#handleNuevaEtiqueta" prefHeight="35.0" prefWidth="35.0" styleClass="btn-add-small" text="+" />
-            </HBox>
-        </VBox>
-    </HBox>
-
-    <Label styleClass="label-section" text="Lista destino">
-        <font><Font size="12.0" /></font>
-    </Label>
-    <ChoiceBox fx:id="listChoiceBox" maxWidth="Infinity" styleClass="join-input" />
-
-    <Label styleClass="label-section" text="Título">
-        <font><Font size="12.0" /></font>
-    </Label>
-    <TextField fx:id="titleField" promptText="Introduce el título de la tarjeta" styleClass="join-input" />
-
-    <VBox fx:id="tareasPanel" managed="false" spacing="8.0" visible="false">
-        <Label styleClass="label-section" text="Tareas">
-            <font><Font size="12.0" /></font>
-        </Label>
-        <HBox spacing="8.0">
-            <TextField fx:id="taskInputField" onAction="#handleAddTask" promptText="Escribe una tarea y pulsa +" styleClass="join-input" HBox.hgrow="ALWAYS" />
-            <Button onAction="#handleAddTask" prefHeight="35.0" prefWidth="35.0" styleClass="btn-add-small" text="+" />
-        </HBox>
-        <VBox fx:id="taskListContainer" spacing="4.0" />
-    </VBox>
-
-    <Label styleClass="label-section" text="Descripción">
-        <font><Font size="12.0" /></font>
-    </Label>
-    <TextArea fx:id="descriptionArea" prefRowCount="3" promptText="Descripción opcional" styleClass="join-input" />
-
-    <Label fx:id="lblCardResult" wrapText="true" />
+    </ScrollPane>
 
     <HBox alignment="CENTER_RIGHT" spacing="12.0">
         <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />

@@ -10,10 +10,10 @@ import com.tasku.ui.client.dto.response.CardApiResponse;
 import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -103,6 +103,11 @@ public class CrearTarjetaController {
             boolean isChecklist = newVal != null && newVal != toggleTipo;
             tareasPanel.setVisible(isChecklist);
             tareasPanel.setManaged(isChecklist);
+            Platform.runLater(() -> {
+                if (tareasPanel.getParent() != null) {
+                    tareasPanel.getParent().requestLayout();
+                }
+            });
         });
 
         preloadListsFromContext();
@@ -184,6 +189,7 @@ public class CrearTarjetaController {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
             Label lbl = new Label(task);
+            lbl.setStyle("-fx-text-fill: #334155; -fx-font-size: 13px;");
             lbl.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(lbl, Priority.ALWAYS);
             Button btnRemove = new Button("×");
@@ -211,17 +217,6 @@ public class CrearTarjetaController {
             choiceEtiqueta.getItems().add(name);
         }
         choiceEtiqueta.setValue(name);
-    }
-
-    private void clearForm() {
-        titleField.clear();
-        descriptionArea.clear();
-        tasks.clear();
-        taskListContainer.getChildren().clear();
-        if (taskInputField != null) taskInputField.clear();
-        if (!choiceEtiqueta.getItems().isEmpty()) {
-            choiceEtiqueta.getSelectionModel().selectFirst();
-        }
     }
 
     private static String normalize(String value) {
@@ -264,34 +259,9 @@ public class CrearTarjetaController {
         this.onCardCreated = onCardCreated;
     }
 
-    private void selectListById(UUID listId) {
-        if (listId == null) {
-            return;
-        }
-        for (BoardListApiResponse list : listChoiceBox.getItems()) {
-            if (listId.equals(list.id())) {
-                listChoiceBox.getSelectionModel().select(list);
-                return;
-            }
-        }
-    }
-
     private void showError(String message) {
         lblCardResult.setStyle("-fx-text-fill: #d63031;");
         lblCardResult.setText(message);
-    }
-
-    private void showSuccess(String message) {
-        lblCardResult.setStyle("-fx-text-fill: #0ba360;");
-        lblCardResult.setText(message);
-    }
-
-    private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informacion");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private void closeDialog() {
