@@ -6,17 +6,23 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 
 public class TaskuDesktopApplication extends Application {
+
+    private static final Logger log = LoggerFactory.getLogger(TaskuDesktopApplication.class);
 
     private double xOffset = 0;
     private double yOffset = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
+        log.info("Arrancando TaskU Desktop");
         SceneManager.getInstance().setPrimaryStage(stage);
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(
@@ -43,6 +49,10 @@ public class TaskuDesktopApplication extends Application {
     }
 
     public static void main(String[] args) {
+        URL configUrl = TaskuDesktopApplication.class.getResource("/log4j2.xml");
+        if (configUrl != null) {
+            System.setProperty("log4j2.configurationFile", configUrl.toExternalForm());
+        }
         launch(args);
     }
 }
