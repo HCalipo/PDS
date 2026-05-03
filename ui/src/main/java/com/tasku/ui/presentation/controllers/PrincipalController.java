@@ -25,6 +25,9 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,6 +37,8 @@ import java.util.UUID;
 
 
 public class PrincipalController {
+
+    private static final Logger log = LoggerFactory.getLogger(PrincipalController.class);
 
     @FXML
     private Button ButtonTableroBlock;
@@ -140,7 +145,7 @@ public class PrincipalController {
         EstadoTablero nuevoEstado = estaBloqueado ? EstadoTablero.BLOCKED : EstadoTablero.ACTIVE;
         try {
             apiClient.changeBoardStatus(new ChangeBoardStatusApiRequest(boardUrl, nuevoEstado));
-            System.out.println("Tablero " + (estaBloqueado ? "bloqueado" : "desbloqueado") + ".");
+            log.info("Tablero {}.", estaBloqueado ? "bloqueado" : "desbloqueado");
         } catch (DesktopApiException ex) {
             estaBloqueado = !estaBloqueado;
             showAlert("Error al cambiar estado del tablero: " + ex.getMessage(), Alert.AlertType.ERROR);
@@ -305,7 +310,7 @@ public class PrincipalController {
             int indice = boardContainer.getChildren().size() - 1;
             boardContainer.getChildren().add(indice, nuevaColumna);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al cargar columna FXML", e);
         }
     }
 

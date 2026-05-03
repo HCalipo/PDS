@@ -1,5 +1,8 @@
 package com.tasku.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +17,7 @@ import java.util.function.Consumer;
 
 public class SceneManager {
 
+    private static final Logger log = LoggerFactory.getLogger(SceneManager.class);
     private static final SceneManager INSTANCE = new SceneManager();
 
     private Stage primaryStage;
@@ -103,8 +107,7 @@ public class SceneManager {
                 primaryStage.setScene(new Scene(root));
             }
         } catch (IOException e) {
-            System.err.println("Error al cargar la vista " + fxmlName + ": " + e.getMessage());
-            e.printStackTrace(); 
+            log.error("Error al cargar la vista {}", fxmlName, e);
         }
     }
 
@@ -133,13 +136,12 @@ public class SceneManager {
             this.primaryStage = tableroStage;
 
         } catch (IOException e) {
-            System.err.println("Error al abrir la aplicacion principal: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error al abrir la aplicacion principal", e);
         }
     }
 
-    public Stage openDialog(String fxmlName) {
-        return openDialogAndGetController(fxmlName, null);
+    public void openDialog(String fxmlName) {
+        openDialogAndGetController(fxmlName, null);
     }
 
     public <T> T openDialogAndGetController(String fxmlName, Consumer<T> controllerInitializer) {
@@ -186,7 +188,7 @@ public class SceneManager {
             dialog.showAndWait();
             return controller;
         } catch (IOException e) {
-            System.err.println("Error al abrir dialogo " + fxmlName + ": " + e.getMessage());
+            log.error("Error al abrir dialogo {}", fxmlName, e);
             return null;
         }
     }
