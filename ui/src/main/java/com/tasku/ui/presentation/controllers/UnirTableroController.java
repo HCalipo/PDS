@@ -2,9 +2,6 @@ package com.tasku.ui.presentation.controllers;
 
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.dto.request.JoinBoardApiRequest;
 import com.tasku.ui.client.http.DesktopApiException;
@@ -17,8 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class UnirTableroController {
-
-    private static final Logger log = LoggerFactory.getLogger(UnirTableroController.class);
 
     @FXML
     private TextField txtUrl;
@@ -63,7 +58,6 @@ public class UnirTableroController {
             showError(ex.getMessage());
         } catch (Exception ex) {
             showError("Se ha producido un error inesperado de conexión.");
-            log.error("Error inesperado de conexión al unirse al tablero", ex);
         }
     }
     
@@ -89,9 +83,6 @@ public class UnirTableroController {
         if (lblMensajeError != null) {
             lblMensajeError.setStyle("-fx-text-fill: #d63031;");
             lblMensajeError.setText(message);
-        } else {
-            
-            log.error("Error (Unir Tablero): {}", message);
         }
     }
 }

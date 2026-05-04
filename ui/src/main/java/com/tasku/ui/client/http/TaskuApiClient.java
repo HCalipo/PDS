@@ -20,9 +20,6 @@ import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
 import com.tasku.ui.client.dto.response.TraceApiResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -35,7 +32,6 @@ import java.util.UUID;
 
 public class TaskuApiClient {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskuApiClient.class);
     private static final String DEFAULT_BASE_URL = "http://localhost:8080";
 
     private final String baseUrl;
@@ -452,7 +448,6 @@ public class TaskuApiClient {
                 throw new DesktopApiException(extractError(response), response.statusCode());
             }
         } catch (Exception ex) {
-            log.error("Error al cargar tableros compartidos", ex);
             return List.of();
         }
     }
