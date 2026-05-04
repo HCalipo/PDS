@@ -11,14 +11,19 @@ import com.tasku.ui.client.http.TaskuApiClient;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,6 +194,8 @@ public class ListaTareasController {
         return removed;
     }
 
+
+
     public void addCard(CardApiResponse card) {
         if (card == null || card.id() == null || tasksContainer == null) {
             return;
@@ -202,25 +209,31 @@ public class ListaTareasController {
     }
 
     private Node buildCardNode(CardApiResponse card) {
-        VBox cardBox = new VBox();
-        cardBox.getStyleClass().add("task-card");
-        cardBox.setUserData(card.id());
+        // StackPane como contenedor principal para posicionamiento absoluto
+        StackPane cardPane = new StackPane();
+        cardPane.getStyleClass().add("task-card");
+        cardPane.setUserData(card.id());
 
         String accentColor = firstLabelColor(card);
         if (!accentColor.isBlank()) {
-            cardBox.setStyle("-fx-border-color: " + accentColor + "; -fx-border-width: 2;");
+            cardPane.setStyle("-fx-border-color: " + accentColor + "; -fx-border-width: 2;");
         }
 
-        // 1. Título
+        // Contenedor interno para el contenido (excepto el menú)
+        VBox contentBox = new VBox();
+        contentBox.setMouseTransparent(false);
+
+        // Título
         Label title = new Label(safe(card.title()));
         title.getStyleClass().add("task-card-title");
         title.setMaxWidth(Double.MAX_VALUE);
         title.setAlignment(javafx.geometry.Pos.CENTER);
+        title.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
         title.setWrapText(true);
         title.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
-        cardBox.getChildren().add(title);
+        contentBox.getChildren().add(title);
 
-        // 2. Nombre de etiqueta(s)
+        // Nombre de etiqueta
         if (card.labels() != null && !card.labels().isEmpty()) {
             HBox labelsBox = new HBox();
             labelsBox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -237,11 +250,11 @@ public class ListaTareasController {
                 labelsBox.getChildren().add(chip);
             }
             if (!labelsBox.getChildren().isEmpty()) {
-                cardBox.getChildren().add(labelsBox);
+                contentBox.getChildren().add(labelsBox);
             }
         }
 
-        // 3. Checklist items
+        // Checklist items
         if (card.type() == TipoTarjeta.CHECKLIST
                 && card.checklistItems() != null
                 && !card.checklistItems().isEmpty()) {
@@ -252,12 +265,12 @@ public class ListaTareasController {
 
             Label progress = new Label(done + " / " + total);
             progress.getStyleClass().add("checklist-progress");
-            cardBox.getChildren().add(progress);
+            contentBox.getChildren().add(progress);
 
             ProgressBar progressBar = new ProgressBar(total > 0 ? (double) done / total : 0);
             progressBar.setMaxWidth(Double.MAX_VALUE);
             progressBar.getStyleClass().add("progress-bar-mini");
-            cardBox.getChildren().add(progressBar);
+            contentBox.getChildren().add(progressBar);
 
             VBox checklistBox = new VBox(4);
             checklistBox.getStyleClass().add("checklist-items");
@@ -279,19 +292,19 @@ public class ListaTareasController {
                 });
                 checklistBox.getChildren().add(cb);
             }
-            cardBox.getChildren().add(checklistBox);
+            contentBox.getChildren().add(checklistBox);
         }
 
-        // 4. Descripción
+        // Descripción
         String descriptionValue = safe(card.description());
         if (!descriptionValue.isBlank()) {
             Label description = new Label(descriptionValue);
             description.setWrapText(true);
             description.getStyleClass().add("task-card-description");
-            cardBox.getChildren().add(description);
+            contentBox.getChildren().add(description);
         }
 
-        // 5. Botón completar
+        // Botón completar
         javafx.scene.control.Button completeBtn = new javafx.scene.control.Button("✓ Completar");
         completeBtn.getStyleClass().add("btn-complete-card");
         completeBtn.setMaxWidth(Double.MAX_VALUE);
@@ -301,9 +314,46 @@ public class ListaTareasController {
                 onCardCompleted.handle(card.id(), listId);
             }
         });
-        cardBox.getChildren().add(completeBtn);
+        contentBox.getChildren().add(completeBtn);
 
-        return cardBox;
+    //menu de 3 puntos 
+    StackPane menuButton = new StackPane();
+    menuButton.getStyleClass().add("card-menu-button");
+    StackPane.setAlignment(menuButton, javafx.geometry.Pos.TOP_RIGHT);
+    menuButton.setMaxSize(javafx.scene.layout.Region.USE_PREF_SIZE, javafx.scene.layout.Region.USE_PREF_SIZE);
+    menuButton.setPadding(new javafx.geometry.Insets(8, 16, 8, 16));
+    StackPane.setMargin(menuButton, new javafx.geometry.Insets(4, 4, 0, 0));
+    
+    SVGPath btnMenuPuntos = new SVGPath();
+    btnMenuPuntos.setContent("M 6 10 C 5.726562 10 5.488281 9.902344 5.292969 9.707031 C 5.097656 9.511719 5 9.273438 5 9 C 5 8.726562 5.097656 8.488281 5.292969 8.292969 C 5.488281 8.097656 5.726562 8 6 8 C 6.273438 8 6.511719 8.097656 6.707031 8.292969 C 6.902344 8.488281 7 8.726562 7 9 C 7 9.273438 6.902344 9.511719 6.707031 9.707031 C 6.511719 9.902344 6.273438 10 6 10 Z M 6 7 C 5.726562 7 5.488281 6.902344 5.292969 6.707031 C 5.097656 6.511719 5 6.273438 5 6 C 5 5.726562 5.097656 5.488281 5.292969 5.292969 C 5.488281 5.097656 5.726562 5 6 5 C 6.273438 5 6.511719 5.097656 6.707031 5.292969 C 6.902344 5.488281 7 5.726562 7 6 C 7 6.273438 6.902344 6.511719 6.707031 6.707031 C 6.511719 6.902344 6.273438 7 6 7 Z M 6 4 C 5.726562 4 5.488281 3.902344 5.292969 3.707031 C 5.097656 3.511719 5 3.273438 5 3 C 5 2.726562 5.097656 2.488281 5.292969 2.292969 C 5.488281 2.097656 5.726562 2 6 2 C 6.273438 2 6.511719 2.097656 6.707031 2.292969 C 6.902344 2.488281 7 2.726562 7 3 C 7 3.273438 6.902344 3.511719 6.707031 3.707031 C 6.511719 3.902344 6.273438 4 6 4 Z M 6 4");
+    btnMenuPuntos.setFill(javafx.scene.paint.Color.web("#6b778c"));
+    menuButton.getChildren().add(btnMenuPuntos);
+    
+    
+    menuButton.setOnMouseClicked(e -> {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem editItem = new MenuItem("Editar");
+        editItem.setOnAction(ev -> {
+            System.out.println("Editar tarjeta: " + card.id());
+        });
+        
+        MenuItem deleteItem = new MenuItem("Eliminar");
+        deleteItem.setOnAction(ev -> {
+            System.out.println("Eliminar tarjeta: " + card.id());
+        });
+        
+        contextMenu.getItems().addAll(editItem, deleteItem);
+        contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0);
+    });
+    
+    // Cursor de mano al pasar por encima
+    //menuButton.setOnMouseEntered(e -> menuButton.setCursor(javafx.scene.Cursor.HAND));
+    //menuButton.setOnMouseExited(e -> menuButton.setCursor(javafx.scene.Cursor.DEFAULT));
+
+    // Añadir contenido y menú al StackPane principal
+    cardPane.getChildren().addAll(contentBox, menuButton);
+
+    return cardPane;
     }
 
     private void refreshCardNode(CardApiResponse updatedCard) {
