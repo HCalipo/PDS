@@ -63,9 +63,6 @@ public class PrincipalController {
     private SVGPath svgCpURL;
 
     @FXML
-    private SVGPath svgURLCopied;
-
-    @FXML
     private TextField searchField;
 
     private final ToggleGroup boardToggleGroup = new ToggleGroup();
@@ -96,7 +93,7 @@ public class PrincipalController {
         if (SceneManager.getInstance().consumeNewUser()) {
             Platform.runLater(this::handleAñadirTablero);
         }
-        svgURLCopied.setVisible(false);
+        //svgURLCopied.setVisible(false);
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldVal, newVal) -> applySearchFilter(newVal));
         }
@@ -409,7 +406,7 @@ public class PrincipalController {
             }
         );
     }
-
+/* 
     @FXML
     void handleCopyURL(MouseEvent event) {
         
@@ -444,7 +441,19 @@ public class PrincipalController {
         }
 
     }
+*/
 
+    @FXML
+void handleCompartirTablero(MouseEvent event) {
+    String boardUrl = SceneManager.getInstance().getCurrentBoardUrl();
+    if (boardUrl == null || boardUrl.isBlank()) {
+        showAlert("Selecciona un tablero antes de compartirlo.", Alert.AlertType.WARNING);
+        return;
+    }
+    
+    SceneManager.getInstance().openDialog("CompartirTablero");
+}
+    
     private void refreshCardsForBoard() {
         if (currentBoardLists == null || currentBoardLists.isEmpty()) {
             return;
