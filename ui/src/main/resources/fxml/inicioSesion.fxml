@@ -87,7 +87,7 @@
                   </Label>
                </children>
                <VBox.margin>
-                  <Insets right="-40.0" top="-110.0" />
+                  <Insets right="-40.0" top="-98.0" />
                </VBox.margin>
             </HBox>
 
