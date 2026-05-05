@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<VBox prefWidth="520.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.AñadirListaController">
+<VBox prefWidth="520.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.AñadirListaController">
     <padding>
         <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
     </padding>

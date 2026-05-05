@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: transparent;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.RegistroController">
+<StackPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: transparent;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.RegistroController">
 
    <BorderPane maxHeight="500.0" maxWidth="700.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15;">
       
@@ -112,7 +112,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" onAction="#handleIniciarSesion" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" stylesheets="@styles.css" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <TextField id="texfieldEmail" fx:id="txtEmail" maxWidth="1.7976931348623157E308" onAction="#handleRegistroEInicioSesion" prefHeight="40.0" prefWidth="182.0" promptText="tu.email@ejemplo.com" styleClass="textfield-login" stylesheets="@styles.css" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <style>
                         -fx-background-color: #fafbfc;
                         -fx-background-radius: 20;

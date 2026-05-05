@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane prefHeight="331.0" prefWidth="956.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.PrincipalController">
+<BorderPane prefHeight="331.0" prefWidth="956.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.PrincipalController">
     
     <top>
         <HBox alignment="CENTER_LEFT" spacing="16" styleClass="board-header">
@@ -29,25 +29,20 @@
             </children>
          </Group>
 
-            <VBox alignment="CENTER_LEFT" spacing="2">
+            <VBox alignment="CENTER_LEFT" spacing="2.0">
                 <MenuButton fx:id="boardMenuButton" styleClass="icon-button" text="Proyecto Alpha">
                     
                 </MenuButton>
 
             </VBox>
-         <StackPane prefHeight="36.0" prefWidth="102.0" HBox.hgrow="NEVER">
+         <StackPane HBox.hgrow="NEVER">
             <children>
-               <HBox alignment="CENTER" StackPane.alignment="CENTER">
+               <HBox alignment="CENTER" StackPane.alignment="TOP_LEFT">
                   <children>
-                     <Label fx:id="labelURL" onMouseClicked="#handleCopyURL" prefHeight="15.0" prefWidth="66.0" text="Copiar URL" underline="true">
-                        <cursor>
-                           <Cursor fx:constant="HAND" />
-                        </cursor></Label>
-                     <SVGPath fx:id="svgCpURL" content="M 4.5 9 C 4.226562 9 3.988281 8.902344 3.792969 8.707031 C 3.597656 8.511719 3.5 8.273438 3.5 8 L 3.5 2 C 3.5 1.726562 3.597656 1.488281 3.792969 1.292969 C 3.988281 1.097656 4.226562 1 4.5 1 L 9 1 C 9.273438 1 9.511719 1.097656 9.707031 1.292969 C 9.902344 1.488281 10 1.726562 10 2 L 10 8 C 10 8.273438 9.902344 8.511719 9.707031 8.707031 C 9.511719 8.902344 9.273438 9 9 9 Z M 4.5 8 L 9 8 L 9 2 L 4.5 2 Z M 2.5 11 C 2.226562 11 1.988281 10.902344 1.792969 10.707031 C 1.597656 10.511719 1.5 10.273438 1.5 10 L 1.5 3 L 2.5 3 L 2.5 10 L 8 10 L 8 11 Z M 4.5 8 L 4.5 2 Z M 4.5 8 " onMouseClicked="#handleCopyURL">
+                     <SVGPath fx:id="svgCpURL" content="M 4.945312 16.199219 C 4.574219 16.199219 4.257812 16.066406 3.992188 15.804688 C 3.730469 15.539062 3.601562 15.222656 3.601562 14.851562 L 3.601562 7.648438 C 3.601562 7.277344 3.730469 6.960938 3.996094 6.695312 C 4.261719 6.433594 4.578125 6.300781 4.949219 6.300781 L 7.199219 6.300781 L 7.199219 7.648438 L 4.949219 7.648438 L 4.949219 14.851562 L 13.050781 14.851562 L 13.050781 7.648438 L 10.800781 7.648438 L 10.800781 6.300781 L 13.050781 6.300781 C 13.425781 6.300781 13.742188 6.433594 14.007812 6.695312 C 14.269531 6.960938 14.398438 7.277344 14.398438 7.648438 L 14.398438 14.851562 C 14.398438 15.222656 14.269531 15.539062 14.003906 15.804688 C 13.738281 16.066406 13.421875 16.199219 13.050781 16.199219 Z M 8.324219 11.699219 L 8.324219 3.488281 L 7.257812 4.554688 L 6.300781 3.601562 L 9 0.898438 L 11.699219 3.601562 L 10.742188 4.554688 L 9.675781 3.488281 L 9.675781 11.699219 Z M 8.324219 11.699219" onMouseClicked="#handleCompartirTablero">
                         <cursor>
                            <Cursor fx:constant="HAND" />
                         </cursor></SVGPath>
-                     <SVGPath fx:id="svgURLCopied" content="M 6.25 10.25 L 3.75 7.75 L 4.625 6.875 L 6.25 8.5 L 10.375 4.375 L 11.25 5.25 Z M 6.25 10.25" onMouseClicked="#handleCopyURL" />
                   </children>
                </HBox>
             </children>

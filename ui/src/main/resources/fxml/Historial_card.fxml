@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<HBox prefHeight="88.0" prefWidth="427.0" spacing="16.0" styleClass="history-card-exact" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.Historial_cardController">
+<HBox prefHeight="88.0" prefWidth="427.0" spacing="16.0" styleClass="history-card-exact" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.Historial_cardController">
     <children>
         <Label fx:id="avatarLabel" alignment="CENTER" minHeight="42.0" minWidth="42.0" styleClass="avatar-exact" text="JD" />
 
