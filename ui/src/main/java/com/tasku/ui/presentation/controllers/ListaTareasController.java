@@ -10,12 +10,15 @@ import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -44,6 +47,14 @@ public class ListaTareasController {
         void handle(UUID draggedListId, UUID targetListId);
     }
 
+    public interface ListDeletedHandler {
+        void handle(UUID listId);
+    }
+
+    public interface ListRenamedHandler {
+        void handle(UUID listId, String newName);
+    }
+
     private static final DataFormat CARD_ID_FORMAT   = new DataFormat("application/x-tasku-card-id");
     private static final DataFormat LIST_ID_FORMAT   = new DataFormat("application/x-tasku-list-id");
     private static final DataFormat COLUMN_ID_FORMAT = new DataFormat("application/x-tasku-column-list-id");
@@ -55,10 +66,13 @@ public class ListaTareasController {
     @FXML private VBox emptyState;
 
     private UUID listId;
+    private String listName = "";
     private final Map<UUID, CardApiResponse> cardsById = new LinkedHashMap<>();
     private CardDropHandler onCardDropped;
     private CardCompletedHandler onCardCompleted;
     private ColumnReorderHandler onColumnReorder;
+    private ListDeletedHandler onListDeleted;
+    private ListRenamedHandler onListRenamed;
     private Runnable onCreateCard;
     private String savedHeaderStyle = "";
     private boolean headerDropActive = false;
@@ -67,6 +81,9 @@ public class ListaTareasController {
     public void setTitulo(String nombre) {
         if (columnTitle != null) {
             columnTitle.setText(nombre != null ? nombre.toUpperCase() : "");
+        }
+        if (nombre != null) {
+            this.listName = nombre;
         }
     }
 
@@ -136,6 +153,41 @@ public class ListaTareasController {
 
     public void setOnCreateCard(Runnable onCreateCard) {
         this.onCreateCard = onCreateCard;
+    }
+
+    public void setOnListDeleted(ListDeletedHandler handler) {
+        this.onListDeleted = handler;
+    }
+
+    public void setOnListRenamed(ListRenamedHandler handler) {
+        this.onListRenamed = handler;
+    }
+
+    @FXML
+    private void handleRenameList() {
+        TextInputDialog dialog = new TextInputDialog(listName);
+        dialog.setTitle("Renombrar lista");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Nuevo nombre:");
+        dialog.showAndWait().ifPresent(newName -> {
+            String trimmed = newName.trim();
+            if (!trimmed.isBlank() && onListRenamed != null) {
+                onListRenamed.handle(listId, trimmed);
+            }
+        });
+    }
+
+    @FXML
+    private void handleDeleteList() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Eliminar lista");
+        confirm.setHeaderText(null);
+        confirm.setContentText("¿Eliminar la lista \"" + listName + "\" y todas sus tarjetas?");
+        confirm.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.OK && onListDeleted != null) {
+                onListDeleted.handle(listId);
+            }
+        });
     }
 
     @FXML
@@ -333,15 +385,11 @@ public class ListaTareasController {
     menuButton.setOnMouseClicked(e -> {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem editItem = new MenuItem("Editar");
-        editItem.setOnAction(ev -> {
-            System.out.println("Editar tarjeta: " + card.id());
-        });
-        
+        editItem.setOnAction(ev -> handleEditCard(card));
+
         MenuItem deleteItem = new MenuItem("Eliminar");
-        deleteItem.setOnAction(ev -> {
-            System.out.println("Eliminar tarjeta: " + card.id());
-        });
-        
+        deleteItem.setOnAction(ev -> handleDeleteCard(card));
+
         contextMenu.getItems().addAll(editItem, deleteItem);
         contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0);
     });
@@ -354,6 +402,47 @@ public class ListaTareasController {
     cardPane.getChildren().addAll(contentBox, menuButton);
 
     return cardPane;
+    }
+
+    private void handleEditCard(CardApiResponse card) {
+        TextInputDialog dialog = new TextInputDialog(card.title());
+        dialog.setTitle("Editar tarjeta");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Nuevo título:");
+        dialog.showAndWait().ifPresent(newTitle -> {
+            String trimmed = newTitle.trim();
+            if (trimmed.isBlank()) return;
+            try {
+                CardApiResponse updated = apiClient.renameCard(card.id(), trimmed);
+                refreshCardNode(updated);
+            } catch (DesktopApiException ex) {
+                showAlert("No se pudo editar la tarjeta: " + ex.getMessage());
+            }
+        });
+    }
+
+    private void handleDeleteCard(CardApiResponse card) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Eliminar tarjeta");
+        confirm.setHeaderText(null);
+        confirm.setContentText("¿Eliminar la tarjeta \"" + card.title() + "\"?");
+        confirm.showAndWait().ifPresent(result -> {
+            if (result != ButtonType.OK) return;
+            try {
+                apiClient.deleteCard(card.id());
+                removeCard(card.id());
+            } catch (DesktopApiException ex) {
+                showAlert("No se pudo eliminar la tarjeta: " + ex.getMessage());
+            }
+        });
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("TaskU");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void refreshCardNode(CardApiResponse updatedCard) {

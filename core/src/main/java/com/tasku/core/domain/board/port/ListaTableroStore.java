@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface ListaTableroStore {
     Optional<ListaTablero> findById(ListaTableroId listId);
+
+    void deleteById(ListaTableroId listId);
 }
 
 

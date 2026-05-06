@@ -14,6 +14,8 @@
             <Label fx:id="columnTitle" styleClass="column-title, text-done" text="NOMBRE" />
             <Region HBox.hgrow="ALWAYS" />
             <Label fx:id="taskCounter" styleClass="task-counter" text="0" />
+            <Button fx:id="btnRenameList" mnemonicParsing="false" onAction="#handleRenameList" styleClass="btn-list-action" text="✏" />
+            <Button fx:id="btnDeleteList" mnemonicParsing="false" onAction="#handleDeleteList" styleClass="btn-list-action" text="🗑" />
          </children>
       </HBox>
       <VBox fx:id="tasksContainer" styleClass="task-list" VBox.vgrow="ALWAYS">

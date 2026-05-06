@@ -17,6 +17,10 @@ public interface TarjetaStore {
     List<Tarjeta> findByListId(ListaTableroId listId);
 
     List<Tarjeta> findCompletedByBoardUrl(String boardUrl);
+
+    void deleteByListId(ListaTableroId listId);
+
+    void deleteById(TarjetaId cardId);
 }
 
 

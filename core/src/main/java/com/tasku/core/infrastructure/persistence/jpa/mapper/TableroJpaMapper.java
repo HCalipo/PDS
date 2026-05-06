@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class TableroJpaMapper {
@@ -60,7 +61,11 @@ public class TableroJpaMapper {
 
     public Tablero toDomain(TableroJpaEntity entity) {
         List<ListaTablero> lists = new ArrayList<>();
+        Set<UUID> seenListIds = new LinkedHashSet<>();
         for (ListaTableroJpaEntity listEntity : entity.getLists()) {
+            if (!seenListIds.add(listEntity.getId())) {
+                continue;
+            }
             lists.add(new ListaTablero(
                     new ListaTableroId(listEntity.getId()),
                     new TableroUrl(listEntity.getBoard().getUrl()),

@@ -23,6 +23,11 @@ public class JpaListaTableroStoreAdapter implements ListaTableroStore {
     public Optional<ListaTablero> findById(ListaTableroId listId) {
         return repository.findById(listId.id()).map(tableroJpaMapper::toDomain);
     }
+
+    @Override
+    public void deleteById(ListaTableroId listId) {
+        repository.deleteById(listId.id());
+    }
 }
 
 

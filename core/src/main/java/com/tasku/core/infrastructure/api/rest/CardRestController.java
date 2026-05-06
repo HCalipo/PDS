@@ -1,6 +1,8 @@
 package com.tasku.core.infrastructure.api.rest;
 
 import com.tasku.core.application.tablero.usecase.TarjetaApplicationService;
+import com.tasku.core.application.tablero.usecase.dto.DeleteCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.RenameCardRequest;
 import com.tasku.core.domain.model.ListaTableroId;
 import com.tasku.core.domain.model.Tarjeta;
 import com.tasku.core.domain.model.TarjetaId;
@@ -10,6 +12,7 @@ import com.tasku.core.infrastructure.api.rest.request.AssignCardLabelApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CompleteCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CreateCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.MoveCardApiRequest;
+import com.tasku.core.infrastructure.api.rest.request.RenameCardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.ToggleChecklistItemApiRequest;
 import com.tasku.core.infrastructure.api.rest.response.CardApiResponse;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -93,6 +97,19 @@ public class CardRestController {
         return cardService.getCompletedCardsForBoard(boardUrl).stream()
                 .map(mapper::toCardResponse)
                 .toList();
+    }
+
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<Void> deleteCard(@PathVariable @NotNull UUID cardId) {
+        cardService.deleteCard(new DeleteCardRequest(new TarjetaId(cardId)));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{cardId}")
+    public CardApiResponse renameCard(@PathVariable @NotNull UUID cardId,
+                                     @Valid @RequestBody RenameCardApiRequest request) {
+        Tarjeta card = cardService.renameCard(new RenameCardRequest(new TarjetaId(cardId), request.title()));
+        return mapper.toCardResponse(card);
     }
 }
 

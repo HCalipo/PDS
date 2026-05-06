@@ -3,6 +3,7 @@
     import com.tasku.core.application.tablero.usecase.dto.ChangeBoardStatusRequest;
     import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
     import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
+    import com.tasku.core.application.tablero.usecase.dto.DeleteListRequest;
     import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
     import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
     import com.tasku.core.domain.board.exception.DomainConflictException;
@@ -15,6 +16,7 @@
     import com.tasku.core.domain.model.TableroUrl;
     import com.tasku.core.domain.model.Usuario;
     import com.tasku.core.domain.board.port.TableroStore;
+    import com.tasku.core.domain.board.port.TarjetaStore;
     import com.tasku.core.domain.board.port.UsuarioStore;
     import org.springframework.stereotype.Service;
     import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +28,12 @@
     public class TableroUseCaseService {
         private final UsuarioStore userStore;
         private final TableroStore boardStore;
+        private final TarjetaStore cardStore;
 
-        public TableroUseCaseService(UsuarioStore userStore, TableroStore boardStore) {
+        public TableroUseCaseService(UsuarioStore userStore, TableroStore boardStore, TarjetaStore cardStore) {
             this.userStore = userStore;
             this.boardStore = boardStore;
+            this.cardStore = cardStore;
         }
 
         @Transactional
@@ -110,6 +114,20 @@
             Tablero board = getBoardByUrl(request.boardUrl());
             Tablero updatedBoard = board.withRenamedList(request.listId(), request.name());
             return boardStore.save(updatedBoard);
+        }
+
+        @Transactional
+        public void deleteList(DeleteListRequest request) {
+            Objects.requireNonNull(request, "La solicitud para eliminar lista no puede ser nula");
+            Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
+            Objects.requireNonNull(request.listId(), "El id de la lista es obligatorio");
+
+            Tablero board = getBoardByUrl(request.boardUrl());
+            board.findListOrFail(request.listId());
+
+            cardStore.deleteByListId(request.listId());
+            Tablero updatedBoard = board.withRemovedList(request.listId());
+            boardStore.save(updatedBoard);
         }
 
         @Transactional

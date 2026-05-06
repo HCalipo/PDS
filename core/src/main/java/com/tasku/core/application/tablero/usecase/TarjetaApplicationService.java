@@ -3,7 +3,9 @@ package com.tasku.core.application.tablero.usecase;
 import com.tasku.core.application.tablero.usecase.dto.AssignCardLabelRequest;
 import com.tasku.core.application.tablero.usecase.dto.CompleteCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.DeleteCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.MoveCardRequest;
+import com.tasku.core.application.tablero.usecase.dto.RenameCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.ToggleChecklistItemRequest;
 import com.tasku.core.application.tablero.usecase.event.TarjetaCreadaEvent;
 import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
@@ -197,6 +199,30 @@ public class TarjetaApplicationService {
             throw new DomainValidationException("La URL del tablero es obligatoria");
         }
         return cardStore.findCompletedByBoardUrl(boardUrl);
+    }
+
+    @Transactional
+    public void deleteCard(DeleteCardRequest request) {
+        Objects.requireNonNull(request, "La solicitud para eliminar tarjeta no puede ser nula");
+        Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
+
+        cardStore.findById(request.cardId())
+                .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
+
+        cardStore.deleteById(request.cardId());
+    }
+
+    @Transactional
+    public Tarjeta renameCard(RenameCardRequest request) {
+        Objects.requireNonNull(request, "La solicitud para renombrar tarjeta no puede ser nula");
+        Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
+        validateText(request.title(), "El titulo de la tarjeta es obligatorio");
+
+        Tarjeta card = cardStore.findById(request.cardId())
+                .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
+
+        card.rename(request.title());
+        return cardStore.save(card);
     }
 
     @Transactional

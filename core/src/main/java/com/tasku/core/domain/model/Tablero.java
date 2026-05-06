@@ -144,6 +144,16 @@ public final class Tablero {
         return withRenamedList(new ListaTableroId(listId), newName);
     }
 
+    public Tablero withRemovedList(ListaTableroId listId) {
+        Objects.requireNonNull(listId, "El id de la lista no puede ser nulo");
+        List<ListaTablero> updatedLists = new ArrayList<>(lists);
+        boolean removed = updatedLists.removeIf(l -> l.listIdValue().equals(listId));
+        if (!removed) {
+            throw new DomainNotFoundException("No existe la lista indicada en el tablero");
+        }
+        return new Tablero(url, name, ownerEmail, color, description, status, updatedLists, sharedWith);
+    }
+
     public Tablero withStatus(EstadoTablero newStatus) {
         EstadoTablero validatedStatus = Objects.requireNonNull(newStatus, "El estado del tablero no puede ser nulo");
         if (validatedStatus == status) {

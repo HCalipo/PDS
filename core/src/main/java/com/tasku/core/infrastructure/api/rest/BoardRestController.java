@@ -4,6 +4,7 @@ import com.tasku.core.application.tablero.usecase.TableroUseCaseService;
 import com.tasku.core.application.tablero.usecase.dto.ChangeBoardStatusRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
+import com.tasku.core.application.tablero.usecase.dto.DeleteListRequest;
 import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
 import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
 import com.tasku.core.application.tablero.usecase.dto.JoinBoardApiRequest;
@@ -16,6 +17,7 @@ import com.tasku.core.infrastructure.api.rest.mapper.ApiRestMapper;
 import com.tasku.core.infrastructure.api.rest.request.ChangeBoardStatusApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CreateBoardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CreateListApiRequest;
+import com.tasku.core.infrastructure.api.rest.request.DeleteListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.InitialListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.RenameListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.ShareBoardApiRequest;
@@ -26,6 +28,7 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -109,6 +112,15 @@ public class BoardRestController {
                 request.colorHex()
         ));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toBoardResponse(board));
+    }
+
+    @DeleteMapping("/lists/{listId}")
+    public ResponseEntity<Void> deleteList(@PathVariable UUID listId, @Valid @RequestBody DeleteListApiRequest request) {
+        boardService.deleteList(new DeleteListRequest(
+                new TableroUrl(request.boardUrl()),
+                new ListaTableroId(listId)
+        ));
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/lists/{listId}")

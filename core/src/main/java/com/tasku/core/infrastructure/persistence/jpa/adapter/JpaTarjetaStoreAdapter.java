@@ -54,6 +54,16 @@ public class JpaTarjetaStoreAdapter implements TarjetaStore {
     public List<Tarjeta> findCompletedByBoardUrl(String boardUrl) {
         return repository.findCompletedByBoardUrl(boardUrl).stream().map(mapper::toDomain).toList();
     }
+
+    @Override
+    public void deleteByListId(ListaTableroId listId) {
+        repository.deleteAll(repository.findByListId(listId.id()));
+    }
+
+    @Override
+    public void deleteById(TarjetaId cardId) {
+        repository.deleteById(cardId.id());
+    }
 }
 
 

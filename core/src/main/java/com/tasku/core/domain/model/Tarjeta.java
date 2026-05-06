@@ -93,6 +93,10 @@ public abstract class Tarjeta {
         this.archived = true;
     }
 
+    public void rename(String newTitle) {
+        this.title = validateText(newTitle, "El titulo no puede ser nulo ni vacio");
+    }
+
     protected static String validateText(String value, String message) {
         if (value == null || value.isBlank()) {
             throw new DomainValidationException(message);

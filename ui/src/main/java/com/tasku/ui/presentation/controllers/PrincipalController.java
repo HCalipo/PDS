@@ -296,6 +296,8 @@ public class PrincipalController {
             controller.setOnCardCompleted(this::handleCardCompleted);
             controller.setOnCreateCard(this::handleCrearTarea);
             controller.setOnColumnReorder(this::handleColumnReorder);
+            controller.setOnListDeleted(this::handleListDeleted);
+            controller.setOnListRenamed(this::handleListRenamed);
             listControllers.put(list.id(), controller);
             columnNodes.put(list.id(), nuevaColumna);
             int indice = boardContainer.getChildren().size() - 1;
@@ -672,6 +674,45 @@ void handleCompartirTablero(MouseEvent event) {
             }
         }
         return newLists;
+    }
+
+    private void handleListDeleted(UUID listId) {
+        if (listId == null) return;
+        String boardUrl = SceneManager.getInstance().getCurrentBoardUrl();
+        if (boardUrl == null) return;
+
+        try {
+            apiClient.deleteList(listId, boardUrl);
+            VBox columnNode = columnNodes.remove(listId);
+            if (columnNode != null) {
+                boardContainer.getChildren().remove(columnNode);
+            }
+            listControllers.remove(listId);
+            currentBoardLists = currentBoardLists.stream()
+                    .filter(l -> !l.id().equals(listId))
+                    .toList();
+        } catch (DesktopApiException ex) {
+            showAlert("No se pudo eliminar la lista: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void handleListRenamed(UUID listId, String newName) {
+        if (listId == null || newName == null) return;
+        String boardUrl = SceneManager.getInstance().getCurrentBoardUrl();
+        if (boardUrl == null) return;
+
+        try {
+            BoardApiResponse updatedBoard = apiClient.renameList(listId, boardUrl, newName);
+            ListaTareasController ctrl = listControllers.get(listId);
+            if (ctrl != null) {
+                ctrl.setTitulo(newName);
+            }
+            mergeBoard(updatedBoard);
+            currentBoard = updatedBoard;
+            currentBoardLists = updatedBoard.lists() != null ? updatedBoard.lists() : List.of();
+        } catch (DesktopApiException ex) {
+            showAlert("No se pudo renombrar la lista: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void handleCardCompleted(UUID cardId, UUID sourceListId) {

@@ -11,10 +11,13 @@ import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
 import com.tasku.ui.client.dto.request.CreateCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateListApiRequest;
+import com.tasku.ui.client.dto.request.DeleteListApiRequest;
 import com.tasku.ui.client.dto.request.JoinBoardApiRequest;
 import com.tasku.ui.client.dto.request.LoginUserApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
 import com.tasku.ui.client.dto.request.RegisterUserApiRequest;
+import com.tasku.ui.client.dto.request.RenameCardApiRequest;
+import com.tasku.ui.client.dto.request.RenameListApiRequest;
 import com.tasku.ui.client.dto.request.ToggleChecklistItemApiRequest;
 import com.tasku.ui.client.dto.response.BoardApiResponse;
 import com.tasku.ui.client.dto.response.CardApiResponse;
@@ -434,7 +437,6 @@ public class TaskuApiClient {
     public List<BoardApiResponse> getSharedBoards(String email) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    // Fíjate que llamamos a la ruta /shared que creamos arriba
                     .uri(URI.create(baseUrl + "/api/boards/shared?email=" + email))
                     .GET()
                     .build();
@@ -442,13 +444,100 @@ public class TaskuApiClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
-                // Mapeamos el JSON a tu lista de objetos
                 return objectMapper.readValue(response.body(), new TypeReference<List<BoardApiResponse>>() {});
             } else {
                 throw new DesktopApiException(extractError(response), response.statusCode());
             }
         } catch (Exception ex) {
             return List.of();
+        }
+    }
+
+    public void deleteList(UUID listId, String boardUrl) {
+        try {
+            String json = objectMapper.writeValueAsString(new DeleteListApiRequest(boardUrl));
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/boards/lists/" + listId))
+                    .header("Content-Type", "application/json")
+                    .method("DELETE", HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 204) {
+                throw new DesktopApiException(extractError(response), response.statusCode());
+            }
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public void deleteCard(UUID cardId) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/cards/" + cardId))
+                    .method("DELETE", HttpRequest.BodyPublishers.noBody())
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 204) {
+                throw new DesktopApiException(extractError(response), response.statusCode());
+            }
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public CardApiResponse renameCard(UUID cardId, String title) {
+        try {
+            String json = objectMapper.writeValueAsString(new RenameCardApiRequest(title));
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/cards/" + cardId))
+                    .header("Content-Type", "application/json")
+                    .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), CardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public BoardApiResponse renameList(UUID listId, String boardUrl, String name) {
+        try {
+            String json = objectMapper.writeValueAsString(new RenameListApiRequest(boardUrl, name));
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/boards/lists/" + listId))
+                    .header("Content-Type", "application/json")
+                    .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), BoardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
         }
     }
 }
