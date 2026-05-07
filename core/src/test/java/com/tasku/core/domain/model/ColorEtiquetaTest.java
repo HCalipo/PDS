@@ -11,13 +11,13 @@ class ColorEtiquetaTest {
     @Test
     void shouldCreateColorEtiquetaWithValidColor() {
         ColorEtiqueta color = new ColorEtiqueta("#FF5733");
-        assertEquals("#FF5733", color);
+        assertEquals("#FF5733", color.color());
     }
 
     @Test
     void shouldTrimWhitespaceFromColor() {
         ColorEtiqueta color = new ColorEtiqueta("  #FF5733  ");
-        assertEquals("#FF5733", color);
+        assertEquals("#FF5733", color.color());
     }
 
     @Test
