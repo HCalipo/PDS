@@ -6,8 +6,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
-<VBox fx:id="listaTareas" maxWidth="Infinity" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.ListaTareasController">
+<VBox fx:id="listaTareas" maxWidth="Infinity" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.ListaTareasController">
    <children>
       <HBox fx:id="columnHeader" alignment="CENTER_LEFT" styleClass="column-header">
          <children>
@@ -18,8 +19,14 @@
             <HBox alignment="CENTER" spacing="8">
                <children>
                   <Label fx:id="taskCounter" styleClass="task-counter" text="0" />
-                  <Button fx:id="btnRenameList" mnemonicParsing="false" onAction="#handleRenameList" styleClass="btn-list-action" text="✏" />
-                  <Button fx:id="btnDeleteList" mnemonicParsing="false" onAction="#handleDeleteList" styleClass="btn-list-action, btn-delete" text="🗑" />
+                  <Button fx:id="btnRenameList" mnemonicParsing="false" onAction="#handleRenameList" styleClass="btn-list-action">
+                     <graphic>
+                        <SVGPath content="M 2.707031 11.375 C 2.410156 11.375 2.15625 11.269531 1.941406 11.058594 C 1.730469 10.84375 1.625 10.589844 1.625 10.292969 L 1.625 2.707031 C 1.625 2.410156 1.730469 2.15625 1.941406 1.941406 C 2.15625 1.730469 2.410156 1.625 2.707031 1.625 L 7.542969 1.625 L 6.460938 2.707031 L 2.707031 2.707031 L 2.707031 10.292969 L 10.292969 10.292969 L 10.292969 6.527344 L 11.375 5.445312 L 11.375 10.292969 C 11.375 10.589844 11.269531 10.84375 11.058594 11.058594 C 10.84375 11.269531 10.589844 11.375 10.292969 11.375 Z M 6.5 6.5 Z M 4.875 8.125 L 4.875 5.824219 L 9.84375 0.851562 C 9.953125 0.746094 10.074219 0.664062 10.210938 0.609375 C 10.347656 0.554688 10.480469 0.527344 10.617188 0.527344 C 10.761719 0.527344 10.898438 0.554688 11.03125 0.609375 C 11.160156 0.664062 11.28125 0.746094 11.386719 0.851562 L 12.148438 1.625 C 12.246094 1.734375 12.324219 1.851562 12.378906 1.984375 C 12.429688 2.113281 12.457031 2.246094 12.457031 2.382812 C 12.457031 2.519531 12.433594 2.652344 12.382812 2.78125 C 12.335938 2.914062 12.253906 3.035156 12.148438 3.140625 L 7.175781 8.125 Z M 11.386719 2.382812 L 10.628906 1.625 Z M 5.957031 7.042969 L 6.714844 7.042969 L 9.859375 3.898438 L 9.480469 3.519531 L 9.085938 3.140625 L 5.957031 6.269531 Z M 9.480469 3.519531 L 9.085938 3.140625 L 9.480469 3.519531 L 9.859375 3.898438 Z M 9.480469 3.519531 " />
+                     </graphic></Button>
+                  <Button fx:id="btnDeleteList" mnemonicParsing="false" onAction="#handleDeleteList" styleClass="btn-list-action, btn-delete">
+                     <graphic>
+                        <SVGPath content="M 3.792969 11.375 C 3.492188 11.375 3.238281 11.269531 3.027344 11.058594 C 2.8125 10.84375 2.707031 10.589844 2.707031 10.292969 L 2.707031 3.25 L 2.167969 3.25 L 2.167969 2.167969 L 4.875 2.167969 L 4.875 1.625 L 8.125 1.625 L 8.125 2.167969 L 10.832031 2.167969 L 10.832031 3.25 L 10.292969 3.25 L 10.292969 10.292969 C 10.292969 10.589844 10.1875 10.84375 9.972656 11.058594 C 9.761719 11.269531 9.507812 11.375 9.207031 11.375 Z M 9.207031 3.25 L 3.792969 3.25 L 3.792969 10.292969 L 9.207031 10.292969 Z M 4.875 9.207031 L 5.957031 9.207031 L 5.957031 4.332031 L 4.875 4.332031 Z M 7.042969 9.207031 L 8.125 9.207031 L 8.125 4.332031 L 7.042969 4.332031 Z M 3.792969 3.25 L 3.792969 10.292969 Z M 3.792969 3.25" />
+                     </graphic></Button>
                </children>
             </HBox>
          </children>
