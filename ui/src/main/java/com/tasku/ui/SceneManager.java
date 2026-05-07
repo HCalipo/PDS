@@ -1,7 +1,6 @@
 package com.tasku.ui;
 
 import com.tasku.ui.client.dto.RolComparticion;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -166,9 +165,7 @@ public class SceneManager {
             Scene scene = new Scene(root);
             scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             dialog.setScene(scene);
-
-            // TODO: hacer que se mueva la ventana.
-            
+           
             
             root.applyCss();
             root.layout();
@@ -196,29 +193,4 @@ public class SceneManager {
         }
     }
 
-    private void syncBoundsWithOwner(Stage dialog) {
-        if (primaryStage == null) return;
-
-        dialog.setX(primaryStage.getX());
-        dialog.setY(primaryStage.getY());
-        dialog.setWidth(primaryStage.getWidth());
-        dialog.setHeight(primaryStage.getHeight());
-
-        ChangeListener<Number> x = (o, ov, nv) -> dialog.setX(nv.doubleValue());
-        ChangeListener<Number> y = (o, ov, nv) -> dialog.setY(nv.doubleValue());
-        ChangeListener<Number> w = (o, ov, nv) -> dialog.setWidth(nv.doubleValue());
-        ChangeListener<Number> h = (o, ov, nv) -> dialog.setHeight(nv.doubleValue());
-
-        primaryStage.xProperty().addListener(x);
-        primaryStage.yProperty().addListener(y);
-        primaryStage.widthProperty().addListener(w);
-        primaryStage.heightProperty().addListener(h);
-
-        dialog.setOnHidden(e -> {
-            primaryStage.xProperty().removeListener(x);
-            primaryStage.yProperty().removeListener(y);
-            primaryStage.widthProperty().removeListener(w);
-            primaryStage.heightProperty().removeListener(h);
-        });
-    }
 }

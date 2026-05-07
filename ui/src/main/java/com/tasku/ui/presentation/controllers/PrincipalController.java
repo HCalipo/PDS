@@ -59,12 +59,6 @@ public class PrincipalController {
     private VBox doneColumn;
 
     @FXML
-    private Label labelURL;
-
-    @FXML
-    private SVGPath svgCpURL;
-
-    @FXML
     private TextField searchField;
 
     private final ToggleGroup boardToggleGroup = new ToggleGroup();
@@ -417,43 +411,6 @@ public class PrincipalController {
             }
         );
     }
-/* 
-    @FXML
-    void handleCopyURL(MouseEvent event) {
-        
-        try{
-            String boardURL = SceneManager.getInstance().getCurrentBoardUrl();
-            if (boardURL == null || boardURL.isBlank()) {
-                showAlert("No hay URL para copiar.", Alert.AlertType.INFORMATION);
-                return;
-            }
-
-            ClipboardContent content = new ClipboardContent();
-            content.putString(boardURL);
-            Clipboard.getSystemClipboard().setContent(content);
-
-            svgCpURL.setVisible(false);
-            svgURLCopied.setVisible(true);
-                // Volver a mostrar el ícono original después de 2 segundos
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    // Ignorar interrupciones
-                }
-                Platform.runLater(() -> {
-                    svgCpURL.setVisible(true);
-                    svgURLCopied.setVisible(false);
-                });
-            }).start();
-
-        } catch (Exception ex) {
-            showAlert("Error al copiar URL: " + ex.getMessage(), Alert.AlertType.ERROR);
-        }
-
-    }
-*/
-
     @FXML
 void handleCompartirTablero(MouseEvent event) {
     String boardUrl = SceneManager.getInstance().getCurrentBoardUrl();
