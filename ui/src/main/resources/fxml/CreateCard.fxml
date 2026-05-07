@@ -13,18 +13,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="450.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css"
-      xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.tasku.ui.presentation.controllers.CrearTarjetaController">
+<VBox prefWidth="450.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CrearTarjetaController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <Label styleClass="label-title" text="Crear Tarjeta" />
 
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="480.0"
-                style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 0;"
-                VBox.vgrow="ALWAYS">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="480.0" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 0;" VBox.vgrow="ALWAYS">
         <VBox spacing="16.0">
             <padding>
                 <Insets right="6.0" />
@@ -75,7 +71,7 @@
             <Label styleClass="label-section" text="Descripción">
                 <font><Font size="12.0" /></font>
             </Label>
-            <TextArea fx:id="descriptionArea" prefRowCount="3" promptText="Descripción opcional" styleClass="join-input" />
+            <TextArea fx:id="descriptionArea" prefRowCount="3" promptText="Descripción" styleClass="join-input" />
 
             <Label fx:id="lblCardResult" wrapText="true" />
         </VBox>
