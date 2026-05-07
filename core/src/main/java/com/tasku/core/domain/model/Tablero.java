@@ -1,6 +1,7 @@
 package com.tasku.core.domain.model;
 
 import com.tasku.core.domain.board.exception.DomainConflictException;
+import com.tasku.core.domain.board.exception.DomainForbiddenException;
 import com.tasku.core.domain.board.exception.DomainNotFoundException;
 import com.tasku.core.domain.board.exception.DomainValidationException;
 
@@ -190,6 +191,26 @@ public final class Tablero {
 
     public ListaTablero findListOrFail(UUID listId) {
         return findListOrFail(new ListaTableroId(listId));
+    }
+
+    public boolean hasAccess(String email) {
+        if (ownerEmail.email().equalsIgnoreCase(email)) return true;
+        for (TableroCompartido share : sharedWith) {
+            if (share.email().equalsIgnoreCase(email)) return true;
+        }
+        return false;
+    }
+
+    public RolComparticion effectiveRoleOf(String email) {
+        if (ownerEmail.email().equalsIgnoreCase(email)) {
+            return RolComparticion.ADMIN;
+        }
+        for (TableroCompartido share : sharedWith) {
+            if (share.email().equalsIgnoreCase(email)) {
+                return share.role();
+            }
+        }
+        throw new DomainForbiddenException("El usuario no tiene acceso a este tablero");
     }
 
     private boolean hasListName(String candidateName, ListaTableroId ignoredListId) {

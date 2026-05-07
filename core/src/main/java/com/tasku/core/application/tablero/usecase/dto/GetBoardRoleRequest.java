@@ -1,12 +1,10 @@
 package com.tasku.core.application.tablero.usecase.dto;
 
 import com.tasku.core.domain.model.Email;
-import com.tasku.core.domain.model.EstadoTablero;
 import com.tasku.core.domain.model.TableroUrl;
 
-public record ChangeBoardStatusRequest(
+public record GetBoardRoleRequest(
         TableroUrl boardUrl,
-        EstadoTablero status,
-        Email actorEmail
+        Email email
 ) {
 }

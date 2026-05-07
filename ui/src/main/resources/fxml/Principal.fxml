@@ -92,7 +92,7 @@
                   <DropShadow height="1.0" offsetX="3.0" offsetY="3.0" radius="0.0" width="0.0" />
                </effect></Button>
 
-                <Button minHeight="39.0" onAction="#handleAñadirLista" prefHeight="39.0" prefWidth="118.0" styleClass="btn-primary-inverted" text="Añadir lista">
+                <Button fx:id="btnAddList" minHeight="39.0" onAction="#handleAñadirLista" prefHeight="39.0" prefWidth="118.0" styleClass="btn-primary-inverted" text="Añadir lista">
                <graphic>
                   <Group styleClass="empty-state">
                      <children>

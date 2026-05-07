@@ -4,9 +4,11 @@
     import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
     import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
     import com.tasku.core.application.tablero.usecase.dto.DeleteListRequest;
+    import com.tasku.core.application.tablero.usecase.dto.GetBoardRoleRequest;
     import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
     import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
     import com.tasku.core.domain.board.exception.DomainConflictException;
+    import com.tasku.core.domain.board.exception.DomainForbiddenException;
     import com.tasku.core.domain.board.exception.DomainNotFoundException;
     import com.tasku.core.domain.board.exception.DomainValidationException;
     import com.tasku.core.domain.model.DefinicionListaInicial;
@@ -86,8 +88,24 @@
             RolComparticion role = Objects.requireNonNull(request.role(), "El rol a compartir es obligatorio");
 
             Tablero board = getBoardByUrl(request.boardUrl());
+
+            if (request.actorEmail() != null) {
+                requireRole(board, request.actorEmail(), RolComparticion.ADMIN,
+                        "Solo el administrador puede compartir el tablero");
+            }
+
             Tablero updatedBoard = board.withAddedShare(request.email().email(), role);
             return boardStore.save(updatedBoard);
+        }
+
+        @Transactional(readOnly = true)
+        public RolComparticion getRoleForUser(GetBoardRoleRequest request) {
+            Objects.requireNonNull(request, "La solicitud de rol no puede ser nula");
+            Objects.requireNonNull(request.boardUrl(), "La url del tablero es obligatoria");
+            Objects.requireNonNull(request.email(), "El email del usuario es obligatorio");
+
+            Tablero board = getBoardByUrl(request.boardUrl());
+            return board.effectiveRoleOf(request.email().email());
         }
 
         @Transactional
@@ -137,8 +155,24 @@
             Objects.requireNonNull(request.status(), "El estado del tablero es obligatorio");
 
             Tablero board = getBoardByUrl(request.boardUrl());
+
+            if (request.actorEmail() != null) {
+                requireRole(board, request.actorEmail(), RolComparticion.ADMIN,
+                        "Solo el administrador puede cambiar el estado del tablero");
+            }
+
             Tablero updatedBoard = board.withStatus(request.status());
             return boardStore.save(updatedBoard);
+        }
+
+        private void requireRole(Tablero board, Email actor, RolComparticion required, String message) {
+            RolComparticion actual = board.effectiveRoleOf(actor.email());
+            if (required == RolComparticion.ADMIN && !actual.isAdmin()) {
+                throw new DomainForbiddenException(message);
+            }
+            if (required == RolComparticion.EDITOR && !actual.canEdit()) {
+                throw new DomainForbiddenException(message);
+            }
         }
 
         private void ensureOwnerExists(Email ownerEmail) {
@@ -166,18 +200,22 @@
             Email email = new Email(emailCrudo);
             TableroUrl boardUrl = new TableroUrl(boardUrlStr);
 
-            
             if (userStore.findByEmail(email).isEmpty()) {
                 throw new DomainNotFoundException("El usuario no está registrado en el sistema.");
             }
 
-            
+            Tablero board = getBoardByUrl(boardUrl);
+
+            // Si el usuario ya tiene acceso (propietario o compartido previamente), devolver el tablero sin modificar
+            if (board.hasAccess(email.email())) {
+                return board;
+            }
+
             ShareBoardRequest shareRequest = new ShareBoardRequest(
                     boardUrl,
                     email,
                     RolComparticion.EDITOR
             );
-
             return shareBoard(shareRequest);
         }
     }

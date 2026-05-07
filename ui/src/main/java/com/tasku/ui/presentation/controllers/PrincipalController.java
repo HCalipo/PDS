@@ -2,6 +2,7 @@ package com.tasku.ui.presentation.controllers;
 
 import com.tasku.ui.SceneManager;
 import com.tasku.ui.client.dto.EstadoTablero;
+import com.tasku.ui.client.dto.RolComparticion;
 import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
 import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
@@ -22,8 +23,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,6 +36,9 @@ public class PrincipalController {
 
     @FXML
     private Button ButtonTableroBlock;
+
+    @FXML
+    private Button btnAddList;
 
     @FXML
     private SVGPath CandadoImage;
@@ -136,7 +138,8 @@ public class PrincipalController {
         estaBloqueado = !estaBloqueado;
         EstadoTablero nuevoEstado = estaBloqueado ? EstadoTablero.BLOCKED : EstadoTablero.ACTIVE;
         try {
-            apiClient.changeBoardStatus(new ChangeBoardStatusApiRequest(boardUrl, nuevoEstado));
+            String actorEmail = SceneManager.getInstance().getCurrentUserEmail();
+            apiClient.changeBoardStatus(new ChangeBoardStatusApiRequest(boardUrl, nuevoEstado, actorEmail));
         } catch (DesktopApiException ex) {
             estaBloqueado = !estaBloqueado;
             showAlert("Error al cambiar estado del tablero: " + ex.getMessage(), Alert.AlertType.ERROR);
@@ -217,17 +220,20 @@ public class PrincipalController {
 
         try {
             boards = apiClient.findBoardsByOwner(email);
-            sharedBoards = apiClient.getSharedBoards(email);
-            
-            allBoards.clear();
-            allBoards.addAll(boards);
-            allBoards.addAll(sharedBoards);
-
         } catch (DesktopApiException ex) {
             boards = List.of();
-            sharedBoards = List.of();
-            showAlert("No se pudieron cargar los tableros: " + ex.getMessage(), Alert.AlertType.ERROR);
+            showAlert("No se pudieron cargar tus tableros: " + ex.getMessage(), Alert.AlertType.ERROR);
         }
+        try {
+            sharedBoards = apiClient.getSharedBoards(email);
+        } catch (DesktopApiException ex) {
+            sharedBoards = List.of();
+            showAlert("No se pudieron cargar los tableros compartidos: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
+
+        allBoards.clear();
+        allBoards.addAll(boards);
+        allBoards.addAll(sharedBoards);
 
         buildBoardMenu(allBoards);
         seleccionarTableroDesdeContexto();
@@ -279,6 +285,7 @@ public class PrincipalController {
 
         estaBloqueado = board.status() == EstadoTablero.BLOCKED;
         actualizarIconoBloqueo();
+        determineAndApplyRole(board);
         clearDoneColumn();
         renderBoardLists(currentBoardLists);
         loadCompletedCards(board.url());
@@ -298,6 +305,8 @@ public class PrincipalController {
             controller.setOnColumnReorder(this::handleColumnReorder);
             controller.setOnListDeleted(this::handleListDeleted);
             controller.setOnListRenamed(this::handleListRenamed);
+            RolComparticion rol = SceneManager.getInstance().getCurrentUserRole();
+            controller.setEditingEnabled(rol != RolComparticion.VIEWER);
             listControllers.put(list.id(), controller);
             columnNodes.put(list.id(), nuevaColumna);
             int indice = boardContainer.getChildren().size() - 1;
@@ -863,6 +872,35 @@ void handleCompartirTablero(MouseEvent event) {
         }
 
         return cardBox;
+    }
+
+    private void determineAndApplyRole(BoardApiResponse board) {
+        String userEmail = SceneManager.getInstance().getCurrentUserEmail();
+        RolComparticion role = RolComparticion.VIEWER;
+        if (userEmail != null && board.ownerEmail() != null
+                && board.ownerEmail().equalsIgnoreCase(userEmail)) {
+            role = RolComparticion.ADMIN;
+        } else if (board.sharedWith() != null) {
+            for (com.tasku.ui.client.dto.response.BoardShareApiResponse share : board.sharedWith()) {
+                if (share.email() != null && share.email().equalsIgnoreCase(userEmail)) {
+                    role = share.role();
+                    break;
+                }
+            }
+        }
+        SceneManager.getInstance().setCurrentUserRole(role);
+        applyRoleRestrictions(role);
+    }
+
+    private void applyRoleRestrictions(RolComparticion role) {
+        boolean isAdmin = role == RolComparticion.ADMIN;
+        boolean canEdit = role != RolComparticion.VIEWER;
+        if (ButtonTableroBlock != null) ButtonTableroBlock.setDisable(!isAdmin);
+        if (btnAddList != null) btnAddList.setDisable(!canEdit);
+        if (btnCreateTask != null) btnCreateTask.setDisable(!canEdit);
+        for (ListaTareasController ctrl : listControllers.values()) {
+            ctrl.setEditingEnabled(canEdit);
+        }
     }
 
     private static String safe(String value) {

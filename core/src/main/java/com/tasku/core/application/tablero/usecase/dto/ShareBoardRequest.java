@@ -7,8 +7,10 @@ import com.tasku.core.domain.model.TableroUrl;
 public record ShareBoardRequest(
         TableroUrl boardUrl,
         Email email,
-        RolComparticion role
+        RolComparticion role,
+        Email actorEmail
 ) {
+    public ShareBoardRequest(TableroUrl boardUrl, Email email, RolComparticion role) {
+        this(boardUrl, email, role, null);
+    }
 }
-
-

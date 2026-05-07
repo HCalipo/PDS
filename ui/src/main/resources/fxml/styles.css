@@ -3,8 +3,6 @@
     -fx-font-size: 13px;
 }
 
-
-
 .btn-cerrar {
     -fx-background-color: transparent;
     -fx-background-radius: 0 15 0 0; 
@@ -16,14 +14,12 @@
     -fx-fill: #2d3436; 
 }
 
-
 .btn-cerrar:hover {
     -fx-background-color: #ff4757; 
 }
 .btn-cerrar:hover SVGPath {
     -fx-fill: white; 
 }
-
 
 /* ================= CABECERA ================= */
 .board-header {
@@ -58,34 +54,27 @@
     -fx-font-weight: bold;
 }
 
-
 /* ================= MENÚ DESPLEGABLE CABECERA ================= */
-
-/* Quita el fondo de botón y lo deja como texto limpio */
 .header-title-menu {
     -fx-background-color: transparent;
     -fx-padding: 0;
     -fx-cursor: hand;
 }
 
-/* Fuerza el estilo del texto principal */
 .header-title-menu > .label {
     -fx-font-size: 21px;
     -fx-font-weight: 800;
     -fx-text-fill: #0f172a;
 }
 
-/* Da estilo a la pequeña flecha (chevron) de la derecha */
 .header-title-menu > .arrow-button {
     -fx-padding: 0 0 0 6;
 }
 .header-title-menu > .arrow-button > .arrow {
-    -fx-background-color: #94a3b8; /* Color grisáceo del icono */
+    -fx-background-color: #94a3b8;
 }
 
 /* ================= INTERIOR DEL MENÚ ================= */
-
-/* Redondea el menú y le da la sombra de Tailwind (shadow-lg) */
 .context-menu {
     -fx-background-color: #ffffff;
     -fx-background-radius: 8;
@@ -95,9 +84,8 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);
 }
 
-/* Etiqueta superior "TUS TABLEROS" */
 .menu-section-label {
-    -fx-opacity: 1; /* Forzamos opacidad 1 aunque esté disabled */
+    -fx-opacity: 1; 
 }
 .menu-section-label > .label {
     -fx-text-fill: #94a3b8;
@@ -106,7 +94,6 @@
     -fx-padding: 4 8;
 }
 
-/* Estilo general de las opciones del menú */
 .menu-board-item, .menu-action-item {
     -fx-padding: 6 12;
 }
@@ -116,21 +103,14 @@
     -fx-font-weight: 500;
 }
 
-/* Hover sobre las opciones */
 .menu-board-item:focused, .menu-action-item:focused {
     -fx-background-color: #f1f5f9;
     -fx-background-radius: 6;
 }
 
-/* Colorea de azul la opción seleccionada (RadioMenuItem) */
 .menu-board-item:selected > .label {
     -fx-text-fill: #0ba360;
 }
-
-
-
-
-
 
 /* Buscador */
 .search-container {
@@ -192,9 +172,7 @@
     -fx-translate-y: -1;
 }
 
-
 .btn-primary:hover {
-    /* -fx-background-color: #05f5a9; */
     -fx-scale-x: 1.02;
     -fx-scale-y: 1.02;
     -fx-translate-y: -1;
@@ -227,7 +205,6 @@
     -fx-cursor: hand;
 }
 .btn-primary-red:hover {
-    /* -fx-background-color: #05f5a9; */
     -fx-scale-x: 1.02;
     -fx-scale-y: 1.02;
     -fx-translate-y: -1;
@@ -250,17 +227,16 @@
     -fx-min-width: 320px;
 }
 
-/* Estilos específicos de cada columna basados en Column.tsx */
 .col-todo {
-    -fx-background-color: rgba(241, 245, 249, 0.7); /* bg-slate-100 */
+    -fx-background-color: rgba(241, 245, 249, 0.7); 
     -fx-border-color: #e2e8f0;
 }
 .col-in-progress {
-    -fx-background-color: rgba(239, 246, 255, 0.5); /* bg-blue-50/50 */
+    -fx-background-color: rgba(239, 246, 255, 0.5); 
     -fx-border-color: #dbeafe;
 }
 .col-done {
-    -fx-background-color: rgba(236, 253, 245, 0.5); /* bg-emerald-50/50 */
+    -fx-background-color: rgba(236, 253, 245, 0.5); 
     -fx-border-color: #d1fae5;
 }
 
@@ -290,6 +266,31 @@
     -fx-border-color: rgba(0,0,0,0.06);
     -fx-border-radius: 20;
 }
+
+/* --- ESTILOS AÑADIDOS: BOTONES DE ACCIÓN DE COLUMNA --- */
+.btn-list-action {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b; /* Gris medio para armonizar con el tema */
+    -fx-font-size: 13px;
+    -fx-padding: 4 6 4 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.btn-list-action:hover {
+    -fx-background-color: #e2e8f0; /* Gris claro de tu paleta */
+    -fx-text-fill: #1e293b;        /* Texto más oscuro al hacer hover */
+}
+
+.btn-delete:hover {
+    -fx-background-color: #fee2e2; /* Fondo rojo muy suave */
+    -fx-text-fill: #ef4444;        /* Icono rojo de peligro */
+}
+
+.btn-list-action:pressed {
+    -fx-background-color: #cbd5e1; /* Fondo un poco más oscuro al presionar */
+}
+/* ------------------------------------------------------ */
 
 .task-list {
     -fx-padding: 16;
@@ -324,7 +325,6 @@
     -fx-min-height: 110px;
 }
 
-
 .empty-title {
     -fx-text-fill: #94a3b8;
     -fx-font-size: 14px;
@@ -352,11 +352,7 @@
     -fx-text-fill: #334155;
 }
 
-
-
-
 /* ================= HISTORIAL ================= */
-
 .history-panel {
     -fx-background-color: #ffffff;
     -fx-border-color: #e2e8f0;
@@ -372,7 +368,6 @@
     -fx-background-color: transparent;
 }
 
-/* Círculo del usuario (Avatar) */
 .avatar-circle {
     -fx-background-color: #f1f5f9;
     -fx-text-fill: #64748b;
@@ -384,11 +379,10 @@
 }
 
 .avatar-blue {
-    -fx-background-color: #0ba360; /* Usando el verde de tu login */
+    -fx-background-color: #0ba360; 
     -fx-text-fill: white;
 }
 
-/* Línea de tiempo vertical */
 .timeline-line {
     -fx-background-color: #f1f5f9;
     -fx-min-width: 2px;
@@ -396,7 +390,6 @@
     -fx-translate-y: 4;
 }
 
-/* Textos del historial */
 .history-user {
     -fx-font-weight: bold;
     -fx-text-fill: #1e293b;
@@ -432,85 +425,66 @@
 }
 
 /* ================= HISTORIAL CARD ================= */
-
-
-/* Contenedor principal de la tarjeta */
 .history-card-exact {
     -fx-background-color: transparent;
 }
 
-/* Avatar circular usando tu verde institucional  */
 .avatar-exact {
     -fx-background-color: #0ba360; 
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-background-radius: 50; /* Hace el círculo perfecto */
+    -fx-background-radius: 50; 
 }
 
-/* Estilos de texto para la línea de acción */
 .text-name {
     -fx-font-weight: bold;
-    -fx-fill: #172b4d; /* Color oscuro de texto de Trello */
+    -fx-fill: #172b4d; 
     -fx-font-size: 14px;
 }
 
 .text-action {
-    -fx-fill: #64748b; /* Slate-500 de tus estilos */
+    -fx-fill: #64748b; 
     -fx-font-size: 14px;
 }
 
 .text-target {
-    -fx-fill: #0ba360; /* Azul de tu botón primario */
+    -fx-fill: #0ba360; 
     -fx-font-size: 14px;
 }
 
-/* Estilos para detalles y tiempo (con el indentado de la imagen) */
 .text-detail {
-    -fx-text-fill: #475569; /* Slate-600 */
+    -fx-text-fill: #475569; 
     -fx-font-size: 14px;
 }
 
 .text-timestamp {
-    -fx-text-fill: #94a3b8; /* Slate-400 de tus iconos */
+    -fx-text-fill: #94a3b8; 
     -fx-font-size: 12px;
 }
 
-
 /* ================= UNIR AL TABLERO ================= */
-
-/* Campo de texto específico para unirse (basado en tu TextField de login) */
 .join-input {
-    -fx-background-color: #fafbfc; /* [cite: 37] */
+    -fx-background-color: #fafbfc; 
     -fx-background-radius: 8;
-    -fx-border-color: #dfe6e9; /* [cite: 38] */
+    -fx-border-color: #dfe6e9; 
     -fx-border-radius: 8;
     -fx-padding: 12 15;
     -fx-font-size: 14px;
 }
 
 .join-input:focused {
-    -fx-border-color: #0ba360; /* Azul primario al enfocar */
+    -fx-border-color: #0ba360; 
     -fx-background-color: #ffffff;
 }
 
-/* Reutilización del título de cabecera */
-.header-title {
-    -fx-font-size: 18px;
-    -fx-font-weight: 800;
-    -fx-text-fill: #0f172a;
-}
-
 /* ================= AÑADIR TABLERO ================= */
-
-/* Panel lateral izquierdo */
 .sidebar-menu {
-    -fx-background-color: #f8fafc; /* Gris extra claro de tus fondos */
-    -fx-border-color: #e2e8f0;     /* Gris de los bordes */
-    -fx-border-width: 0 1 0 0;     /* Solo borde separador derecho */
+    -fx-background-color: #f8fafc; 
+    -fx-border-color: #e2e8f0;     
+    -fx-border-width: 0 1 0 0;     
 }
 
-/* Botón Volver circular */
 .icon-button-circle {
     -fx-background-color: transparent;
     -fx-background-radius: 50;
@@ -518,62 +492,56 @@
     -fx-cursor: hand;
 }
 .icon-button-circle:hover {
-    -fx-background-color: #e2e8f0; /* Hover gris natural */
+    -fx-background-color: #e2e8f0; 
 }
 
-/* Ítems del menú lateral */
 .nav-item {
     -fx-background-color: transparent;
-    -fx-text-fill: #334155; /* Color de texto estándar del menú */
+    -fx-text-fill: #334155; 
     -fx-font-size: 14px;
     -fx-padding: 10 16;
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
 .nav-item:hover {
-    -fx-background-color: #f1f5f9; /* Hover suave */
+    -fx-background-color: #f1f5f9; 
 }
 
-/* Ítem activo (Usando tu verde institucional #0ba360) */
 .nav-item-active {
-    -fx-background-color: rgba(11, 163, 96, 0.1); /* Fondo verde translúcido */
-    -fx-text-fill: #0ba360;                       /* Verde principal */
+    -fx-background-color: rgba(11, 163, 96, 0.1); 
+    -fx-text-fill: #0ba360;                       
     -fx-font-weight: bold;
 }
 .nav-item-active:hover {
     -fx-background-color: rgba(11, 163, 96, 0.15);
 }
 
-/* ScrollPane del contenido derecho */
 .content-scroll {
     -fx-background-color: transparent;
-    -fx-background: #ffffff; /* Fondo blanco limpio para la zona de creación */
+    -fx-background: #ffffff; 
     -fx-border-color: transparent;
 }
 
 /* ================= TARJETAS DE CREACIÓN / PLANTILLAS ================= */
-
 .template-card {
     -fx-background-color: #ffffff;
-    -fx-border-color: #e2e8f0; /* Borde estándar */
+    -fx-border-color: #e2e8f0; 
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-cursor: hand;
 }
 .template-card:hover {
-    -fx-border-color: #0ba360; /* Al pasar el ratón, se ilumina con el verde primario */
+    -fx-border-color: #0ba360; 
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
 }
 
-/* Zona superior de la tarjeta (donde va el icono grande) */
 .template-card-img-bg {
-    -fx-background-color: #f1f5f9; /* Mismo fondo que tu search-container */
+    -fx-background-color: #f1f5f9; 
     -fx-background-radius: 8 8 0 0;
     -fx-border-color: #e2e8f0;
     -fx-border-width: 0 0 1 0;
 }
 
-/* Zona de texto de la tarjeta */
 .template-card-info {
     -fx-padding: 16;
 }
@@ -585,13 +553,11 @@
 }
 
 .template-card-desc {
-    -fx-text-fill: #64748b; /* Gris medio, como tu header-subtitle */
+    -fx-text-fill: #64748b; 
     -fx-font-size: 12px;
 }
 
 /* ================= SELECTOR DE PLANTILLAS HORIZONTAL ================= */
-
-/* Contenedor clickeable de cada plantilla */
 .template-selector-card {
     -fx-cursor: hand;
     -fx-padding: 6 8;
@@ -601,42 +567,28 @@
 }
 
 .template-selector-card:hover {
-    -fx-background-color: #f8fafc; /* Gris muy clarito al pasar el ratón */
+    -fx-background-color: #f8fafc; 
 }
 
-/* Plantilla seleccionada (Aprovechamos tu verde institucional #0ba360) */
 .template-selector-active {
-    -fx-background-color: rgba(11, 163, 96, 0.05); /* Fondo verde casi transparente */
-    -fx-border-color: #0ba360; /* Verde principal */
+    -fx-background-color: rgba(11, 163, 96, 0.05); 
+    -fx-border-color: #0ba360; 
 }
 
 .template-selector-active .template-label {
     -fx-text-fill: #0ba360;
 }
 
-/* La previsualización (el cuadradito con la imagen/color) */
 .template-preview {
     -fx-background-radius: 4;
-    -fx-border-color: #e2e8f0; /* Borde gris estándar */
+    -fx-border-color: #e2e8f0; 
     -fx-border-radius: 4;
 }
 
-/* Colores simulando el contenido de las plantillas */
-.preview-blank {
-    -fx-background-color: #ffffff;
-}
+.preview-blank { -fx-background-color: #ffffff; }
+.preview-kanban { -fx-background-color: #e2e8f0; }
+.preview-scrum { -fx-background-color: #dbeafe; }
 
-.preview-kanban {
-    /* Simula columnas de tablero con un gradiente/color sólido */
-    -fx-background-color: #e2e8f0; 
-}
-
-.preview-scrum {
-    /* Otro color para distinguirlo */
-    -fx-background-color: #dbeafe; 
-}
-
-/* Texto debajo del cuadradito */
 .template-label {
     -fx-font-size: 11px;
     -fx-text-fill: #64748b;
@@ -673,7 +625,6 @@
     -fx-padding: 6 12;
     -fx-min-width: 120;
 }
-
 .choice-etiqueta:hover {
     -fx-border-color: #cbd5e1;
 }
@@ -688,7 +639,6 @@
     -fx-background-radius: 4;
     -fx-cursor: hand;
 }
-
 .btn-add-small:hover {
     -fx-background-color: #0ba360;
     -fx-text-fill: #ffffff;
@@ -704,12 +654,10 @@
     -fx-font-size: 14px;
     -fx-text-fill: #2d3436;
 }
-
 .textfield-login:focused {
     -fx-border-color: #0ba360;
     -fx-background-color: #ffffff;
 }
-
 .textfield-login:hover {
     -fx-border-color: #b2bec3;
 }
@@ -720,11 +668,9 @@
     -fx-stroke: transparent;
     -fx-stroke-width: 2;
 }
-
 .color-swatch:hover {
     -fx-stroke: #64748b;
 }
-
 .color-swatch-selected {
     -fx-stroke: #0ba360;
     -fx-stroke-width: 3;
@@ -739,140 +685,32 @@
     -fx-padding: 12;
     -fx-cursor: hand;
 }
-
 .task-card:hover {
     -fx-background-color: #f8fafc;
     -fx-border-color: #cbd5e1;
 }
-
 .task-title {
     -fx-font-size: 14px;
     -fx-font-weight: 500;
     -fx-text-fill: #0f172a;
 }
-
 .task-menu-button {
     -fx-background-color: transparent;
     -fx-padding: 4;
 }
-
 .task-menu-button:hover {
     -fx-background-color: #f1f5f9;
 }
-
 .task-content {
     -fx-font-size: 13px;
     -fx-text-fill: #475569;
 }
-
 .task-checklist-item {
     -fx-font-size: 12px;
     -fx-text-fill: #64748b;
 }
-
 .task-date {
     -fx-font-size: 11px;
-    -fx-text-fill: #94a3b8;
-}
-
-/* ================= TARJETAS EN LISTAS ================= */
-.card-title {
-    -fx-font-size: 14px;
-    -fx-font-weight: 500;
-    -fx-text-fill: #0f172a;
-}
-
-.card-text {
-    -fx-font-size: 13px;
-    -fx-text-fill: #475569;
-}
-
-.card-checklist-item {
-    -fx-font-size: 12px;
-    -fx-text-fill: #64748b;
-}
-
-.card-progress {
-    -fx-font-size: 11px;
-    -fx-text-fill: #0ba360;
-    -fx-font-weight: bold;
-}
-
-.card-date {
-    -fx-font-size: 11px;
-    -fx-text-fill: #94a3b8;
-}
-
-.card-menu-button {
-    -fx-background-color: transparent;
-    -fx-padding: 2 4;
-    -fx-cursor: hand;
-}
-
-.card-menu-button:hover {
-    -fx-background-color: #f1f5f9;
-}
-
-/* ================= TARJETAS DE LISTAS ================= */
-.text-card, .checklist-card {
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-padding: 10;
-    -fx-cursor: hand;
-}
-
-.text-card:hover, .checklist-card:hover {
-    -fx-effect: dropshadow(gaussian, #00000026, 4, 0, 0, 2);
-}
-
-.text-card-title, .checklist-card-title {
-    -fx-font-size: 14px;
-    -fx-font-weight: 600;
-    -fx-text-fill: #0f172a;
-}
-
-.text-card-content {
-    -fx-font-size: 13px;
-    -fx-text-fill: #475569;
-    -fx-wrap-text: true;
-}
-
-.text-card-desc {
-    -fx-font-size: 12px;
-    -fx-text-fill: #64748b;
-    -fx-wrap-text: true;
-    -fx-padding: 4 0 0 0;
-}
-
-.text-card-date, .checklist-card-date {
-    -fx-font-size: 11px;
-    -fx-text-fill: #94a3b8;
-}
-
-/* Toggle buttons en checklist */
-.checklist-card .toggle-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-padding: 4 0;
-    -fx-alignment: LEFT;
-    -fx-cursor: hand;
-}
-
-.checklist-card .toggle-button:hover {
-    -fx-background-color: #f1f5f9;
-}
-
-/* CheckBox en checklist */
-.checklist-card .check-box {
-    -fx-padding: 4 0;
-}
-
-.checklist-card .check-box .text {
-    -fx-font-size: 13px;
-    -fx-text-fill: #0f172a;
-}
-
-.checklist-card .check-box:selected .text {
     -fx-text-fill: #94a3b8;
 }
 
@@ -887,57 +725,42 @@
     -fx-cursor: hand;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 6, 0, 0, 2);
 }
-
 .card-modern:hover {
     -fx-background-color: #fafcfc;
     -fx-border-color: #cbd5e1;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);
 }
-
-/* Header de tarjeta con menú */
 .card-header {
     -fx-alignment: CENTER_LEFT;
     -fx-spacing: 8;
 }
-
-/* Título de tarjeta moderna */
 .card-title-modern {
     -fx-font-size: 14px;
     -fx-font-weight: 700;
     -fx-text-fill: #1e293b;
     -fx-wrap-text: true;
 }
-
-/* Contenido de tarjeta */
 .card-content {
     -fx-font-size: 13px;
     -fx-text-fill: #64748b;
     -fx-wrap-text: true;
     -fx-line-spacing: 4;
 }
-
-/* Descripción de tarjeta */
 .card-description {
     -fx-font-size: 12px;
     -fx-text-fill: #94a3b8;
     -fx-wrap-text: true;
     -fx-padding: 4 0 0 0;
 }
-
-/* Fecha de tarjeta */
 .card-date {
     -fx-font-size: 11px;
     -fx-text-fill: #94a3b8;
     -fx-padding: 8 0 0 0;
 }
-
-/* Contenedor de etiquetas */
 .card-tags {
     -fx-spacing: 6;
     -fx-padding: 0 0 8 0;
 }
-
-/* Etiqueta individual */
 .tag-chip {
     -fx-background-radius: 4;
     -fx-padding: 2 8;
@@ -945,8 +768,6 @@
     -fx-font-weight: 600;
     -fx-text-fill: white;
 }
-
-/* Menú de opciones de tarjeta */
 .card-menu {
     -fx-background-color: transparent;
     -fx-text-fill: #64748b;
@@ -957,38 +778,29 @@
     -fx-min-height: 24;
     -fx-cursor: hand;
 }
-
 .card-menu:hover {
     -fx-background-color: #f1f5f9;
     -fx-text-fill: #334155;
     -fx-background-radius: 4;
 }
-
 .card-menu .arrow {
     -fx-background-color: transparent;
 }
-
-/* Checklist item moderno */
 .checklist-item {
     -fx-spacing: 10;
     -fx-alignment: CENTER_LEFT;
 }
-
 .checklist-item .check-box {
     -fx-padding: 2 0;
 }
-
 .checklist-item .check-box .text {
     -fx-font-size: 13px;
     -fx-text-fill: #475569;
 }
-
 .checklist-item .check-box:selected .text {
     -fx-strikethrough: true;
     -fx-text-fill: #94a3b8;
 }
-
-/* Progreso del checklist */
 .checklist-progress {
     -fx-font-size: 11px;
     -fx-font-weight: 600;
@@ -1001,7 +813,6 @@
     -fx-background-radius: 4;
     -fx-min-height: 6;
 }
-
 .progress-bar-mini .bar {
     -fx-background-color: #0ba360;
     -fx-background-radius: 4;
@@ -1035,11 +846,9 @@
     -fx-spacing: 5;
     -fx-padding: 2 0 4 0;
 }
-
 .checklist-items .check-box {
     -fx-padding: 2 0;
 }
-
 .checklist-items .check-box > .box {
     -fx-background-color: white;
     -fx-border-color: #cbd5e1;
@@ -1048,25 +857,20 @@
     -fx-min-width: 14px;
     -fx-min-height: 14px;
 }
-
 .checklist-items .check-box:hover > .box {
     -fx-border-color: #0ba360;
 }
-
 .checklist-items .check-box:selected > .box {
     -fx-background-color: #0ba360;
     -fx-border-color: #0ba360;
 }
-
 .checklist-items .check-box:selected > .box > .mark {
     -fx-background-color: white;
 }
-
 .checklist-items .check-box .text {
     -fx-font-size: 12px;
     -fx-text-fill: #475569;
 }
-
 .checklist-items .check-box:selected .text {
     -fx-strikethrough: true;
     -fx-text-fill: #94a3b8;
@@ -1082,7 +886,6 @@
     -fx-cursor: hand;
     -fx-wrap-text: true;
 }
-
 .card-label-chip:hover {
     -fx-opacity: 0.9;
 }
@@ -1093,12 +896,10 @@
     -fx-font-size: 12px;
     -fx-text-fill: #475569;
 }
-
 .label-helper {
     -fx-font-size: 11px;
     -fx-text-fill: #94a3b8;
 }
-
 .label-title {
     -fx-font-size: 18px;
     -fx-font-weight: 800;
@@ -1110,14 +911,12 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
-
 .listview-modern .list-cell {
     -fx-background-color: transparent;
     -fx-padding: 12 16;
     -fx-border-color: #f1f5f9;
     -fx-border-width: 0 0 1 0;
 }
-
 .listview-modern .list-cell:filled:hover {
     -fx-background-color: #f8fafc;
 }
@@ -1131,7 +930,6 @@
     -fx-padding: 4 8;
     -fx-background-radius: 6;
 }
-
 .btn-close:hover {
     -fx-background-color: #f1f5f9;
     -fx-text-fill: #0f172a;

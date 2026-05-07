@@ -5,12 +5,14 @@ import com.tasku.core.application.tablero.usecase.dto.ChangeBoardStatusRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateBoardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateListRequest;
 import com.tasku.core.application.tablero.usecase.dto.DeleteListRequest;
+import com.tasku.core.application.tablero.usecase.dto.GetBoardRoleRequest;
 import com.tasku.core.application.tablero.usecase.dto.RenameListRequest;
 import com.tasku.core.application.tablero.usecase.dto.ShareBoardRequest;
 import com.tasku.core.application.tablero.usecase.dto.JoinBoardApiRequest;
 import com.tasku.core.domain.model.DefinicionListaInicial;
 import com.tasku.core.domain.model.Email;
 import com.tasku.core.domain.model.ListaTableroId;
+import com.tasku.core.domain.model.RolComparticion;
 import com.tasku.core.domain.model.Tablero;
 import com.tasku.core.domain.model.TableroUrl;
 import com.tasku.core.infrastructure.api.rest.mapper.ApiRestMapper;
@@ -95,12 +97,26 @@ public class BoardRestController {
 
     @PostMapping("/share")
     public BoardApiResponse shareBoard(@Valid @RequestBody ShareBoardApiRequest request) {
+        Email actorEmail = (request.actorEmail() != null && !request.actorEmail().isBlank())
+                ? new Email(request.actorEmail()) : null;
         Tablero board = boardService.shareBoard(new ShareBoardRequest(
                 new TableroUrl(request.boardUrl()),
                 new Email(request.email()),
-                request.role()
+                request.role(),
+                actorEmail
         ));
         return mapper.toBoardResponse(board);
+    }
+
+    @GetMapping("/role")
+    public String getRoleForUser(
+            @RequestParam("boardUrl") @NotBlank @Pattern(regexp = "^tasku://tablero/[0-9a-fA-F\\-]{36}$") String boardUrl,
+            @RequestParam("email") @NotBlank @jakarta.validation.constraints.Email String email) {
+        RolComparticion role = boardService.getRoleForUser(new GetBoardRoleRequest(
+                new TableroUrl(boardUrl),
+                new Email(email)
+        ));
+        return role.name();
     }
 
     @PostMapping("/lists")
@@ -135,9 +151,12 @@ public class BoardRestController {
 
     @PatchMapping("/status")
     public BoardApiResponse changeBoardStatus(@Valid @RequestBody ChangeBoardStatusApiRequest request) {
+        Email actorEmail = (request.actorEmail() != null && !request.actorEmail().isBlank())
+                ? new Email(request.actorEmail()) : null;
         Tablero board = boardService.changeBoardStatus(new ChangeBoardStatusRequest(
                 new TableroUrl(request.boardUrl()),
-                request.status()
+                request.status(),
+                actorEmail
         ));
         return mapper.toBoardResponse(board);
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.tasku.ui.client.dto.RolComparticion;
 import com.tasku.ui.client.dto.request.ChangeBoardStatusApiRequest;
 import com.tasku.ui.client.dto.request.CompleteCardApiRequest;
 import com.tasku.ui.client.dto.request.CreateBoardApiRequest;
@@ -14,6 +15,7 @@ import com.tasku.ui.client.dto.request.CreateListApiRequest;
 import com.tasku.ui.client.dto.request.DeleteListApiRequest;
 import com.tasku.ui.client.dto.request.JoinBoardApiRequest;
 import com.tasku.ui.client.dto.request.LoginUserApiRequest;
+import com.tasku.ui.client.dto.request.ShareBoardApiRequest;
 import com.tasku.ui.client.dto.request.MoveCardApiRequest;
 import com.tasku.ui.client.dto.request.RegisterUserApiRequest;
 import com.tasku.ui.client.dto.request.RenameCardApiRequest;
@@ -435,21 +437,24 @@ public class TaskuApiClient {
 
 
     public List<BoardApiResponse> getSharedBoards(String email) {
+        String encoded = URLEncoder.encode(email, StandardCharsets.UTF_8);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/api/boards/shared?email=" + encoded))
+                .GET()
+                .build();
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(baseUrl + "/api/boards/shared?email=" + email))
-                    .GET()
-                    .build();
-
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
             if (response.statusCode() == 200) {
                 return objectMapper.readValue(response.body(), new TypeReference<List<BoardApiResponse>>() {});
-            } else {
-                throw new DesktopApiException(extractError(response), response.statusCode());
             }
-        } catch (Exception ex) {
-            return List.of();
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
         }
     }
 
@@ -506,6 +511,53 @@ public class TaskuApiClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 return objectMapper.readValue(response.body(), CardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public BoardApiResponse shareBoard(ShareBoardApiRequest payload) {
+        try {
+            String json = objectMapper.writeValueAsString(payload);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(baseUrl + "/api/boards/share"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), BoardApiResponse.class);
+            }
+            throw new DesktopApiException(extractError(response), response.statusCode());
+        } catch (DesktopApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new DesktopApiException("No se pudo conectar con la API en " + baseUrl + ".", ex);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new DesktopApiException("Solicitud interrumpida.", ex);
+        }
+    }
+
+    public RolComparticion getUserRole(String boardUrl, String email) {
+        String encodedUrl = URLEncoder.encode(boardUrl, StandardCharsets.UTF_8);
+        String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/api/boards/role?boardUrl=" + encodedUrl + "&email=" + encodedEmail))
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                String body = response.body().trim().replace("\"", "");
+                return RolComparticion.valueOf(body);
             }
             throw new DesktopApiException(extractError(response), response.statusCode());
         } catch (DesktopApiException ex) {

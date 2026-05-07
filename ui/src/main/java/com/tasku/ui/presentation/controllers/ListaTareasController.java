@@ -64,9 +64,13 @@ public class ListaTareasController {
     @FXML private Label taskCounter;
     @FXML private VBox tasksContainer;
     @FXML private VBox emptyState;
+    @FXML private javafx.scene.control.Button btnRenameList;
+    @FXML private javafx.scene.control.Button btnDeleteList;
+    @FXML private javafx.scene.control.Button btnCrearTareaVacio;
 
     private UUID listId;
     private String listName = "";
+    private boolean editingEnabled = true;
     private final Map<UUID, CardApiResponse> cardsById = new LinkedHashMap<>();
     private CardDropHandler onCardDropped;
     private CardCompletedHandler onCardCompleted;
@@ -163,6 +167,22 @@ public class ListaTareasController {
         this.onListRenamed = handler;
     }
 
+    public void setEditingEnabled(boolean canEdit) {
+        this.editingEnabled = canEdit;
+        if (btnRenameList != null) {
+            btnRenameList.setVisible(canEdit);
+            btnRenameList.setManaged(canEdit);
+        }
+        if (btnDeleteList != null) {
+            btnDeleteList.setVisible(canEdit);
+            btnDeleteList.setManaged(canEdit);
+        }
+        if (btnCrearTareaVacio != null) {
+            btnCrearTareaVacio.setDisable(!canEdit);
+        }
+        updateCards(java.util.List.copyOf(cardsById.values()));
+    }
+
     @FXML
     private void handleRenameList() {
         TextInputDialog dialog = new TextInputDialog(listName);
@@ -192,6 +212,7 @@ public class ListaTareasController {
 
     @FXML
     private void handleCrearTarea() {
+        if (!editingEnabled) return;
         if (listId != null) {
             SceneManager.getInstance().setCurrentListId(listId);
         }
@@ -384,14 +405,16 @@ public class ListaTareasController {
     
     menuButton.setOnMouseClicked(e -> {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem editItem = new MenuItem("Editar");
-        editItem.setOnAction(ev -> handleEditCard(card));
-
-        MenuItem deleteItem = new MenuItem("Eliminar");
-        deleteItem.setOnAction(ev -> handleDeleteCard(card));
-
-        contextMenu.getItems().addAll(editItem, deleteItem);
-        contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0);
+        if (editingEnabled) {
+            MenuItem editItem = new MenuItem("Editar");
+            editItem.setOnAction(ev -> handleEditCard(card));
+            MenuItem deleteItem = new MenuItem("Eliminar");
+            deleteItem.setOnAction(ev -> handleDeleteCard(card));
+            contextMenu.getItems().addAll(editItem, deleteItem);
+        }
+        if (!contextMenu.getItems().isEmpty()) {
+            contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0);
+        }
     });
     
     // Cursor de mano al pasar por encima

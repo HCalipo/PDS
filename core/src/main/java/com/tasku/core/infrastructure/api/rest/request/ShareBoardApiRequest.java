@@ -9,7 +9,8 @@ import jakarta.validation.constraints.Pattern;
 public record ShareBoardApiRequest(
         @NotBlank @Pattern(regexp = "^tasku://tablero/[0-9a-fA-F\\-]{36}$") String boardUrl,
         @NotBlank @Email String email,
-        @NotNull RolComparticion role
+        @NotNull RolComparticion role,
+        @Email String actorEmail
 ) {
 }
 

@@ -1,5 +1,6 @@
 package com.tasku.ui;
 
+import com.tasku.ui.client.dto.RolComparticion;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,6 +23,7 @@ public class SceneManager {
     private String currentBoardName;
     private UUID currentListId;
 
+    private RolComparticion currentUserRole = RolComparticion.VIEWER;
     private boolean newUser = false;
 
     private double xOffset = 0;
@@ -71,6 +73,14 @@ public class SceneManager {
         boolean val = newUser;
         newUser = false;
         return val;
+    }
+
+    public void setCurrentUserRole(RolComparticion role) {
+        this.currentUserRole = role != null ? role : RolComparticion.VIEWER;
+    }
+
+    public RolComparticion getCurrentUserRole() {
+        return currentUserRole;
     }
 
     public void setCurrentListId(UUID listId) {
