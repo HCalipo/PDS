@@ -135,6 +135,7 @@
     -fx-text-fill: #3B3B3B;
     -fx-font-size: 16px;
     -fx-cursor: hand;
+    -fx-background-radius: 8px;
 }
 .icon-button:hover {
     -fx-background-color: #f1f5f9;

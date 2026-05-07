@@ -13,19 +13,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<VBox prefWidth="400.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CreateTagController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="460.0" prefWidth="600.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CreateTagController">
     <padding>
         <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
     </padding>
 
-    <!-- Header -->
     <Label styleClass="label-title" text="Crear Etiqueta" />
 
-    <!-- Nombre de la etiqueta -->
     <Label styleClass="label-section" text="Nombre" />
     <TextField fx:id="txtNombre" promptText="Ej. Urgente, Backend, Diseño..." styleClass="join-input" />
 
-    <!-- Selector de paleta -->
     <Label styleClass="label-section" text="Paleta de colores" />
     <HBox spacing="8.0">
         <ToggleButton onAction="#handleTogglePaleta" selected="true" styleClass="toggle-card-type" text="Normal">
@@ -39,7 +36,6 @@
         <ToggleButton onAction="#handleTogglePaleta" styleClass="toggle-card-type" text="Oscuro" toggleGroup="$paletaGroup" />
     </HBox>
 
-    <!-- Selector de color -->
     <Label styleClass="label-section" text="Color" />
     <GridPane fx:id="gridColores" hgap="10.0" vgap="10.0">
         <columnConstraints>
@@ -51,14 +47,12 @@
         </columnConstraints>
     </GridPane>
 
-    <!-- Preview del color seleccionado -->
     <HBox alignment="CENTER_LEFT" spacing="12.0">
         <Label styleClass="label-section" text="Preview:" />
         <Circle fx:id="colorPreview" radius="12.0" strokeWidth="2.0" />
         <Label fx:id="lblColorHex" styleClass="label-helper" text="#000000" />
     </HBox>
 
-    <!-- Botones -->
     <HBox alignment="CENTER_RIGHT" spacing="12.0">
         <Region HBox.hgrow="ALWAYS" />
         <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />

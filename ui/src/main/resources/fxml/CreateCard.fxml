@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="450.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CrearTarjetaController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" spacing="16.0" styleClass="template-card" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.CrearTarjetaController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -41,7 +41,7 @@
                 <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                     <Label styleClass="label-section" text="Etiqueta" />
                     <HBox spacing="10.0">
-                        <ChoiceBox fx:id="choiceEtiqueta" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                        <ChoiceBox fx:id="choiceEtiqueta" maxWidth="Infinity" prefHeight="36.0" style="-fx-background-color: #f1f5f9;" styleClass="task-menu-button" HBox.hgrow="ALWAYS" />
                         <Button fx:id="btnNuevaEtiqueta" onAction="#handleNuevaEtiqueta" prefHeight="35.0" prefWidth="35.0" styleClass="btn-add-small" text="+" />
                     </HBox>
                 </VBox>

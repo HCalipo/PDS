@@ -8,118 +8,71 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="620.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.AñadirTableroController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="600.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tasku.ui.presentation.controllers.AñadirTableroController">
     <padding>
         <Insets bottom="24.0" left="28.0" right="28.0" top="24.0" />
     </padding>
 
     <Label styleClass="label-title" text="Crear nuevo tablero" />
 
-    <!-- Selector de plantillas -->
     <VBox spacing="12.0">
         <Label styleClass="label-section" text="SELECCIONA UNA PLANTILLA" />
 
         <HBox alignment="CENTER" spacing="16.0">
 
-            <!-- EN BLANCO -->
-            <VBox fx:id="templateBlank" alignment="CENTER" onMouseClicked="#onTemplateSelected"
-                  spacing="8.0" styleClass="template-selector-card, template-selector-active">
-                <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="168.0" spacing="6.0"
-                      style="-fx-background-color: #dcfce7; -fx-background-radius: 6; -fx-padding: 8;">
-                    <VBox HBox.hgrow="ALWAYS" spacing="4.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 5 4 5 4;">
-                        <Label text="General"
-                               style="-fx-font-size: 8px; -fx-font-weight: bold; -fx-text-fill: #166534;" />
-                        <Region maxWidth="Infinity" prefHeight="7.0"
-                                style="-fx-background-color: #bbf7d0; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="7.0"
-                                style="-fx-background-color: #bbf7d0; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="7.0"
-                                style="-fx-background-color: #bbf7d0; -fx-background-radius: 2;" />
+            <VBox fx:id="templateBlank" alignment="CENTER" onMouseClicked="#onTemplateSelected" spacing="8.0" styleClass="template-selector-card, template-selector-active">
+                <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="168.0" spacing="6.0" style="-fx-background-color: #dcfce7; -fx-background-radius: 6; -fx-padding: 8;">
+                    <VBox spacing="4.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 5 4 5 4;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 8px; -fx-font-weight: bold; -fx-text-fill: #166534;" text="General" />
+                        <Region maxWidth="Infinity" prefHeight="7.0" style="-fx-background-color: #bbf7d0; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="7.0" style="-fx-background-color: #bbf7d0; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="7.0" style="-fx-background-color: #bbf7d0; -fx-background-radius: 2;" />
                     </VBox>
                 </HBox>
                 <Label styleClass="template-label" text="En blanco" />
                 <Label style="-fx-font-size: 10px; -fx-text-fill: #64748b;" text="1 lista · General" />
             </VBox>
 
-            <!-- KANBAN -->
-            <VBox fx:id="template1" alignment="CENTER" onMouseClicked="#onTemplateSelected"
-                  spacing="8.0" styleClass="template-selector-card">
-                <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="168.0" spacing="4.0"
-                      style="-fx-background-color: #dbeafe; -fx-background-radius: 6; -fx-padding: 8;">
-                    <!-- Pendientes -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="3.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;">
-                        <Label text="Pendientes"
-                               style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+            <VBox fx:id="template1" alignment="CENTER" onMouseClicked="#onTemplateSelected" spacing="8.0" styleClass="template-selector-card">
+                <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="168.0" spacing="4.0" style="-fx-background-color: #dbeafe; -fx-background-radius: 6; -fx-padding: 8;">
+                    <VBox spacing="3.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" text="Pendientes" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
                     </VBox>
-                    <!-- En progreso -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="3.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;">
-                        <Label text="En progreso"
-                               style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+                    <VBox spacing="3.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" text="En progreso" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
                     </VBox>
-                    <!-- Bloqueado -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="3.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;">
-                        <Label text="Bloqueado"
-                               style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #991b1b;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fecaca; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fecaca; -fx-background-radius: 2;" />
+                    <VBox spacing="3.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #991b1b;" text="Bloqueado" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fecaca; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fecaca; -fx-background-radius: 2;" />
                     </VBox>
                 </HBox>
                 <Label styleClass="template-label" text="Kanban" />
                 <Label style="-fx-font-size: 10px; -fx-text-fill: #64748b;" text="3 listas · Pendientes › En progreso › Bloqueado" />
             </VBox>
 
-            <!-- SCRUM -->
-            <VBox fx:id="template2" alignment="CENTER" onMouseClicked="#onTemplateSelected"
-                  spacing="8.0" styleClass="template-selector-card">
-                <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="168.0" spacing="4.0"
-                      style="-fx-background-color: #ffedd5; -fx-background-radius: 6; -fx-padding: 8;">
-                    <!-- Backlog -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="3.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;">
-                        <Label text="Backlog"
-                               style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #713f12;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fef08a; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fef08a; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fef08a; -fx-background-radius: 2;" />
+            <VBox fx:id="template2" alignment="CENTER" onMouseClicked="#onTemplateSelected" spacing="8.0" styleClass="template-selector-card">
+                <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="168.0" spacing="4.0" style="-fx-background-color: #ffedd5; -fx-background-radius: 6; -fx-padding: 8;">
+                    <VBox spacing="3.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #713f12;" text="Backlog" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fef08a; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fef08a; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fef08a; -fx-background-radius: 2;" />
                     </VBox>
-                    <!-- Sprint -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="3.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;">
-                        <Label text="Sprint"
-                               style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #9a3412;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fed7aa; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #fed7aa; -fx-background-radius: 2;" />
+                    <VBox spacing="3.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #9a3412;" text="Sprint" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fed7aa; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #fed7aa; -fx-background-radius: 2;" />
                     </VBox>
-                    <!-- QA -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="3.0"
-                          style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;">
-                        <Label text="QA"
-                               style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
-                        <Region maxWidth="Infinity" prefHeight="6.0"
-                                style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+                    <VBox spacing="3.0" style="-fx-background-color: rgba(255,255,255,0.9); -fx-background-radius: 4; -fx-padding: 4 3 4 3;" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 7px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" text="QA" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
+                        <Region maxWidth="Infinity" prefHeight="6.0" style="-fx-background-color: #bfdbfe; -fx-background-radius: 2;" />
                     </VBox>
                 </HBox>
                 <Label styleClass="template-label" text="Scrum" />
@@ -132,7 +85,6 @@
         </VBox.margin>
     </VBox>
 
-    <!-- Nombre del tablero -->
     <VBox spacing="8.0">
         <Label styleClass="label-section" text="NOMBRE DEL TABLERO" />
         <TextField fx:id="boardNameField" prefHeight="40.0" promptText="Ej. Proyecto Alpha" styleClass="join-input" />
@@ -141,7 +93,6 @@
         </VBox.margin>
     </VBox>
 
-    <!-- Botones -->
     <HBox alignment="CENTER_RIGHT" spacing="10.0">
         <Label fx:id="lblBoardResult" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
         <Button onAction="#handleCancel" styleClass="toggle-card-type" text="Cancelar" />
