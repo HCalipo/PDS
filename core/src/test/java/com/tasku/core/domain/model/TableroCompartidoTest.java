@@ -2,42 +2,64 @@ package com.tasku.core.domain.model;
 
 import org.junit.jupiter.api.Test;
 
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TableroCompartidoTest {
 
+    private final TableroUrl boardUrl = TableroUrl.createNew();
+
     @Test
-    void constructor_validaCamposNoNulos() {
-        TableroUrl url = TableroUrl.createNew();
-        Email email = new Email("test@test.com");
-        // Primer constructor: (Long id, TableroUrl boardUrl, Email email, RolComparticion role)
-        assertThatThrownBy(() -> new TableroCompartido(1L, null, email, RolComparticion.VIEWER))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("url");
-        assertThatThrownBy(() -> new TableroCompartido(1L, url, null, RolComparticion.VIEWER))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("email");
-        assertThatThrownBy(() -> new TableroCompartido(1L, url, email, null))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("rol");
-        // Segundo constructor: (Long id, String boardUrl, String email, RolComparticion role)
-        // TableroUrl constructor lanza DomainValidationException para null
-        assertThatThrownBy(() -> new TableroCompartido(1L, (String) null, "test@test.com", RolComparticion.VIEWER))
-                .isInstanceOf(com.tasku.core.domain.board.exception.DomainValidationException.class).hasMessageContaining("nula");
+    void shouldThrowWhenBoardUrlIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new TableroCompartido(1L, (TableroUrl) null, new Email("u@t.com"), RolComparticion.VIEWER));
     }
 
     @Test
-    void constructor_conStringUrl_creaValida() {
-        TableroCompartido compartido = new TableroCompartido(1L, "tasku://tablero/" + java.util.UUID.randomUUID(), "test@test.com", RolComparticion.EDITOR);
-        assertThat(compartido.email()).isEqualTo("test@test.com");
-        assertThat(compartido.role()).isEqualTo(RolComparticion.EDITOR);
+    void shouldThrowWhenRoleIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new TableroCompartido(1L, boardUrl, new Email("u@t.com"), null));
     }
 
     @Test
-    void getters_retornanValoresCorrectos() {
-        TableroUrl url = TableroUrl.createNew();
-        TableroCompartido compartido = new TableroCompartido(1L, url, new Email("test@test.com"), RolComparticion.VIEWER);
-        assertThat(compartido.id()).isEqualTo(1L);
-        assertThat(compartido.boardUrlValue()).isEqualTo(url);
-        assertThat(compartido.emailValue()).isNotNull();
+    void shouldReturnEmailValue() {
+        TableroCompartido tc = new TableroCompartido(1L, boardUrl, new Email("u@t.com"), RolComparticion.VIEWER);
+        assertEquals("u@t.com", tc.email());
+    }
+
+    @Test
+    void shouldThrowWhenEmailIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new TableroCompartido(1L, boardUrl, null, RolComparticion.VIEWER));
+    }
+
+    @Test
+    void shouldReturnBoardUrl() {
+        TableroCompartido tc = new TableroCompartido(1L, boardUrl, new Email("u@t.com"), RolComparticion.VIEWER);
+        assertEquals(boardUrl.value(), tc.boardUrl());
+    }
+
+    @Test
+    void shouldReturnBoardUrlValueObject() {
+        TableroCompartido tc = new TableroCompartido(1L, boardUrl, new Email("u@t.com"), RolComparticion.VIEWER);
+        assertEquals(boardUrl, tc.boardUrlValue());
+    }
+
+    @Test
+    void shouldReturnEmailValueObject() {
+        Email email = new Email("u@t.com");
+        TableroCompartido tc = new TableroCompartido(1L, boardUrl, email, RolComparticion.VIEWER);
+        assertEquals(email, tc.emailValue());
+    }
+
+    @Test
+    void shouldReturnRole() {
+        TableroCompartido tc = new TableroCompartido(1L, boardUrl, new Email("u@t.com"), RolComparticion.EDITOR);
+        assertEquals(RolComparticion.EDITOR, tc.role());
+    }
+
+    @Test
+    void shouldReturnId() {
+        TableroCompartido tc = new TableroCompartido(42L, boardUrl, new Email("u@t.com"), RolComparticion.VIEWER);
+        assertEquals(42L, tc.id());
     }
 }

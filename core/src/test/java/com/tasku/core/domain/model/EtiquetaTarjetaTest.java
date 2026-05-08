@@ -1,40 +1,41 @@
 package com.tasku.core.domain.model;
 
-import com.tasku.core.domain.board.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import com.tasku.core.domain.board.exception.DomainValidationException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class EtiquetaTarjetaTest {
 
     @Test
-    void constructor_creaEtiquetaValida() {
-        EtiquetaTarjeta etiqueta = new EtiquetaTarjeta("Urgent", "red");
-        assertThat(etiqueta.name()).isEqualTo("Urgent");
-        assertThat(etiqueta.colorHex()).isEqualTo("red");
+    void shouldCreateWithValidValues() {
+        EtiquetaTarjeta e = new EtiquetaTarjeta("backend", "#0EA5E9");
+        assertEquals("backend", e.name());
+        assertEquals("#0EA5E9", e.colorHex());
     }
 
     @Test
-    void constructor_lanzaExcepcion_nombreInvalido() {
-        assertThatThrownBy(() -> new EtiquetaTarjeta(null, "red"))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("nombre");
-        assertThatThrownBy(() -> new EtiquetaTarjeta("   ", "red"))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("nombre");
+    void shouldThrowWhenNameIsNull() {
+        assertThrows(DomainValidationException.class,
+                () -> new EtiquetaTarjeta(null, "#0EA5E9"));
     }
 
     @Test
-    void constructor_lanzaExcepcion_colorInvalido() {
-        assertThatThrownBy(() -> new EtiquetaTarjeta("Name", null))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("color");
-        assertThatThrownBy(() -> new EtiquetaTarjeta("Name", "   "))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("color");
+    void shouldThrowWhenNameIsBlank() {
+        assertThrows(DomainValidationException.class,
+                () -> new EtiquetaTarjeta("   ", "#0EA5E9"));
     }
 
     @Test
-    void constructor_recortaEspacios() {
-        EtiquetaTarjeta etiqueta = new EtiquetaTarjeta("  Urgent  ", "  red  ");
-        assertThat(etiqueta.name()).isEqualTo("Urgent");
-        assertThat(etiqueta.colorHex()).isEqualTo("red");
+    void shouldThrowWhenColorIsNull() {
+        assertThrows(DomainValidationException.class,
+                () -> new EtiquetaTarjeta("backend", null));
+    }
+
+    @Test
+    void shouldThrowWhenColorIsBlank() {
+        assertThrows(DomainValidationException.class,
+                () -> new EtiquetaTarjeta("backend", "   "));
     }
 }

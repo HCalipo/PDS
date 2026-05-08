@@ -2,27 +2,37 @@ package com.tasku.core.domain.model;
 
 import org.junit.jupiter.api.Test;
 
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RolComparticionTest {
 
     @Test
-    void viewer_esRolValido() {
-        assertThat(RolComparticion.VIEWER).isNotNull();
-        assertThat(RolComparticion.VIEWER.name()).isEqualTo("VIEWER");
+    void shouldHaveViewerEditorAdmin() {
+        assertEquals(3, RolComparticion.values().length);
     }
 
     @Test
-    void editor_esRolValido() {
-        assertThat(RolComparticion.EDITOR).isNotNull();
-        assertThat(RolComparticion.EDITOR.name()).isEqualTo("EDITOR");
+    void viewerCannotEdit() {
+        assertFalse(RolComparticion.VIEWER.canEdit());
     }
 
     @Test
-    void values_retornaTodosLosRoles() {
-        RolComparticion[] values = RolComparticion.values();
-        assertThat(values).hasSize(2);
-        assertThat(values).contains(RolComparticion.VIEWER, RolComparticion.EDITOR);
+    void adminCanEdit() {
+        assertTrue(RolComparticion.ADMIN.canEdit());
+    }
+
+    @Test
+    void editorCanEdit() {
+        assertTrue(RolComparticion.EDITOR.canEdit());
+    }
+
+    @Test
+    void viewerIsNotAdmin() {
+        assertFalse(RolComparticion.VIEWER.isAdmin());
+    }
+
+    @Test
+    void editorIsNotAdmin() {
+        assertFalse(RolComparticion.EDITOR.isAdmin());
     }
 }
