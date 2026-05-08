@@ -42,6 +42,12 @@ public class PrincipalController {
     private StackPane btnCompartirTablero;
 
     @FXML
+    private SVGPath SVG_NoCompartir;
+
+    @FXML
+    private SVGPath SVG_CpURL;
+
+    @FXML
     private Button btnAddList;
 
     @FXML
@@ -93,7 +99,7 @@ public class PrincipalController {
         if (SceneManager.getInstance().consumeNewUser()) {
             Platform.runLater(this::handleAñadirTablero);
         }
-        //svgURLCopied.setVisible(false);
+
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldVal, newVal) -> applySearchFilter(newVal));
         }
@@ -865,8 +871,17 @@ void handleCompartirTablero(MouseEvent event) {
         boolean canCreate = canEdit && !estaBloqueado;
         boolean canRename = canEdit && !estaBloqueado;
         boolean canDelete = canEdit && !estaBloqueado;
+
+
         if (ButtonTableroBlock != null) ButtonTableroBlock.setDisable(!isAdmin);
-        if (btnCompartirTablero != null) btnCompartirTablero.setDisable(!isAdmin);
+        if (btnCompartirTablero != null){
+            
+            btnCompartirTablero.setDisable(!isAdmin);
+            SVG_CpURL.setVisible(isAdmin);
+            SVG_NoCompartir.setVisible(!isAdmin);
+        }
+        
+        
         if (btnAddList != null) btnAddList.setDisable(!canCreate);
         if (btnCreateTask != null) btnCreateTask.setDisable(!canCreate);
         for (ListaTareasController ctrl : listControllers.values()) {
