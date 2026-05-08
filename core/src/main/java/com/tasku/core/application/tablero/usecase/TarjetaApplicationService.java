@@ -120,9 +120,6 @@ public class TarjetaApplicationService {
             throw new DomainValidationException("No se puede mover una tarjeta entre tableros distintos");
         }
 
-        Tablero board = boardStore.findByUrl(sourceList.boardUrlValue())
-                .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
-
         if (!card.listIdValue().equals(request.destinationListId())) {
             long destinationCount = cardStore.countByListId(request.destinationListId());
             if (destinationCount >= destinationList.cardLimit()) {
