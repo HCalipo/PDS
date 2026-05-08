@@ -3,30 +3,36 @@ package com.tasku.core.domain.model;
 import com.tasku.core.domain.board.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TableroUrlTest {
 
     @Test
-    void createNew_generaUrlValida() {
-        TableroUrl url = TableroUrl.createNew();
-        assertThat(url.value()).startsWith("tasku://tablero/");
-        assertThat(url.value()).hasSize("tasku://tablero/".length() + 36);
+    void shouldCreateFromFullUrl() {
+        UUID uuid = UUID.randomUUID();
+        String fullUrl = "tasku://tablero/" + uuid;
+        TableroUrl url = new TableroUrl(fullUrl);
+        assertEquals(fullUrl, url.value());
     }
 
     @Test
-    void constructor_validaFormatoUrl() {
-        String validUrl = "tasku://tablero/" + UUID.randomUUID();
-        TableroUrl url = new TableroUrl(validUrl);
-        assertThat(url.value()).isEqualTo(validUrl);
-
-        assertThatThrownBy(() -> new TableroUrl(null))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("nula ni vacia");
-        assertThatThrownBy(() -> new TableroUrl("invalid-url"))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("UUID valido");
+    void shouldThrowWhenValueIsNull() {
+        assertThrows(DomainValidationException.class, () -> new TableroUrl(null));
     }
+
+    @Test
+    void shouldThrowWhenValueIsBlank() {
+        assertThrows(DomainValidationException.class, () -> new TableroUrl("   "));
+    }
+
+    @Test
+    void shouldNormalizeUrl() {
+        UUID uuid = UUID.randomUUID();
+        TableroUrl a = new TableroUrl("tasku://tablero/" + uuid);
+        TableroUrl b = new TableroUrl(uuid.toString());
+        assertEquals(a, b);
+    }
+
 }

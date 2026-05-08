@@ -2,50 +2,63 @@ package com.tasku.core.domain.model;
 
 import org.junit.jupiter.api.Test;
 
-
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioTest {
 
     @Test
-    void constructor_validaCamposNoNulos() {
-        Email email = new Email("test@test.com");
+    void shouldCreateWithEmailAndDate() {
+        Email email = new Email("user@tasku.dev");
         LocalDateTime now = LocalDateTime.now();
-        assertThatThrownBy(() -> new Usuario(null, now))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("email");
-        assertThatThrownBy(() -> new Usuario(email, null))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("fecha");
+        Usuario user = new Usuario(email, now);
+        assertEquals("user@tasku.dev", user.email());
+        assertEquals(now, user.registrationDate());
     }
 
     @Test
-    void createNew_conString_creaValido() {
-        Usuario usuario = Usuario.createNew("test@test.com");
-        assertThat(usuario.email()).isEqualTo("test@test.com");
-        assertThat(usuario.registrationDate()).isNotNull();
+    void shouldCreateNewWithStringEmail() {
+        Usuario user = Usuario.createNew("User@Tasku.dev");
+        assertEquals("user@tasku.dev", user.email());
+        assertNotNull(user.registrationDate());
     }
 
     @Test
-    void createNew_conEmail_creaValido() {
-        Email email = new Email("test@test.com");
-        Usuario usuario = Usuario.createNew(email);
-        assertThat(usuario.emailValue()).isEqualTo(email);
+    void shouldEqualSameEmail() {
+        Usuario a = new Usuario(new Email("user@tasku.dev"), LocalDateTime.now());
+        Usuario b = new Usuario(new Email("User@Tasku.dev"), LocalDateTime.now().minusDays(1));
+        assertEquals(a, b);
     }
 
     @Test
-    void normalizeEmail_normaliza() {
-        String normalized = Usuario.normalizeEmail("  TEST@TEST.COM  ");
-        assertThat(normalized).isEqualTo("test@test.com");
+    void shouldThrowWhenEmailIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new Usuario(null, LocalDateTime.now()));
     }
 
     @Test
-    void equals_comparaPorEmail() {
-        Usuario u1 = Usuario.createNew("test@test.com");
-        Usuario u2 = Usuario.createNew(new Email("test@test.com"));
-        Usuario u3 = Usuario.createNew("other@test.com");
-        assertThat(u1).isEqualTo(u2);
-        assertThat(u1).isNotEqualTo(u3);
+    void shouldThrowWhenRegistrationDateIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new Usuario(new Email("user@tasku.dev"), null));
+    }
+
+    @Test
+    void shouldNotEqualDifferentEmail() {
+        Usuario a = new Usuario(new Email("user@tasku.dev"), LocalDateTime.now());
+        Usuario b = new Usuario(new Email("other@tasku.dev"), LocalDateTime.now());
+        assertNotEquals(a, b);
+    }
+
+    @Test
+    void shouldNormalizeEmailStatic() {
+        assertEquals("user@tasku.dev", Usuario.normalizeEmail("User@TASKU.dev"));
+    }
+
+    @Test
+    void shouldReturnEmailValueObject() {
+        Email email = new Email("user@tasku.dev");
+        Usuario user = new Usuario(email, LocalDateTime.now());
+        assertEquals(email, user.emailValue());
     }
 }

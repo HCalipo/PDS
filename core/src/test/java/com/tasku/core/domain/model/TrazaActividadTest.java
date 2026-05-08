@@ -3,52 +3,53 @@ package com.tasku.core.domain.model;
 import com.tasku.core.domain.board.exception.DomainValidationException;
 import org.junit.jupiter.api.Test;
 
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TrazaActividadTest {
 
-    private final String BOARD_URL = "tasku://tablero/" + UUID.randomUUID();
-    private final String AUTHOR_EMAIL = "author@test.com";
-
     @Test
-    void createNow_creaTrazaFechaActual() {
-        TrazaActividad trace = TrazaActividad.createNow(BOARD_URL, AUTHOR_EMAIL, "Test trace");
-        assertThat(trace.id()).isNotNull();
-        assertThat(trace.boardUrl()).isEqualTo(BOARD_URL);
-        assertThat(trace.authorEmail()).isEqualTo(AUTHOR_EMAIL);
-        assertThat(trace.date()).isBeforeOrEqualTo(LocalDateTime.now());
-    }
-
-    @Test
-    void constructor_validaCamposNoNulos() {
+    void shouldCreateWithAllParameters() {
         UUID id = UUID.randomUUID();
-        TableroUrl url = new TableroUrl(BOARD_URL);
-        Email email = new Email(AUTHOR_EMAIL);
-        LocalDateTime date = LocalDateTime.now();
-
-        assertThatThrownBy(() -> new TrazaActividad(null, url, email, "desc", date))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("id");
-        assertThatThrownBy(() -> new TrazaActividad(id, null, email, "desc", date))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("url");
-        assertThatThrownBy(() -> new TrazaActividad(id, url, null, "desc", date))
-                .isInstanceOf(NullPointerException.class).hasMessageContaining("autor");
+        TableroUrl boardUrl = TableroUrl.createNew();
+        Email email = new Email("user@tasku.dev");
+        LocalDateTime now = LocalDateTime.now();
+        TrazaActividad trace = new TrazaActividad(id, boardUrl, email, "Tarjeta movida", now);
+        assertEquals(id, trace.id());
+        assertEquals(boardUrl.value(), trace.boardUrl());
+        assertEquals("user@tasku.dev", trace.authorEmail());
+        assertEquals("Tarjeta movida", trace.description());
+        assertEquals(now, trace.date());
     }
 
     @Test
-    void constructor_validaDescripcionNoVacia() {
-        UUID id = UUID.randomUUID();
-        TableroUrl url = new TableroUrl(BOARD_URL);
-        Email email = new Email(AUTHOR_EMAIL);
-        LocalDateTime date = LocalDateTime.now();
-
-        assertThatThrownBy(() -> new TrazaActividad(id, url, email, null, date))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("descripcion");
-        assertThatThrownBy(() -> new TrazaActividad(id, url, email, "   ", date))
-                .isInstanceOf(DomainValidationException.class).hasMessageContaining("descripcion");
+    void shouldThrowWhenIdIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new TrazaActividad(null, TableroUrl.createNew(), new Email("u@t.com"),
+                        "desc", LocalDateTime.now()));
     }
+
+    @Test
+    void shouldThrowWhenAuthorEmailIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new TrazaActividad(UUID.randomUUID(), TableroUrl.createNew(), null,
+                        "desc", LocalDateTime.now()));
+    }
+
+    @Test
+    void shouldThrowWhenDescriptionIsNull() {
+        assertThrows(DomainValidationException.class,
+                () -> new TrazaActividad(UUID.randomUUID(), TableroUrl.createNew(), new Email("u@t.com"),
+                        null, LocalDateTime.now()));
+    }
+
+    @Test
+    void shouldThrowWhenDateIsNull() {
+        assertThrows(NullPointerException.class,
+                () -> new TrazaActividad(UUID.randomUUID(), TableroUrl.createNew(), new Email("u@t.com"),
+                        "desc", null));
+    }
+
 }

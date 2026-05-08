@@ -2,26 +2,42 @@ package com.tasku.core.domain.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.tasku.core.domain.board.exception.DomainValidationException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DefinicionListaInicialTest {
 
     @Test
-    void constructor_creaDefinicionValida() {
-        DefinicionListaInicial def = new DefinicionListaInicial("TODO", 10);
-        assertThat(def.name()).isEqualTo("TODO");
-        assertThat(def.cardLimit()).isEqualTo(10);
+    void shouldCreateWithValidValues() {
+        DefinicionListaInicial d = new DefinicionListaInicial("TODO", 5);
+        assertEquals("TODO", d.name());
+        assertEquals(5, d.cardLimit());
     }
 
     @Test
-    void name_retornaNombreCorrecto() {
-        DefinicionListaInicial def = new DefinicionListaInicial("DOING", 20);
-        assertThat(def.name()).isEqualTo("DOING");
+    void shouldThrowWhenNameIsNull() {
+        assertThrows(DomainValidationException.class,
+                () -> new DefinicionListaInicial(null, 5));
     }
 
     @Test
-    void cardLimit_retornaLimiteCorrecto() {
-        DefinicionListaInicial def = new DefinicionListaInicial("DONE", 30);
-        assertThat(def.cardLimit()).isEqualTo(30);
+    void shouldThrowWhenNameIsBlank() {
+        assertThrows(DomainValidationException.class,
+                () -> new DefinicionListaInicial("   ", 5));
+    }
+
+    @Test
+    void shouldThrowWhenCardLimitIsZeroOrNegative() {
+        assertThrows(DomainValidationException.class,
+                () -> new DefinicionListaInicial("TODO", 0));
+        assertThrows(DomainValidationException.class,
+                () -> new DefinicionListaInicial("DOING", -5));
+    }
+
+    @Test
+    void shouldTrimWhitespaceFromName() {
+        DefinicionListaInicial d = new DefinicionListaInicial("  TODO  ", 5);
+        assertEquals("TODO", d.name());
     }
 }
