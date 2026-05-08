@@ -5,6 +5,7 @@
 !/docs
 !/docs/*
 !/README.md
+!/CREDITOS.md
 
 /core/data/
 !/pom.xml
