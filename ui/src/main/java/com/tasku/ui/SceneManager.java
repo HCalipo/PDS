@@ -125,6 +125,9 @@ public class SceneManager {
 
             // 2. Crear un Stage COMPLETAMENTE NUEVO
             Stage tableroStage = new Stage();
+
+            tableroStage.setMinWidth(1200);
+            tableroStage.setMinHeight(600);
             tableroStage.setTitle("TaskU");
             tableroStage.setScene(scene);
             
