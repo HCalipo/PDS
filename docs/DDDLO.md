@@ -26,7 +26,7 @@ Actualmente el repositorio utiliza un unico modelo de dominio en `com.tasku.core
 * **TarjetaId:** Value Object que identifica de forma única una tarjeta dentro del dominio (`UUID`).
 * **ListaTableroId:** Value Object que identifica de forma única una lista dentro de un tablero (`UUID`).
 * **DefinicionListaInicial:** Value Object usado al crear un tablero para declarar las listas iniciales (nombre + límite de tarjetas).
-* **EstadoTablero:** Enum con valores `ACTIVE` y `BLOCKED`. Cuando está `BLOCKED` se impide la creación/movimiento de tarjetas.
+* **EstadoTablero:** Enum con valores `ACTIVE` y `BLOCKED`. Cuando está `BLOCKED` se impide la creación, renombrado, eliminación, completado y asignación de etiquetas en tarjetas. El movimiento de tarjetas entre listas **sí está permitido** aunque el tablero esté bloqueado.
 * **TipoTarjeta:** Enum con valores `TAREA` y `CHECKLIST`. Determina el subtipo concreto de una tarjeta.
 * **RolComparticion:** Enum con valores `VIEWER`, `EDITOR` y `ADMIN`. Controla los permisos de un colaborador sobre el tablero (`canEdit()`, `isAdmin()`).
 * **Dueño del tablero:** Usuario cuyo email aparece como `ownerEmail` en el tablero. Su rol efectivo siempre es `ADMIN`.
