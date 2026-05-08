@@ -10,6 +10,10 @@
 - Álvaro Pujante Cánovas — alvaro.pujantec@um.es
 - Hugo Polo Molina — h.polomolina@um.es
 
+### Profesor Responsable
+
+- Bernardo Cánovas
+
 ---
 
 ## 2. Stack tecnológico
@@ -462,7 +466,15 @@ mvn -f ui/pom.xml javafx:run
 
 ---
 
-## 14. Documentación relacionada
+## 14. Mejoras implementadas
+
+- Filtrado de tarjetas por etiquetas.
+- Reglas a nivel de lista: una lista no puede tener más de N items.
+- Creación de plantillas. Una plantilla es un tablero con listas y tarjetas predeterminadas. Las plantillas se definen como un fichero YAML.
+- Permisos para usuarios. Cada tablero tendrá un dueño que podrá decidir qué usuarios de aquellos con los que ha compartido el tablero pueden leer o escribir en ciertas tarjetas.
+- Customizacion avanzada de la interfaz, añadiendo distintas paletas de colores tanto para las etiquetas, tareas y listas.
+
+## 1. Documentación relacionada
 
 - `docs/diagramaDominio.md` — Modelo de dominio, lenguaje ubicuo, historias de usuario
 - `docs/manualUsuario.md` — Manual de usuario con capturas de pantalla
