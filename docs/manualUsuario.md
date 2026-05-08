@@ -55,7 +55,7 @@ Una vez pulsado debes seleccionar los permisos, y pulsar el boton de copiar para
 
 #### 1.2.5. Bloquear tablero
 
-Para bloquear el tablero debes pulsar el boton del candado que se encuentra a la izquierda de la barra de busqueda, al pulsarlo cambiará su iciono a cerrado y bloqueara la creacion de tarjetas.
+Para bloquear el tablero debes pulsar el boton del candado que se encuentra a la izquierda de la barra de busqueda, al pulsarlo cambiará su icono a cerrado y bloqueara la creacion de tarjetas.
 
 <img src="imagenes/botonBloqueo.jpeg" alt="Tab de cuentas" width="600"/>
 
@@ -95,10 +95,34 @@ El cual nos llevara el menu de creacion de etiquetas.
 
 <img src="imagenes/crearEtiqueta.jpeg" alt="Tab de cuentas" width="600"/>
 
-#### 1.2.9. Crear lista
+#### 1.2.8.2 Editar tarjeta
+
+Tanto para las tarjetas de tareas como para las de checklist, se puede editar su titulo, para ello pulsamos en los tres puntos verticales de la tarjeta y pulsamos editar.
+
+<img src="imagenes/editarTarjeta.png" alt="Tab de cuentas" width="600"/>
+
+Aparece esta interfaz, en la que se puede modificar el titulo.
+
+<img src="imagenes/editarChecklist.png" alt="Tab de cuentas" width="600"/>
+
+### 1.2.9. Crear lista
 
 En la pantalla principal, para crear una nueva lista, debes pulsar el boton de "Añadir lista", el cual te llevara a la interfaz de creacion de listas.
 
 <img src="imagenes/añadirLista.jpeg" alt="Tab de cuentas" width="600"/>
 
 <img src="imagenes/crearLista.jpeg" alt="Tab de cuentas" width="600"/>
+
+#### 1.2.9.1 Renombrar lista
+
+Tambien es posible cambiar el titulo a una lista, pulsando en el icono de la izquierda de la papelera en la propia lista.
+
+<img src="imagenes/editarLista.png" alt="Tab de cuentas" width="600"/>
+
+parece esta interfaz, en la que se puede modificar el titulo.
+
+### 1.2.10. Mover tarjetas entre listas
+
+Usando Drag and Drop se pueden mover tarjetas entre listas
+
+<img src="imagenes/dragAndDrop.png" alt="Tab de cuentas" width="600"/>
