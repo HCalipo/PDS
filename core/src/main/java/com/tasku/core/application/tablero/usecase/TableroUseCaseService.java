@@ -119,6 +119,9 @@ public class TableroUseCaseService {
         }
 
         Tablero board = getBoardByUrl(request.boardUrl());
+        if (board.isBlocked()) {
+            throw new DomainForbiddenException("El tablero esta bloqueado y no permite crear listas");
+        }
         Tablero updatedBoard = board.withAddedList(request.name(), request.cardLimit(), request.colorHex());
         return boardStore.save(updatedBoard);
     }
@@ -131,6 +134,9 @@ public class TableroUseCaseService {
         UseCaseValidator.requireText(request.name(), "El nombre de la lista es obligatorio");
 
         Tablero board = getBoardByUrl(request.boardUrl());
+        if (board.isBlocked()) {
+            throw new DomainForbiddenException("El tablero esta bloqueado y no permite renombrar listas");
+        }
         Tablero updatedBoard = board.withRenamedList(request.listId(), request.name());
         return boardStore.save(updatedBoard);
     }
@@ -142,6 +148,9 @@ public class TableroUseCaseService {
         Objects.requireNonNull(request.listId(), "El id de la lista es obligatorio");
 
         Tablero board = getBoardByUrl(request.boardUrl());
+        if (board.isBlocked()) {
+            throw new DomainForbiddenException("El tablero esta bloqueado y no permite eliminar listas");
+        }
         board.findListOrFail(request.listId());
 
         cardStore.deleteByListId(request.listId());

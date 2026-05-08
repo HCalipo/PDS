@@ -122,7 +122,6 @@ public class TarjetaApplicationService {
 
         Tablero board = boardStore.findByUrl(sourceList.boardUrlValue())
                 .orElseThrow(() -> new DomainNotFoundException("No existe el tablero asociado a la tarjeta"));
-        ensureBoardAllowsCardMutations(board);
 
         if (!card.listIdValue().equals(request.destinationListId())) {
             long destinationCount = cardStore.countByListId(request.destinationListId());
@@ -210,8 +209,14 @@ public class TarjetaApplicationService {
         Objects.requireNonNull(request, "La solicitud para eliminar tarjeta no puede ser nula");
         Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
 
-        cardStore.findById(request.cardId())
+        Tarjeta card = cardStore.findById(request.cardId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
+
+        ListaTablero list = boardListStore.findById(card.listIdValue())
+                .orElseThrow(() -> new DomainNotFoundException("La lista de la tarjeta no existe"));
+        Tablero board = boardStore.findByUrl(list.boardUrlValue())
+                .orElseThrow(() -> new DomainNotFoundException("El tablero de la tarjeta no existe"));
+        ensureBoardAllowsCardMutations(board);
 
         cardStore.deleteById(request.cardId());
     }
@@ -224,6 +229,12 @@ public class TarjetaApplicationService {
 
         Tarjeta card = cardStore.findById(request.cardId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
+
+        ListaTablero list = boardListStore.findById(card.listIdValue())
+                .orElseThrow(() -> new DomainNotFoundException("La lista de la tarjeta no existe"));
+        Tablero board = boardStore.findByUrl(list.boardUrlValue())
+                .orElseThrow(() -> new DomainNotFoundException("El tablero de la tarjeta no existe"));
+        ensureBoardAllowsCardMutations(board);
 
         card.rename(request.title());
         return cardStore.save(card);

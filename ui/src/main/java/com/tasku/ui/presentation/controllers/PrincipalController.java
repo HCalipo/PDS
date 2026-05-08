@@ -139,6 +139,8 @@ public class PrincipalController {
             showAlert("Error al cambiar estado del tablero: " + ex.getMessage(), Alert.AlertType.ERROR);
         }
         actualizarIconoBloqueo();
+        RolComparticion rolActual = SceneManager.getInstance().getCurrentUserRole();
+        if (rolActual != null) applyRoleRestrictions(rolActual);
     }
 
     private void actualizarIconoBloqueo() {
@@ -300,7 +302,11 @@ public class PrincipalController {
             controller.setOnListDeleted(this::handleListDeleted);
             controller.setOnListRenamed(this::handleListRenamed);
             RolComparticion rol = SceneManager.getInstance().getCurrentUserRole();
-            controller.setEditingEnabled(rol != RolComparticion.VIEWER);
+            boolean canEdit = rol != null && rol != RolComparticion.VIEWER;
+            controller.setEditingEnabled(canEdit);
+            controller.setCardCreationEnabled(canEdit && !estaBloqueado);
+            controller.setRenamingEnabled(canEdit && !estaBloqueado);
+            controller.setDeletionEnabled(canEdit && !estaBloqueado);
             listControllers.put(list.id(), controller);
             columnNodes.put(list.id(), nuevaColumna);
             int indice = boardContainer.getChildren().size() - 1;
@@ -852,11 +858,17 @@ void handleCompartirTablero(MouseEvent event) {
     private void applyRoleRestrictions(RolComparticion role) {
         boolean isAdmin = role == RolComparticion.ADMIN;
         boolean canEdit = role != RolComparticion.VIEWER;
+        boolean canCreate = canEdit && !estaBloqueado;
+        boolean canRename = canEdit && !estaBloqueado;
+        boolean canDelete = canEdit && !estaBloqueado;
         if (ButtonTableroBlock != null) ButtonTableroBlock.setDisable(!isAdmin);
-        if (btnAddList != null) btnAddList.setDisable(!canEdit);
-        if (btnCreateTask != null) btnCreateTask.setDisable(!canEdit);
+        if (btnAddList != null) btnAddList.setDisable(!canCreate);
+        if (btnCreateTask != null) btnCreateTask.setDisable(!canCreate);
         for (ListaTareasController ctrl : listControllers.values()) {
             ctrl.setEditingEnabled(canEdit);
+            ctrl.setCardCreationEnabled(canCreate);
+            ctrl.setRenamingEnabled(canRename);
+            ctrl.setDeletionEnabled(canDelete);
         }
     }
 

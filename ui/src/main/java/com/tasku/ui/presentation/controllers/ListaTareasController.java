@@ -71,6 +71,8 @@ public class ListaTareasController {
     private UUID listId;
     private String listName = "";
     private boolean editingEnabled = true;
+    private boolean renamingEnabled = true;
+    private boolean deletionEnabled = true;
     private final Map<UUID, CardApiResponse> cardsById = new LinkedHashMap<>();
     private CardDropHandler onCardDropped;
     private CardCompletedHandler onCardCompleted;
@@ -169,6 +171,8 @@ public class ListaTareasController {
 
     public void setEditingEnabled(boolean canEdit) {
         this.editingEnabled = canEdit;
+        this.renamingEnabled = canEdit;
+        this.deletionEnabled = canEdit;
         if (btnRenameList != null) {
             btnRenameList.setVisible(canEdit);
             btnRenameList.setManaged(canEdit);
@@ -181,6 +185,28 @@ public class ListaTareasController {
             btnCrearTareaVacio.setDisable(!canEdit);
         }
         updateCards(java.util.List.copyOf(cardsById.values()));
+    }
+
+    public void setCardCreationEnabled(boolean canCreate) {
+        if (btnCrearTareaVacio != null) {
+            btnCrearTareaVacio.setDisable(!canCreate);
+        }
+    }
+
+    public void setRenamingEnabled(boolean canRename) {
+        this.renamingEnabled = canRename;
+        if (btnRenameList != null) {
+            btnRenameList.setVisible(canRename);
+            btnRenameList.setManaged(canRename);
+        }
+    }
+
+    public void setDeletionEnabled(boolean canDelete) {
+        this.deletionEnabled = canDelete;
+        if (btnDeleteList != null) {
+            btnDeleteList.setVisible(canDelete);
+            btnDeleteList.setManaged(canDelete);
+        }
     }
 
     @FXML
@@ -405,12 +431,15 @@ public class ListaTareasController {
     
     menuButton.setOnMouseClicked(e -> {
         ContextMenu contextMenu = new ContextMenu();
-        if (editingEnabled) {
+        if (renamingEnabled) {
             MenuItem editItem = new MenuItem("Editar");
             editItem.setOnAction(ev -> handleEditCard(card));
+            contextMenu.getItems().add(editItem);
+        }
+        if (deletionEnabled) {
             MenuItem deleteItem = new MenuItem("Eliminar");
             deleteItem.setOnAction(ev -> handleDeleteCard(card));
-            contextMenu.getItems().addAll(editItem, deleteItem);
+            contextMenu.getItems().add(deleteItem);
         }
         if (!contextMenu.getItems().isEmpty()) {
             contextMenu.show(menuButton, javafx.geometry.Side.BOTTOM, 0, 0);
