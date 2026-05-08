@@ -3,38 +3,21 @@ package com.tasku.core.infrastructure.events;
 import com.tasku.core.application.tablero.usecase.TrazaActividadUseCaseService;
 import com.tasku.core.application.tablero.usecase.dto.RegisterTraceRequest;
 import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
-import com.tasku.core.domain.board.port.ListaTableroStore;
-import com.tasku.core.domain.board.port.TarjetaStore;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TarjetaMovidaTrazaListener {
-    private final TrazaActividadUseCaseService trazaService;
-    private final ListaTableroStore listStore;
-    private final TarjetaStore cardStore;
 
-    public TarjetaMovidaTrazaListener(TrazaActividadUseCaseService trazaService,
-                                      ListaTableroStore listStore,
-                                      TarjetaStore cardStore) {
+    private final TrazaActividadUseCaseService trazaService;
+
+    public TarjetaMovidaTrazaListener(TrazaActividadUseCaseService trazaService) {
         this.trazaService = trazaService;
-        this.listStore = listStore;
-        this.cardStore = cardStore;
     }
 
     @EventListener
     public void onCardMoved(TarjetaMovidaEvent event) {
-        String cardTitle = cardStore.findById(event.cardId())
-                .map(c -> c.title())
-                .orElse("una tarjeta");
-        String srcName = listStore.findById(event.sourceListId())
-                .map(l -> l.name())
-                .orElse("lista desconocida");
-        String dstName = listStore.findById(event.destinationListId())
-                .map(l -> l.name())
-                .orElse("lista desconocida");
-
-        String description = "Tarjeta '" + cardTitle + "' movida de '" + srcName + "' a '" + dstName + "'";
+        String description = "Tarjeta '" + event.cardTitle() + "' movida de '" + event.sourceListName() + "' a '" + event.destinationListName() + "'";
         trazaService.registerTrace(new RegisterTraceRequest(
                 event.boardUrl(),
                 event.authorEmail(),

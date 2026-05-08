@@ -1,5 +1,6 @@
 package com.tasku.core.application.tablero.usecase;
 
+import com.tasku.core.application.port.EventPublisher;
 import com.tasku.core.application.tablero.usecase.dto.AssignCardLabelRequest;
 import com.tasku.core.application.tablero.usecase.dto.CompleteCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.CreateCardRequest;
@@ -9,6 +10,7 @@ import com.tasku.core.application.tablero.usecase.dto.RenameCardRequest;
 import com.tasku.core.application.tablero.usecase.dto.ToggleChecklistItemRequest;
 import com.tasku.core.application.tablero.usecase.event.TarjetaCreadaEvent;
 import com.tasku.core.application.tablero.usecase.event.TarjetaMovidaEvent;
+import com.tasku.core.application.util.UseCaseValidator;
 import com.tasku.core.domain.board.exception.DomainConflictException;
 import com.tasku.core.domain.board.exception.DomainForbiddenException;
 import com.tasku.core.domain.board.exception.DomainNotFoundException;
@@ -25,7 +27,6 @@ import com.tasku.core.domain.model.TarjetaChecklist;
 import com.tasku.core.domain.model.TarjetaId;
 import com.tasku.core.domain.model.TarjetaTarea;
 import com.tasku.core.domain.model.TipoTarjeta;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,12 +40,12 @@ public class TarjetaApplicationService {
     private final ListaTableroStore boardListStore;
     private final TableroStore boardStore;
     private final TarjetaStore cardStore;
-    private final ApplicationEventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     public TarjetaApplicationService(ListaTableroStore boardListStore,
                                      TableroStore boardStore,
                                      TarjetaStore cardStore,
-                                     ApplicationEventPublisher eventPublisher) {
+                                     EventPublisher eventPublisher) {
         this.boardListStore = boardListStore;
         this.boardStore = boardStore;
         this.cardStore = cardStore;
@@ -86,9 +87,11 @@ public class TarjetaApplicationService {
         Tarjeta saved = cardStore.save(card);
 
         if (request.authorEmail() != null) {
-            eventPublisher.publishEvent(new TarjetaCreadaEvent(
+            eventPublisher.publish(new TarjetaCreadaEvent(
                     saved.cardIdValue(),
+                    saved.title(),
                     list.listIdValue(),
+                    list.name(),
                     list.boardUrlValue(),
                     request.authorEmail(),
                     LocalDateTime.now()
@@ -129,10 +132,13 @@ public class TarjetaApplicationService {
             card.moveToList(request.destinationListId());
             Tarjeta updated = cardStore.save(card);
 
-            eventPublisher.publishEvent(new TarjetaMovidaEvent(
+            eventPublisher.publish(new TarjetaMovidaEvent(
                     updated.cardIdValue(),
+                    updated.title(),
                     sourceList.listIdValue(),
+                    sourceList.name(),
                     destinationList.listIdValue(),
+                    destinationList.name(),
                     destinationList.boardUrlValue(),
                     request.authorEmail(),
                     LocalDateTime.now()
@@ -165,8 +171,8 @@ public class TarjetaApplicationService {
     public Tarjeta assignLabelToCard(AssignCardLabelRequest request) {
         Objects.requireNonNull(request, "La solicitud para asignar etiqueta no puede ser nula");
         Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
-        validateText(request.labelName(), "El nombre de la etiqueta es obligatorio");
-        validateText(request.colorHex(), "El color de la etiqueta es obligatorio");
+        UseCaseValidator.requireText(request.labelName(), "El nombre de la etiqueta es obligatorio");
+        UseCaseValidator.requireText(request.colorHex(), "El color de la etiqueta es obligatorio");
 
         Tarjeta card = cardStore.findById(request.cardId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
@@ -195,9 +201,7 @@ public class TarjetaApplicationService {
 
     @Transactional(readOnly = true)
     public List<Tarjeta> getCompletedCardsForBoard(String boardUrl) {
-        if (boardUrl == null || boardUrl.isBlank()) {
-            throw new DomainValidationException("La URL del tablero es obligatoria");
-        }
+        UseCaseValidator.requireText(boardUrl, "La URL del tablero es obligatoria");
         return cardStore.findCompletedByBoardUrl(boardUrl);
     }
 
@@ -216,7 +220,7 @@ public class TarjetaApplicationService {
     public Tarjeta renameCard(RenameCardRequest request) {
         Objects.requireNonNull(request, "La solicitud para renombrar tarjeta no puede ser nula");
         Objects.requireNonNull(request.cardId(), "El id de la tarjeta no puede ser nulo");
-        validateText(request.title(), "El titulo de la tarjeta es obligatorio");
+        UseCaseValidator.requireText(request.title(), "El titulo de la tarjeta es obligatorio");
 
         Tarjeta card = cardStore.findById(request.cardId())
                 .orElseThrow(() -> new DomainNotFoundException("No existe la tarjeta indicada"));
@@ -243,19 +247,12 @@ public class TarjetaApplicationService {
         Objects.requireNonNull(request, "La solicitud para crear tarjeta no puede ser nula");
         Objects.requireNonNull(request.listId(), "La lista destino de la tarjeta no puede ser nula");
         Objects.requireNonNull(request.type(), "El tipo de tarjeta es obligatorio");
-        validateText(request.title(), "El titulo de la tarjeta es obligatorio");
-        validateText(request.description(), "La descripcion de la tarjeta es obligatoria");
+        UseCaseValidator.requireText(request.title(), "El titulo de la tarjeta es obligatorio");
+        UseCaseValidator.requireText(request.description(), "La descripcion de la tarjeta es obligatoria");
 
         if (request.type() == TipoTarjeta.CHECKLIST && request.checklistItems() == null) {
             throw new DomainValidationException("Las tarjetas checklist deben incluir lista de items");
         }
-    }
-
-    private static String validateText(String value, String message) {
-        if (value == null || value.isBlank()) {
-            throw new DomainValidationException(message);
-        }
-        return value.trim();
     }
 
     private static void ensureBoardAllowsCardMutations(Tablero board) {

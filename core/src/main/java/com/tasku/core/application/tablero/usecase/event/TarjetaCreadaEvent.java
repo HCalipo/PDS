@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 public record TarjetaCreadaEvent(
         TarjetaId cardId,
+        String cardTitle,
         ListaTableroId listId,
+        String listName,
         TableroUrl boardUrl,
         Email authorEmail,
         LocalDateTime createdAt

@@ -11,27 +11,26 @@ Actualmente el repositorio utiliza un unico modelo de dominio en `com.tasku.core
 
 ## Glosario de Términos
 
-* **Usuario:** Persona identificada en el sistema mediante un correo electrónico. Puede crear tableros o colaborar en ellos.
-* **Tablero:** Es el espacio de trabajo principal. Contiene listas con limite, estado (`ACTIVE/BLOCKED`) y configuracion de comparticion por email.
-* **Lista de Tareas:** Contenedor de tarjetas dentro de un tablero. Representa una fase o estado del flujo de trabajo (ej. *TODO, DOING, DONE*).
-* **Lista de Completadas:** Una lista especial dentro del tablero que contiene las tarjetas que han sido finalizadas.
-* **Tarjeta:** La unidad base de la aplicación. Puede moverse entre listas, recibir etiquetas y marcarse como completada.
-* **Tarjeta de Tarea:** Subtipo de tarjeta con tipo `TAREA`.
-* **Tarjeta de Checklist:** Subtipo de tarjeta que contiene una lista de comprobación de subtareas.
-* **Etiqueta:** Elemento clasificador asignado a las tarjetas. Está definida por un color y una descripción.
-* **Historial de movimientos:** Registro cronológico de acciones realizadas por usuarios sobre un tablero.
-* **Movimiento:** Evento individual dentro del historial que guarda qué acción ocurrió, cuándo ocurrió y qué usuario la realizó.
-* **URL de Acceso:** Identificador único que actúa como mecanismo de invitación y acceso al tablero para los colaboradores.
-* **Dueño del tablero:** Usuario creador del tablero con control sobre su configuración y gestión general.
-* **Colaborador:** Usuario invitado mediante URL que puede participar en el tablero según las reglas definidas.
-* **Estado de bloqueo:** Condición del tablero representada con el enum `EstadoTablero`, que bloquea operaciones de modificación sobre tarjetas.
-* **Elemento de checklist:** Subtarea individual de una tarjeta de checklist que puede marcarse como completada o pendiente.
-* **Lista de ítems:** Colección de elementos de checklist asociada a una tarjeta de tipo checklist.
-* **TarjetaId:** Identificador de valor único que distingue cada tarjeta dentro del dominio.
-* **ListaTareasId:** Identificador de valor para una lista de tareas dentro de un tablero.
-* **ListaCompletadasId:** Identificador de valor para la lista especial de tarjetas finalizadas.
-* **Email:** Value Object que encapsula y valida el correo electrónico de un usuario.
-* **Color de etiqueta:** Value Object que restringe y representa el color válido de una etiqueta.
+* **Usuario:** Persona identificada en el sistema mediante un correo electrónico (`Email`) y una fecha de registro. Puede crear tableros o colaborar en ellos.
+* **Tablero:** Raíz de agregado y espacio de trabajo principal. Contiene listas (`ListaTablero`), comparticiones (`TableroCompartido`), estado (`EstadoTablero`) y se identifica por su `TableroUrl`.
+* **ListaTablero:** Contenedor de tarjetas dentro de un tablero. Representa una fase del flujo de trabajo (ej. *TODO, DOING, DONE*). Tiene un límite de tarjetas (`cardLimit`) y un color.
+* **Tarjeta:** La unidad base de la aplicación (clase abstracta). Puede moverse entre listas, recibir etiquetas (`EtiquetaTarjeta`) y archivarse.
+* **TarjetaTarea:** Subtipo concreto de `Tarjeta` con `TipoTarjeta.TAREA`. No añade campos extra al supertipo.
+* **TarjetaChecklist:** Subtipo concreto de `Tarjeta` con `TipoTarjeta.CHECKLIST`. Contiene una lista de `ElementoChecklist` que se pueden marcar individualmente.
+* **ElementoChecklist:** Value Object que representa una subtarea dentro de una `TarjetaChecklist`: tiene descripción y estado completado/pendiente.
+* **EtiquetaTarjeta:** Value Object que clasifica visualmente una tarjeta mediante un nombre y un color hexadecimal.
+* **TableroCompartido:** Entidad que registra con qué email y con qué rol (`RolComparticion`) se ha compartido un tablero.
+* **TrazaActividad:** Registro de una acción ocurrida en un tablero: guarda la URL del tablero, el email del autor, una descripción y la fecha/hora.
+* **TableroUrl:** Value Object que encapsula y normaliza la URL de un tablero. Acepta UUID bare o formato completo `tasku://tablero/<uuid>`.
+* **Email:** Value Object que encapsula y valida el correo electrónico de un usuario (normalizado a minúsculas).
+* **TarjetaId:** Value Object que identifica de forma única una tarjeta dentro del dominio (`UUID`).
+* **ListaTableroId:** Value Object que identifica de forma única una lista dentro de un tablero (`UUID`).
+* **DefinicionListaInicial:** Value Object usado al crear un tablero para declarar las listas iniciales (nombre + límite de tarjetas).
+* **EstadoTablero:** Enum con valores `ACTIVE` y `BLOCKED`. Cuando está `BLOCKED` se impide la creación/movimiento de tarjetas.
+* **TipoTarjeta:** Enum con valores `TAREA` y `CHECKLIST`. Determina el subtipo concreto de una tarjeta.
+* **RolComparticion:** Enum con valores `VIEWER`, `EDITOR` y `ADMIN`. Controla los permisos de un colaborador sobre el tablero (`canEdit()`, `isAdmin()`).
+* **Dueño del tablero:** Usuario cuyo email aparece como `ownerEmail` en el tablero. Su rol efectivo siempre es `ADMIN`.
+* **Colaborador:** Usuario añadido a `sharedWith` del tablero con un `RolComparticion` explícito.
 
 ---
 
@@ -43,88 +42,114 @@ classDiagram
 
     class USUARIO {
       <<Entity>>
-      +Email correo
-      +String nombre
+      +Email email
+      +LocalDateTime registrationDate
+      +createNew(String email)$ USUARIO
     }
 
     class TABLERO {
-      <<Entity>>
-      +TableroId url
-      +boolean estaBloqueado
-      +Usuario dueno
-      +Set~Usuario~ colaboradores
-      +List~ListaTareas~ listasTareas
-      +ListaCompletadas listaCompletadas
-      +HistorialMovimientos historial
+      <<AggregateRoot>>
+      +TableroUrl url
+      +String name
+      +Email ownerEmail
+      +String color
+      +String description
+      +EstadoTablero status
+      +List~ListaTablero~ lists
+      +Set~TableroCompartido~ sharedWith
+      +createNew(ownerEmail, name, color, desc, lists)$ Tablero
+      +withAddedList(name, limit, color) Tablero
+      +withRemovedList(ListaTableroId) Tablero
+      +withRenamedList(ListaTableroId, name) Tablero
+      +withStatus(EstadoTablero) Tablero
+      +withAddedShare(email, rol) Tablero
+      +hasAccess(String) boolean
+      +effectiveRoleOf(String) RolComparticion
+      +isBlocked() boolean
     }
 
-    class LISTATAREAS {
+    class LISTATABLERO {
       <<Entity>>
-      +ListaTareasId id
-      +List~Tarjeta~ tarjetas
-    }
-
-    class ListaTareasId {
-      <<VO>>
-      +TableroId url
-      +UUID id
-    }
-
-    class LISTACOMPLETADAS {
-      <<Entity>>
-      +ListaCompletadasId id
-      +List~Tarjeta~ tarjetas
-    }
-
-    class HISTORIALMOVIMIENTOS {
-      <<Entity>>
-      +List~Movimiento~ movimientos
+      +ListaTableroId id
+      +TableroUrl boardUrl
+      +String name
+      +int cardLimit
+      +String colorHex
+      +createNew(boardUrl, name, limit, color)$ ListaTablero
+      +withName(String) ListaTablero
     }
 
     class TARJETA {
-      <<Abstract Entity>>
+      <<AbstractEntity>>
       +TarjetaId id
-      +String titulo
-      +String descripcion
-      +boolean estaCompletada
-      +LocalDateTime fechaCreacion
-      +Set~Etiqueta~ etiquetas
-    }
-
-    class ETIQUETA {
-      <<Entity>>
-      +String id
-      +String texto
-      +ColorEtiqueta color
-    }
-
-    class MOVIMIENTO {
-      <<Entity>>
-      +MovimientoId id
-      +LocalDateTime fechaHora
-      +String accionDetalle
-      +Email autor
+      +ListaTableroId listId
+      +TipoTarjeta type
+      +String title
+      +String description
+      +boolean archived
+      +Set~EtiquetaTarjeta~ labels
+      +moveToList(ListaTableroId)
+      +archive()
+      +rename(String)
+      +addLabel(EtiquetaTarjeta)
+      +removeLabel(EtiquetaTarjeta)
     }
 
     class TARJETATAREA {
       <<Entity>>
-      +String texto
+      +createNew(listId, title, desc, labels)$ TarjetaTarea
     }
 
     class TARJETACHECKLIST {
       <<Entity>>
-      +ListaItems listaItems
-    }
-
-    class LISTAITEMS {
-      <<Entity>>
       +List~ElementoChecklist~ items
+      +createNew(listId, title, desc, labels, items)$ TarjetaChecklist
+      +toggleItem(int, boolean)
+      +checklistItems() List
     }
 
-    class ELEMENTOCHECKLIST {
+    class TABLEROCOMPARTIDO {
+      <<Entity>>
+      +Long id
+      +TableroUrl boardUrl
+      +Email email
+      +RolComparticion role
+    }
+
+    class TRAZAACTIVIDAD {
+      <<Entity>>
+      +UUID id
+      +TableroUrl boardUrl
+      +Email authorEmail
+      +String description
+      +LocalDateTime date
+      +createNow(boardUrl, authorEmail, desc)$ TrazaActividad
+    }
+
+    class EtiquetaTarjeta {
       <<VO>>
-      +String descripcion
-      +boolean estaMarcado
+      +String name
+      +String colorHex
+    }
+
+    class ElementoChecklist {
+      <<VO>>
+      +String description
+      +boolean completed
+      +withCompleted(boolean) ElementoChecklist
+    }
+
+    class DefinicionListaInicial {
+      <<VO>>
+      +String name
+      +int cardLimit
+    }
+
+    class TableroUrl {
+      <<VO>>
+      +String value
+      +createNew()$ TableroUrl
+      +uuid() UUID
     }
 
     class Email {
@@ -132,59 +157,79 @@ classDiagram
       +String email
     }
 
-    class TableroId {
+    class TarjetaId {
       <<VO>>
-      +UUID url
-    }
-
-    class ListaCompletadasId {
-      <<VO>>
-      +TableroId url
       +UUID id
     }
-    class TarjetaId { <<VO>> +UUID id }
-    class MovimientoId { <<VO>> +UUID id }
-    class ColorEtiqueta { <<VO>> +String color }
 
-    USUARIO --> TABLERO : accede >
+    class ListaTableroId {
+      <<VO>>
+      +UUID id
+    }
 
-    TABLERO --> LISTATAREAS : contiene >
-    TABLERO --> LISTACOMPLETADAS : incluye >
-    TABLERO --> HISTORIALMOVIMIENTOS : registra >
+    class EstadoTablero {
+      <<Enum>>
+      ACTIVE
+      BLOCKED
+    }
 
-    LISTATAREAS *-- ListaTareasId : id >
+    class TipoTarjeta {
+      <<Enum>>
+      TAREA
+      CHECKLIST
+    }
 
-    LISTATAREAS --> TARJETA : organiza >
-    LISTACOMPLETADAS --> TARJETA : archiva >
-    TARJETA --> ETIQUETA : clasifica con >
-    HISTORIALMOVIMIENTOS --> MOVIMIENTO : compone >
+    class RolComparticion {
+      <<Enum>>
+      VIEWER
+      EDITOR
+      ADMIN
+      +canEdit() boolean
+      +isAdmin() boolean
+    }
 
-    TARJETA <|-- TARJETATAREA : subtipo >
-    TARJETA <|-- TARJETACHECKLIST : subtipo >
+    TABLERO *-- TableroUrl : url
+    TABLERO *-- Email : ownerEmail
+    TABLERO --> EstadoTablero : status
+    TABLERO "1" *-- "0..*" LISTATABLERO : lists
+    TABLERO "1" *-- "0..*" TABLEROCOMPARTIDO : sharedWith
+    TABLERO ..> DefinicionListaInicial : usa en createNew
 
-    TARJETACHECKLIST --> LISTAITEMS : contiene >
-    LISTAITEMS --> ELEMENTOCHECKLIST : incluye >
+    LISTATABLERO *-- ListaTableroId : id
+    LISTATABLERO *-- TableroUrl : boardUrl
 
-    USUARIO *-- Email : correo >
-    TABLERO *-- TableroId : url >
-    LISTACOMPLETADAS *-- ListaCompletadasId : id >
-    TARJETA *-- TarjetaId : id >
-    MOVIMIENTO *-- MovimientoId : id >
-    ETIQUETA *-- ColorEtiqueta : color >
+    TARJETA <|-- TARJETATAREA
+    TARJETA <|-- TARJETACHECKLIST
+    TARJETA *-- TarjetaId : id
+    TARJETA *-- ListaTableroId : listId
+    TARJETA --> TipoTarjeta : type
+    TARJETA "1" *-- "0..*" EtiquetaTarjeta : labels
+
+    TARJETACHECKLIST "1" *-- "0..*" ElementoChecklist : items
+
+    TABLEROCOMPARTIDO *-- TableroUrl : boardUrl
+    TABLEROCOMPARTIDO *-- Email : email
+    TABLEROCOMPARTIDO --> RolComparticion : role
+
+    TRAZAACTIVIDAD *-- TableroUrl : boardUrl
+    TRAZAACTIVIDAD *-- Email : authorEmail
+
+    USUARIO *-- Email : email
 ```
 
 ---
 
-## Explicación de los diagramas
+## Explicación del diagrama
 
-Estos diagramas de clases representan la estructura de nuestro dominio, definiendo cómo interactúan las Entidades y los Value Objects:
+El diagrama representa la estructura real del dominio en `com.tasku.core.domain.model`, mostrando cómo interactúan entidades, value objects y enums:
 
-* **Tablero:** Es el componente principal. Contiene las listas de tareas, la lista de tarjetas terminadas y el historial de cambios. Cada tablero tiene una `URL` única para compartirlo, un `Usuario` dueño y una colección de `Usuario` colaboradores.
-* **Organización en Listas:** Un `Tablero` agrupa varias `ListaTareas` y una `ListaCompletadas`. Dentro de estas listas es donde se guardan y organizan las diferentes `Tarjetas`.
-* **Tipos de Tarjetas (Herencia):** Existe una `Tarjeta` básica que guarda la información común (título, descripción, estado). De ella nacen dos tipos especiales: la `TarjetaTarea` (en legacy añade `texto`) y la `TarjetaChecklist` (que tiene subtareas que se pueden ir marcando).
-* **Value Objects:** En lugar de usar texto simple (`String`) para cosas importantes, creamos clases específicas como `Email`, `TableroId` o `ColorEtiqueta` (en la etapa legacy). Así nos aseguramos de que un correo tenga formato válido o que un color sea correcto desde el momento en que se crean.
-* **Etiquetas e Historial:** Las tarjetas usan `Etiqueta` para clasificarse visualmente. Por otro lado, el tablero usa el `HistorialMovimientos` como una "caja negra" para recordar qué usuario hizo cada cambio y en qué momento.
-* **Usuarios:** El `Usuario` es la persona que usa la aplicación. Se identifica por su correo electrónico y puede crear sus propios tableros o colaborar en los tableros de otras personas.
+* **Tablero (Aggregate Root):** Es el componente central. Contiene una lista de `ListaTablero` y un conjunto de `TableroCompartido`. Identifica su propietario solo por su `Email` (no por una referencia a `Usuario`). Sus métodos `with*` devuelven **nuevas instancias** — el objeto es inmutable.
+* **ListaTablero:** Cada tablero puede tener varias listas con nombre, límite de tarjetas y color. Las tarjetas no viven dentro de la lista en el dominio; la lista solo define el contenedor. Las tarjetas referencian a su lista por `ListaTableroId`.
+* **Tipos de Tarjetas (Herencia):** `Tarjeta` es una clase abstracta con todos los campos comunes (`id`, `listId`, `type`, `title`, `description`, `archived`, `labels`). `TarjetaTarea` no añade campos nuevos. `TarjetaChecklist` añade una lista de `ElementoChecklist`.
+* **Value Objects:** `Email`, `TableroUrl`, `TarjetaId`, `ListaTableroId`, `EtiquetaTarjeta` y `ElementoChecklist` son records Java inmutables que validan sus valores en el constructor. Garantizan integridad desde el momento de creación.
+* **Compartición y Roles:** `TableroCompartido` registra con qué email y con qué `RolComparticion` (VIEWER / EDITOR / ADMIN) se comparte el tablero. El método `effectiveRoleOf(email)` en `Tablero` devuelve ADMIN para el dueño.
+* **TrazaActividad:** Registro de auditoría independiente del tablero. Se crea cuando ocurre una acción relevante (mover tarjeta, cambiar estado, etc.) y se persiste por separado.
+* **EstadoTablero y TipoTarjeta:** Enums que evitan el uso de Strings mágicos para el estado del tablero y el tipo de tarjeta respectivamente.
 
 ---
 
@@ -260,314 +305,3 @@ La arquitectura hexagonal se adhiere perfectamente a los principios *S.O.L.I.D*
   - La capa de Infraestructura es la más externa.
 
 ---
-
-## Implementación de la Persistencia
-
-### 1. Tecnologías y Herramientas Utilizadas ("Qué se ha usado")
-
-La persistencia de este proyecto se apoya en una base de datos **relacional SQL**.
-
-| Categoría                | Implementación real en el proyecto                          | Dónde se evidencia                                                                                   |
-| ------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| Base de datos             | **H2** en modo archivo (`jdbc:h2:file`)              | `core/src/main/resources/application.properties`                                                    |
-| ORM                       | **Hibernate ORM** vía **Spring Data JPA**       | `spring-boot-starter-data-jpa` en `core/pom.xml`                                                  |
-| Abstracción de acceso    | **Spring Data JPA (`JpaRepository`)**                | `SpringDataTableroRepository`, `SpringDataTarjetaRepository`, `SpringDataTrazaRepository`, etc. |
-| Driver de conexión       | **org.h2.Driver**                                      | `spring.datasource.driver-class-name`                                                               |
-| Consola de soporte        | **spring-boot-h2console**                              | Dependencia +`spring.h2.console.enabled=true`                                                       |
-| Gestión de transacciones | **Spring Transaction Management** (`@Transactional`) | `TableroUseCaseService`, `TrazaActividadUseCaseService`                                           |
-
-Notas técnicas:
-
-- No se utiliza un gestor explícito de migraciones (Flyway/Liquibase) en el estado actual.
-- El esquema se gestiona con `spring.jpa.hibernate.ddl-auto=update`.
-
-Configuración activa real:
-
-```properties
-spring.datasource.url=jdbc:h2:file:./data/tasku-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-spring.datasource.driver-class-name=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.open-in-view=false
-
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
-```
-
-### 2. Arquitectura y Estructura de Directorios ("Cómo está estructurado")
-
-La persistencia se implementa siguiendo DDD + arquitectura hexagonal:
-
-1. **Dominio** define contratos (puertos) y modelo puro.
-2. **Aplicación** orquesta casos de uso y transacciones.
-3. **Infraestructura** implementa puertos con JPA/Hibernate.
-
-Árbol representativo de persistencia (estado real):
-
-```text
-core/src/main/java/com/tasku/core
-├─ application/tablero/usecase
-│  ├─ TableroUseCaseService.java
-│  ├─ TrazaActividadUseCaseService.java
-│  ├─ dto/
-│  └─ event/
-├─ domain/board
-│  ├─ exception/
-│  └─ port/
-│     ├─ TableroStore.java
-│     ├─ ListaTableroStore.java
-│     ├─ TarjetaStore.java
-│     ├─ TrazaStore.java
-│     └─ UsuarioStore.java
-├─ domain/model
-│  ├─ Tablero.java
-│  ├─ ListaTablero.java
-│  ├─ Tarjeta.java
-│  ├─ TarjetaTarea.java
-│  ├─ TarjetaChecklist.java
-│  ├─ TrazaActividad.java
-│  └─ CuentaUsuario.java
-└─ infrastructure
-   ├─ bootstrap/CoreApplication.java
-   ├─ config/ProgramacionPersistenciaConfig.java
-   ├─ config/CompactacionTrazasProperties.java
-   ├─ scheduler/CompactacionTrazasJob.java
-   ├─ events/TarjetaMovidaTrazaListener.java
-   └─ persistence/jpa
-      ├─ adapter/
-      │  ├─ JpaTableroStoreAdapter.java
-      │  ├─ JpaListaTableroStoreAdapter.java
-      │  ├─ JpaTarjetaStoreAdapter.java
-      │  ├─ JpaTrazaStoreAdapter.java
-      │  └─ JpaUsuarioStoreAdapter.java
-      ├─ repository/
-      │  ├─ SpringDataTableroRepository.java
-      │  ├─ SpringDataListaTableroRepository.java
-      │  ├─ SpringDataTarjetaRepository.java
-      │  ├─ SpringDataTrazaRepository.java
-      │  └─ SpringDataUsuarioRepository.java
-      ├─ entity/
-      │  ├─ TableroJpaEntity.java
-      │  ├─ ListaTableroJpaEntity.java
-      │  ├─ TableroCompartidoJpaEntity.java
-      │  ├─ TarjetaJpaEntity.java
-      │  ├─ TarjetaTareaJpaEntity.java
-      │  ├─ TarjetaChecklistJpaEntity.java
-      │  ├─ TrazaJpaEntity.java
-      │  ├─ UsuarioJpaEntity.java
-      │  └─ embeddables...
-      └─ mapper/
-         ├─ TableroJpaMapper.java
-         ├─ TarjetaJpaMapper.java
-         ├─ TrazaJpaMapper.java
-         └─ UsuarioJpaMapper.java
-```
-
-Propósito de los componentes clave:
-
-- **`domain/board/port/*Store.java`**: contratos de persistencia independientes de JPA.
-- **`domain/model/*`**: modelo de dominio unificado usado por aplicación y persistencia.
-- **`infrastructure/persistence/jpa/adapter/*Adapter.java`**: implementación concreta de los contratos de dominio.
-- **`infrastructure/persistence/jpa/repository/SpringData*Repository.java`**: capa Spring Data para CRUD/queries.
-- **`infrastructure/persistence/jpa/entity/*JpaEntity.java`**: modelo de base de datos con anotaciones JPA.
-- **`infrastructure/persistence/jpa/mapper/*Mapper.java`**: traducción bidireccional Dominio <-> JPA.
-
-### 3. Implementación Paso a Paso ("Cómo se ha usado")
-
-#### Paso 1: Configuración de la Conexión
-
-La conexión y el wiring se configuran por propiedades + autoconfiguración de Spring Boot.
-
-En `CoreApplication` se declara el escaneo explícito de entidades y repositorios:
-
-```java
-@SpringBootApplication(scanBasePackages = "com.tasku.core")
-@EntityScan(basePackages = "com.tasku.core.infrastructure.persistence.jpa.entity")
-@EnableJpaRepositories(basePackages = "com.tasku.core.infrastructure.persistence.jpa.repository")
-public class CoreApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(CoreApplication.class, args);
-  }
-}
-```
-
-Resultado práctico:
-
-1. Spring crea `DataSource` (pool HikariCP).
-2. Crea `EntityManagerFactory` y `JpaTransactionManager`.
-3. Registra automáticamente los `SpringData*Repository`.
-4. Inyecta adapters y servicios por constructor.
-
-#### Paso 2: Modelado de Datos (Data Models/Schemas)
-
-**Diferencia técnica en este proyecto:**
-
-- **Entidad de Dominio**: representa reglas de negocio y no contiene anotaciones JPA.
-- **Modelo de Base de Datos (JPA Entity)**: representa tablas/relaciones y sí contiene anotaciones de persistencia.
-
-Ejemplo de entidad de dominio (sin anotaciones ORM):
-
-```java
-public abstract class Tarjeta {
-  private final UUID id;
-  private UUID listId;
-  private final TipoTarjeta type;
-  private String title;
-  private String description;
-  private boolean archived;
-  private final Set<EtiquetaTarjeta> labels;
-}
-```
-
-Ejemplo de modelo JPA (acoplado a SQL):
-
-```java
-@Entity
-@Table(name = "tarjetas")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo_tarjeta", discriminatorType = DiscriminatorType.STRING)
-public abstract class TarjetaJpaEntity {
-  @Id
-  @Column(name = "id", nullable = false)
-  private UUID id;
-
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "lista_id", nullable = false)
-  private ListaTableroJpaEntity list;
-}
-```
-
-Además, la herencia de tarjetas se materializa con subtipos persistentes:
-
-- `TarjetaTareaJpaEntity` (`@DiscriminatorValue("TAREA")`)
-- `TarjetaChecklistJpaEntity` (`@DiscriminatorValue("CHECKLIST")`)
-
-#### Paso 3: Implementación del Patrón Repositorio
-
-El patrón se implementa en dos niveles:
-
-1. **Contrato de dominio** (puerto).
-2. **Adapter de infraestructura** (implementación con Spring Data).
-
-Contrato (dominio):
-
-```java
-public interface TarjetaStore {
-  Tarjeta save(Tarjeta card);
-  Optional<Tarjeta> findById(UUID cardId);
-  long countByListId(UUID listId);
-  List<Tarjeta> findByListId(UUID listId);
-}
-```
-
-Implementación (infraestructura):
-
-```java
-@Repository
-public class JpaTarjetaStoreAdapter implements TarjetaStore {
-  private final SpringDataTarjetaRepository repository;
-  private final SpringDataListaTableroRepository boardListRepository;
-  private final TarjetaJpaMapper mapper;
-
-  @Override
-  public Tarjeta save(Tarjeta card) {
-    ListaTableroJpaEntity listEntity = boardListRepository.findById(card.listId())
-      .orElseThrow(() -> new DomainNotFoundException("No existe la lista para persistir la tarjeta"));
-    return mapper.toDomain(repository.save(mapper.toJpa(card, listEntity)));
-  }
-}
-```
-
-Patrón resultante:
-
-- **Repository + Data Mapper**.
-- No se usa Active Record en el dominio.
-
-#### Paso 4: Mapeo de Datos (Mappers)
-
-La transformación entre dominio y persistencia se concentra en:
-
-- `TableroJpaMapper`
-- `TarjetaJpaMapper`
-- `TrazaJpaMapper`
-- `UsuarioJpaMapper`
-
-Ejemplo real de `TableroJpaMapper` (Dominio -> JPA):
-
-```java
-entity.setUrl(domain.url());
-entity.setName(domain.name());
-entity.setOwnerEmail(domain.ownerEmail());
-entity.setColor(domain.color());
-entity.setDescription(domain.description());
-entity.setStatus(domain.status().name());
-```
-
-Ejemplo real de `TarjetaJpaMapper` para polimorfismo:
-
-```java
-if (domain instanceof TarjetaChecklist tarjetaChecklist) {
-  TarjetaChecklistJpaEntity checklistEntity = new TarjetaChecklistJpaEntity();
-  checklistEntity.setItems(mapItemsToJpa(tarjetaChecklist.items()));
-  entity = checklistEntity;
-} else if (domain instanceof TarjetaTarea) {
-  entity = new TarjetaTareaJpaEntity();
-}
-```
-
-Ventaja clave del mapeo explícito:
-
-1. El dominio permanece limpio (sin `@Entity`, `@Column`, etc.).
-2. Cambios de infraestructura no fuerzan cambios en reglas de negocio.
-3. Se puede testear el dominio sin dependencias de ORM.
-
-#### Paso 5: Gestión de Transacciones (Unit of Work)
-
-No existe una clase `UnitOfWork` explícita, pero el comportamiento de unidad de trabajo se implementa con `@Transactional` de Spring.
-
-Ejemplo de operación que usa múltiples repositorios dentro de la misma transacción:
-
-```java
-@Transactional
-public Tablero createBoard(CreateBoardRequest request) {
-  if (boardStore.existsByOwnerEmailAndNameIgnoreCase(request.ownerEmail(), request.name())) {
-    throw new DomainConflictException("Ya existe un tablero con ese nombre para el mismo duenio");
-  }
-
-  ensureOwnerExists(request.ownerEmail()); // usa userStore
-  Tablero board = Tablero.createNew(...);
-  return boardStore.save(board); // usa boardStore
-}
-```
-
-En este caso, la creación/aseguramiento de usuario y la persistencia del tablero comparten frontera transaccional.
-
-También se observa transaccionalidad en:
-
-- `createCard(...)`
-- `moveCard(...)`
-- `TrazaActividadUseCaseService.registerTrace(...)`
-- `TrazaActividadUseCaseService.compactOlderThan(...)`
-
-### 4. Decisiones de Diseño y Trade-offs
-
-#### Por qué esta configuración encaja con el enfoque DDD del proyecto
-
-1. **Puertos en Dominio + Adapters en Infraestructura**: refuerza la inversión de dependencias.
-2. **Mappers explícitos**: evita contaminar el modelo de dominio con detalles del ORM.
-3. **Spring Data JPA**: acelera acceso a datos y consultas sin sacrificar separación de capas.
-4. **`@Transactional` en servicios de aplicación**: centraliza consistencia en casos de uso.
-
-#### Ventajas concretas
-
-- Alto desacoplamiento entre lógica de negocio y persistencia.
-- Mayor testabilidad del dominio.
-- Evolución independiente del modelo de base de datos.
-
-#### Trade-offs reales
-
-- Mayor volumen de código por mapeo manual (más clases y mantenimiento).
-- Dependencia actual de `ddl-auto=update` (sin migraciones versionadas explícitas).
-- H2 en modo archivo es excelente para desarrollo/pruebas, pero no es objetivo de producción de alta concurrencia.

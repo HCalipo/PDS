@@ -20,7 +20,6 @@ import com.tasku.core.infrastructure.api.rest.request.ChangeBoardStatusApiReques
 import com.tasku.core.infrastructure.api.rest.request.CreateBoardApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.CreateListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.DeleteListApiRequest;
-import com.tasku.core.infrastructure.api.rest.request.InitialListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.RenameListApiRequest;
 import com.tasku.core.infrastructure.api.rest.request.ShareBoardApiRequest;
 import com.tasku.core.infrastructure.api.rest.response.BoardApiResponse;
@@ -60,7 +59,7 @@ public class BoardRestController {
         List<DefinicionListaInicial> initialLists = null;
         if (request.initialLists() != null) {
             initialLists = request.initialLists().stream()
-                    .map(this::toInitialListDefinition)
+                    .map(mapper::toInitialListDefinition)
                     .toList();
         }
 
@@ -168,8 +167,5 @@ public class BoardRestController {
         return ResponseEntity.ok().build(); 
     }
 
-    private DefinicionListaInicial toInitialListDefinition(InitialListApiRequest request) {
-        return new DefinicionListaInicial(request.name(), request.cardLimit());
-    }
 }
 

@@ -1,5 +1,6 @@
 package com.tasku.core.infrastructure.api.rest.mapper;
 
+import com.tasku.core.domain.model.DefinicionListaInicial;
 import com.tasku.core.domain.model.EtiquetaTarjeta;
 import com.tasku.core.domain.model.ElementoChecklist;
 import com.tasku.core.domain.model.ListaTablero;
@@ -7,6 +8,7 @@ import com.tasku.core.domain.model.Tablero;
 import com.tasku.core.domain.model.TableroCompartido;
 import com.tasku.core.domain.model.Tarjeta;
 import com.tasku.core.domain.model.TrazaActividad;
+import com.tasku.core.infrastructure.api.rest.request.InitialListApiRequest;
 import com.tasku.core.infrastructure.api.rest.response.BoardApiResponse;
 import com.tasku.core.infrastructure.api.rest.response.BoardListApiResponse;
 import com.tasku.core.infrastructure.api.rest.response.BoardShareApiResponse;
@@ -95,6 +97,10 @@ public class ApiRestMapper {
 
     private CardLabelApiResponse toCardLabelResponse(EtiquetaTarjeta label) {
         return new CardLabelApiResponse(label.name(), label.colorHex());
+    }
+
+    public DefinicionListaInicial toInitialListDefinition(InitialListApiRequest request) {
+        return new DefinicionListaInicial(request.name(), request.cardLimit());
     }
 
     private ChecklistItemApiResponse toChecklistItemResponse(ElementoChecklist item) {
