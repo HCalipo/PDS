@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 
@@ -36,6 +37,9 @@ public class PrincipalController {
 
     @FXML
     private Button ButtonTableroBlock;
+
+    @FXML
+    private StackPane btnCompartirTablero;
 
     @FXML
     private Button btnAddList;
@@ -862,6 +866,7 @@ void handleCompartirTablero(MouseEvent event) {
         boolean canRename = canEdit && !estaBloqueado;
         boolean canDelete = canEdit && !estaBloqueado;
         if (ButtonTableroBlock != null) ButtonTableroBlock.setDisable(!isAdmin);
+        if (btnCompartirTablero != null) btnCompartirTablero.setDisable(!isAdmin);
         if (btnAddList != null) btnAddList.setDisable(!canCreate);
         if (btnCreateTask != null) btnCreateTask.setDisable(!canCreate);
         for (ListaTareasController ctrl : listControllers.values()) {
