@@ -210,16 +210,12 @@ public class ListaTareasController {
 
     @FXML
     private void handleRenameList() {
-        TextInputDialog dialog = new TextInputDialog(listName);
-        dialog.setTitle("Renombrar lista");
-        dialog.setHeaderText(null);
-        dialog.setContentText("Nuevo nombre:");
-        dialog.showAndWait().ifPresent(newName -> {
-            String trimmed = newName.trim();
-            if (!trimmed.isBlank() && onListRenamed != null) {
-                onListRenamed.handle(listId, trimmed);
-            }
+        EditarListaController ctrl = SceneManager.getInstance().openDialogAndGetController("editarLista", c -> {
+            c.setListName(listName);
         });
+        if (ctrl != null && ctrl.wasSaved() && onListRenamed != null) {
+            onListRenamed.handle(listId, ctrl.getNewName());
+        }
     }
 
     @FXML
@@ -456,20 +452,28 @@ public class ListaTareasController {
     }
 
     private void handleEditCard(CardApiResponse card) {
-        TextInputDialog dialog = new TextInputDialog(card.title());
-        dialog.setTitle("Editar tarjeta");
-        dialog.setHeaderText(null);
-        dialog.setContentText("Nuevo título:");
-        dialog.showAndWait().ifPresent(newTitle -> {
-            String trimmed = newTitle.trim();
-            if (trimmed.isBlank()) return;
-            try {
-                CardApiResponse updated = apiClient.renameCard(card.id(), trimmed);
-                refreshCardNode(updated);
-            } catch (DesktopApiException ex) {
-                showAlert("No se pudo editar la tarjeta: " + ex.getMessage());
+        String fxml = card.type() == TipoTarjeta.CHECKLIST ? "EditarTarjetaChecklist" : "EditarTarjetaTexto";
+        Object ctrl = SceneManager.getInstance().openDialogAndGetController(fxml, c -> {
+            if (c instanceof EditarTarjetaTextoController ec) {
+                ec.setCard(card);
+            } else if (c instanceof EditarTarjetaChecklistController ec) {
+                ec.setCard(card);
             }
         });
+        if (ctrl == null) return;
+        if (ctrl instanceof EditarTarjetaTextoController ec && ec.wasSaved()) {
+            try {
+                refreshCardNode(apiClient.renameCard(card.id(), ec.getNewTitle()));
+            } catch (DesktopApiException ex) {
+                showAlert("No se pudo guardar: " + ex.getMessage());
+            }
+        } else if (ctrl instanceof EditarTarjetaChecklistController ec && ec.wasSaved()) {
+            try {
+                refreshCardNode(apiClient.renameCard(card.id(), ec.getNewTitle()));
+            } catch (DesktopApiException ex) {
+                showAlert("No se pudo guardar: " + ex.getMessage());
+            }
+        }
     }
 
     private void handleDeleteCard(CardApiResponse card) {
