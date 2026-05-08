@@ -163,7 +163,7 @@ public class BoardRestController {
             @PathVariable String boardUrl,
             @RequestBody JoinBoardApiRequest request) {
 
-        boardService.joinBoard(boardUrl, request.email());
+        boardService.joinBoard(boardUrl, request.email(), request.role());
         return ResponseEntity.ok().build(); 
     }
 

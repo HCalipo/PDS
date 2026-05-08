@@ -34,12 +34,21 @@ public class CompartirTableroController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         String boardUrl = SceneManager.getInstance().getCurrentBoardUrl();
         if (boardUrl != null) {
-            txtEnlace.setText(boardUrl);
+            updateEnlace(boardUrl);
             btnCopiar.setDisable(false);
         } else {
             btnCopiar.setDisable(true);
         }
         lblEstado.setText("");
+
+        permisosGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            String url = SceneManager.getInstance().getCurrentBoardUrl();
+            if (url != null) updateEnlace(url);
+        });
+    }
+
+    private void updateEnlace(String boardUrl) {
+        txtEnlace.setText(boardUrl + "?role=" + resolveSelectedRole().name());
     }
 
     @FXML

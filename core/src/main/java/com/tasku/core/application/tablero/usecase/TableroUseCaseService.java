@@ -176,7 +176,7 @@ public class TableroUseCaseService {
     }
 
     @Transactional
-    public Tablero joinBoard(String boardUrlStr, String emailCrudo) {
+    public Tablero joinBoard(String boardUrlStr, String emailCrudo, RolComparticion requestedRole) {
         Email email = new Email(emailCrudo);
         TableroUrl boardUrl = new TableroUrl(boardUrlStr);
 
@@ -190,7 +190,8 @@ public class TableroUseCaseService {
             return board;
         }
 
-        return shareBoard(new ShareBoardRequest(boardUrl, email, RolComparticion.EDITOR));
+        RolComparticion role = (requestedRole != null) ? requestedRole : RolComparticion.EDITOR;
+        return shareBoard(new ShareBoardRequest(boardUrl, email, role));
     }
 
     private void requireRole(Tablero board, Email actor, RolComparticion required, String message) {

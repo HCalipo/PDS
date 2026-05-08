@@ -3,6 +3,7 @@ package com.tasku.ui.presentation.controllers;
 import java.util.function.Consumer;
 
 import com.tasku.ui.SceneManager;
+import com.tasku.ui.client.dto.RolComparticion;
 import com.tasku.ui.client.dto.request.JoinBoardApiRequest;
 import com.tasku.ui.client.http.DesktopApiException;
 import com.tasku.ui.client.http.TaskuApiClient;
@@ -35,6 +36,17 @@ public class UnirTableroController {
         }
 
         String token = input.trim();
+
+        RolComparticion role = RolComparticion.EDITOR;
+        int roleIdx = token.indexOf("?role=");
+        if (roleIdx != -1) {
+            String roleStr = token.substring(roleIdx + 6).trim();
+            try {
+                role = RolComparticion.valueOf(roleStr);
+            } catch (IllegalArgumentException ignored) { }
+            token = token.substring(0, roleIdx);
+        }
+
         String uuid = token.substring(token.lastIndexOf('/') + 1).trim();
         String fullBoardUrl = "tasku://tablero/" + uuid;
         String currentUserEmail = SceneManager.getInstance().getCurrentUserEmail();
@@ -45,7 +57,7 @@ public class UnirTableroController {
         }
 
         try {
-            JoinBoardApiRequest request = new JoinBoardApiRequest(currentUserEmail);
+            JoinBoardApiRequest request = new JoinBoardApiRequest(currentUserEmail, role);
             apiClient.joinBoard(uuid, request);
             if (onJoinedAvisar != null) {
                 onJoinedAvisar.accept(fullBoardUrl);
